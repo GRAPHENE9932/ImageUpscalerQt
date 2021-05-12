@@ -1,0 +1,9 @@
+/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/install/strip.dir
+/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/install/local.dir
+/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/install.dir
+/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/list_install_components.dir
+/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/rebuild_cache.dir
+/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/edit_cache.dir
+/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/imageupscalerqt.dir
+/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/imageupscalerqt_autogen_timestamp_deps.dir
+/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/imageupscalerqt_autogen.dir

@@ -1,0 +1,41 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+
+[CMake]
+Build Directory Count=1
+Current Build Directory Index-Host System=0
+
+[CMake][CMake Build Directory 0]
+Build Directory Path=/home/artem/Projects/ImageUpscalerQt/debug
+Build Type=Debug
+CMake Binary=/usr/bin/cmake
+CMake Executable=/usr/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=/usr/local
+Runtime=Host System
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=imageupscalerqt
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x1e\x00I\x00m\x00a\x00g\x00e\x00U\x00p\x00s\x00c\x00a\x00l\x00e\x00r\x00Q\x00t\x00\x00\x00\x1e\x00i\x00m\x00a\x00g\x00e\x00u\x00p\x00s\x00c\x00a\x00l\x00e\x00r\x00q\x00t)
+Dependency Action=Build
+EnvironmentGroup=
+Executable=file:///home/artem/Projects/ImageUpscalerQt
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Kill Before Executing Again=4194304
+Project Target=ImageUpscalerQt,imageupscalerqt
+Use External Terminal=false
+Working Directory=
+isExecutable=false
+
+[Project]
+VersionControlSupport=kdevgit
