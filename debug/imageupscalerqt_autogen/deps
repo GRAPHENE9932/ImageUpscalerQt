@@ -4,7 +4,16 @@ imageupscalerqt_autogen/timestamp: \
 	/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/3.20.2/CMakeCXXCompiler.cmake \
 	/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/3.20.2/CMakeSystem.cmake \
 	/home/artem/Projects/ImageUpscalerQt/debug/imageupscalerqt_autogen/moc_predefs.h \
+	/home/artem/Projects/ImageUpscalerQt/src/Algorithms.cpp \
+	/home/artem/Projects/ImageUpscalerQt/src/Algorithms.h \
 	/home/artem/Projects/ImageUpscalerQt/src/main.cpp \
+	/home/artem/Projects/ImageUpscalerQt/src/task/Task.h \
+	/home/artem/Projects/ImageUpscalerQt/src/task/TaskFSRCNN.cpp \
+	/home/artem/Projects/ImageUpscalerQt/src/task/TaskFSRCNN.h \
+	/home/artem/Projects/ImageUpscalerQt/src/task/TaskResize.cpp \
+	/home/artem/Projects/ImageUpscalerQt/src/task/TaskResize.h \
+	/home/artem/Projects/ImageUpscalerQt/src/task/TaskSRCNN.cpp \
+	/home/artem/Projects/ImageUpscalerQt/src/task/TaskSRCNN.h \
 	/home/artem/Projects/ImageUpscalerQt/src/windows/imageupscalerqt.cpp \
 	/home/artem/Projects/ImageUpscalerQt/src/windows/imageupscalerqt.h \
 	/usr/include/assert.h \

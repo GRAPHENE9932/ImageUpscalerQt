@@ -94,6 +94,30 @@
 	"HEADERS" : 
 	[
 		[
+			"/home/artem/Projects/ImageUpscalerQt/src/Algorithms.h",
+			"MU",
+			"UVLADIE3JM/moc_Algorithms.cpp",
+			null
+		],
+		[
+			"/home/artem/Projects/ImageUpscalerQt/src/task/TaskFSRCNN.h",
+			"MU",
+			"MFLM4537M2/moc_TaskFSRCNN.cpp",
+			null
+		],
+		[
+			"/home/artem/Projects/ImageUpscalerQt/src/task/TaskResize.h",
+			"MU",
+			"MFLM4537M2/moc_TaskResize.cpp",
+			null
+		],
+		[
+			"/home/artem/Projects/ImageUpscalerQt/src/task/TaskSRCNN.h",
+			"MU",
+			"MFLM4537M2/moc_TaskSRCNN.cpp",
+			null
+		],
+		[
 			"/home/artem/Projects/ImageUpscalerQt/src/windows/imageupscalerqt.h",
 			"MU",
 			"3LXPKN4LCA/moc_imageupscalerqt.cpp",
@@ -152,7 +176,23 @@
 	"SETTINGS_FILE" : "/home/artem/Projects/ImageUpscalerQt/debug/CMakeFiles/imageupscalerqt_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[ "/home/artem/Projects/ImageUpscalerQt/src/Algorithms.cpp", "MU", null ],
 		[ "/home/artem/Projects/ImageUpscalerQt/src/main.cpp", "MU", null ],
+		[
+			"/home/artem/Projects/ImageUpscalerQt/src/task/TaskFSRCNN.cpp",
+			"MU",
+			null
+		],
+		[
+			"/home/artem/Projects/ImageUpscalerQt/src/task/TaskResize.cpp",
+			"MU",
+			null
+		],
+		[
+			"/home/artem/Projects/ImageUpscalerQt/src/task/TaskSRCNN.cpp",
+			"MU",
+			null
+		],
 		[
 			"/home/artem/Projects/ImageUpscalerQt/src/windows/imageupscalerqt.cpp",
 			"MU",

@@ -1,15 +1,18 @@
 #ifndef IMAGEUPSCALERQT_H
 #define IMAGEUPSCALERQT_H
 
+#include <vector>
+
 #include <QMainWindow>
 #include <QScopedPointer>
+
+#include "../task/Task.h"
 
 namespace Ui {
 class ImageUpscalerQt;
 }
 
-class ImageUpscalerQt : public QMainWindow
-{
+class ImageUpscalerQt : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -18,6 +21,13 @@ public:
 
 private:
     QScopedPointer<Ui::ImageUpscalerQt> m_ui;
+	std::vector<Task*> task_queue;
+
+private slots:
+	//BEGIN Signals
+	void add_task_clicked();
+	void task_kind_changed(int index);
+	//END Signals
 };
 
 #endif // IMAGEUPSCALERQT_H

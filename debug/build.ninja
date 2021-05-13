@@ -117,6 +117,14 @@ build CMakeFiles/imageupscalerqt.dir/imageupscalerqt_autogen/mocs_compilation.cp
   OBJECT_DIR = CMakeFiles/imageupscalerqt.dir
   OBJECT_FILE_DIR = CMakeFiles/imageupscalerqt.dir/imageupscalerqt_autogen
 
+build CMakeFiles/imageupscalerqt.dir/src/Algorithms.cpp.o: CXX_COMPILER__imageupscalerqt_Debug ../src/Algorithms.cpp || cmake_object_order_depends_target_imageupscalerqt
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles/imageupscalerqt.dir/src/Algorithms.cpp.o.d
+  FLAGS = -g -fPIC -std=gnu++2a
+  INCLUDES = -I. -I../ -Iimageupscalerqt_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++
+  OBJECT_DIR = CMakeFiles/imageupscalerqt.dir
+  OBJECT_FILE_DIR = CMakeFiles/imageupscalerqt.dir/src
+
 build CMakeFiles/imageupscalerqt.dir/src/main.cpp.o: CXX_COMPILER__imageupscalerqt_Debug ../src/main.cpp || cmake_object_order_depends_target_imageupscalerqt
   DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
   DEP_FILE = CMakeFiles/imageupscalerqt.dir/src/main.cpp.o.d
@@ -124,6 +132,30 @@ build CMakeFiles/imageupscalerqt.dir/src/main.cpp.o: CXX_COMPILER__imageupscaler
   INCLUDES = -I. -I../ -Iimageupscalerqt_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++
   OBJECT_DIR = CMakeFiles/imageupscalerqt.dir
   OBJECT_FILE_DIR = CMakeFiles/imageupscalerqt.dir/src
+
+build CMakeFiles/imageupscalerqt.dir/src/task/TaskFSRCNN.cpp.o: CXX_COMPILER__imageupscalerqt_Debug ../src/task/TaskFSRCNN.cpp || cmake_object_order_depends_target_imageupscalerqt
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles/imageupscalerqt.dir/src/task/TaskFSRCNN.cpp.o.d
+  FLAGS = -g -fPIC -std=gnu++2a
+  INCLUDES = -I. -I../ -Iimageupscalerqt_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++
+  OBJECT_DIR = CMakeFiles/imageupscalerqt.dir
+  OBJECT_FILE_DIR = CMakeFiles/imageupscalerqt.dir/src/task
+
+build CMakeFiles/imageupscalerqt.dir/src/task/TaskResize.cpp.o: CXX_COMPILER__imageupscalerqt_Debug ../src/task/TaskResize.cpp || cmake_object_order_depends_target_imageupscalerqt
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles/imageupscalerqt.dir/src/task/TaskResize.cpp.o.d
+  FLAGS = -g -fPIC -std=gnu++2a
+  INCLUDES = -I. -I../ -Iimageupscalerqt_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++
+  OBJECT_DIR = CMakeFiles/imageupscalerqt.dir
+  OBJECT_FILE_DIR = CMakeFiles/imageupscalerqt.dir/src/task
+
+build CMakeFiles/imageupscalerqt.dir/src/task/TaskSRCNN.cpp.o: CXX_COMPILER__imageupscalerqt_Debug ../src/task/TaskSRCNN.cpp || cmake_object_order_depends_target_imageupscalerqt
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles/imageupscalerqt.dir/src/task/TaskSRCNN.cpp.o.d
+  FLAGS = -g -fPIC -std=gnu++2a
+  INCLUDES = -I. -I../ -Iimageupscalerqt_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++
+  OBJECT_DIR = CMakeFiles/imageupscalerqt.dir
+  OBJECT_FILE_DIR = CMakeFiles/imageupscalerqt.dir/src/task
 
 build CMakeFiles/imageupscalerqt.dir/src/windows/imageupscalerqt.cpp.o: CXX_COMPILER__imageupscalerqt_Debug ../src/windows/imageupscalerqt.cpp || cmake_object_order_depends_target_imageupscalerqt
   DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
@@ -141,7 +173,7 @@ build CMakeFiles/imageupscalerqt.dir/src/windows/imageupscalerqt.cpp.o: CXX_COMP
 #############################################
 # Link the executable imageupscalerqt
 
-build imageupscalerqt: CXX_EXECUTABLE_LINKER__imageupscalerqt_Debug CMakeFiles/imageupscalerqt.dir/imageupscalerqt_autogen/mocs_compilation.cpp.o CMakeFiles/imageupscalerqt.dir/src/main.cpp.o CMakeFiles/imageupscalerqt.dir/src/windows/imageupscalerqt.cpp.o | /usr/lib/libQt5Widgets.so.5.15.2 /usr/lib/libQt5Gui.so.5.15.2 /usr/lib/libQt5Core.so.5.15.2 || imageupscalerqt_autogen imageupscalerqt_autogen_timestamp_deps
+build imageupscalerqt: CXX_EXECUTABLE_LINKER__imageupscalerqt_Debug CMakeFiles/imageupscalerqt.dir/imageupscalerqt_autogen/mocs_compilation.cpp.o CMakeFiles/imageupscalerqt.dir/src/Algorithms.cpp.o CMakeFiles/imageupscalerqt.dir/src/main.cpp.o CMakeFiles/imageupscalerqt.dir/src/task/TaskFSRCNN.cpp.o CMakeFiles/imageupscalerqt.dir/src/task/TaskResize.cpp.o CMakeFiles/imageupscalerqt.dir/src/task/TaskSRCNN.cpp.o CMakeFiles/imageupscalerqt.dir/src/windows/imageupscalerqt.cpp.o | /usr/lib/libQt5Widgets.so.5.15.2 /usr/lib/libQt5Gui.so.5.15.2 /usr/lib/libQt5Core.so.5.15.2 || imageupscalerqt_autogen imageupscalerqt_autogen_timestamp_deps
   FLAGS = -g
   LINK_FLAGS = -rdynamic
   LINK_LIBRARIES = /usr/lib/libQt5Widgets.so.5.15.2  /usr/lib/libQt5Gui.so.5.15.2  /usr/lib/libQt5Core.so.5.15.2

@@ -1,13 +1,11 @@
 # ninja log v5
-5	112	1620797411526680201	imageupscalerqt_autogen/timestamp	fa8c212e0b852c44
-112	1936	1620797413373346953	CMakeFiles/imageupscalerqt.dir/imageupscalerqt_autogen/mocs_compilation.cpp.o	48a94b8c370ddcf6
-257	2401	1620709744853055630	CMakeFiles/imageupscalerqt.dir/src/main.cpp.o	e05b86f49abd61b5
+4	90	1620924901026329604	imageupscalerqt_autogen/timestamp	fa8c212e0b852c44
+90	2838	1620924903799662791	CMakeFiles/imageupscalerqt.dir/imageupscalerqt_autogen/mocs_compilation.cpp.o	e148f39bb93094ed
+281	3951	1620919930193256762	CMakeFiles/imageupscalerqt.dir/src/main.cpp.o	aa1b5801904b93c3
+91	4375	1620924905336329377	CMakeFiles/imageupscalerqt.dir/src/windows/imageupscalerqt.cpp.o	4ebfe22b10738377
 1	2326	1620797418936680532	CMakeFiles/imageupscalerqt.dir/src/imageupscalerqt.cpp.o	b66c502127eca40e
-2326	2942	1620797419550013895	imageupscalerqt	2498e199e91d3628
-4	364	1620839303316603852	imageupscalerqt_autogen/timestamp	fa8c212e0b852c44
-364	3406	1620839306366603762	CMakeFiles/imageupscalerqt.dir/imageupscalerqt_autogen/mocs_compilation.cpp.o	e148f39bb93094ed
-365	4139	1620839307099937074	CMakeFiles/imageupscalerqt.dir/src/windows/imageupscalerqt.cpp.o	4ebfe22b10738377
-4	57	1620839322383269958	imageupscalerqt_autogen/timestamp	fa8c212e0b852c44
-57	2768	1620839325106603212	CMakeFiles/imageupscalerqt.dir/imageupscalerqt_autogen/mocs_compilation.cpp.o	e148f39bb93094ed
-57	3046	1620839325383269870	CMakeFiles/imageupscalerqt.dir/src/main.cpp.o	aa1b5801904b93c3
-3046	3720	1620839326053269850	imageupscalerqt	e24116f9d34a7559
+4375	4878	1620924905836329352	imageupscalerqt	3f128672edaf7f06
+263	558	1620919744349933189	CMakeFiles/imageupscalerqt.dir/src/task/TaskResize.cpp.o	f2a16c955f20d3e6
+91	1309	1620923722293058064	CMakeFiles/imageupscalerqt.dir/src/Algorithms.cpp.o	332f132b2f7d362f
+264	559	1620919744349933189	CMakeFiles/imageupscalerqt.dir/src/task/TaskSRCNN.cpp.o	87287ace61c2856
+263	559	1620919744349933189	CMakeFiles/imageupscalerqt.dir/src/task/TaskFSRCNN.cpp.o	962e6661dec8f5cf

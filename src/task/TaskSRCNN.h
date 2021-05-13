@@ -1,9 +1,15 @@
 #pragma once
 
+#include <array>
+
 #include "Task.h"
 
 struct TaskSRCNN : public Task {
-	unsigned char ker[3];
-	unsigned char pad[3];
-	unsigned char ch_n[2];
+	std::array<unsigned char, 3> kernels;
+	std::array<unsigned char, 3> paddings;
+	std::array<unsigned char, 2> channels;
+
+	TaskSRCNN();
+	TaskSRCNN(std::array<unsigned char, 3> kernels, std::array<unsigned char, 3> paddings,
+			  std::array<unsigned char, 2> channels);
 };

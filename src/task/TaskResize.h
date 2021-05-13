@@ -24,6 +24,9 @@ enum class Interpolation : unsigned char {
 };
 
 struct TaskResize : public Task {
-	unsigned int x_size, y_size;
-	Interpolation interpolation;
+	unsigned int x_size = 0, y_size = 0;
+	Interpolation interpolation = Interpolation::none;
+
+	TaskResize();
+	TaskResize(unsigned int x_size, unsigned int y_size, Interpolation interpolation);
 };

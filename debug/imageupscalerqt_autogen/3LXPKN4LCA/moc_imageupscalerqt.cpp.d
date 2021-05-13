@@ -1,5 +1,9 @@
 /home/artem/Projects/ImageUpscalerQt/debug/imageupscalerqt_autogen/3LXPKN4LCA/moc_imageupscalerqt.cpp: /home/artem/Projects/ImageUpscalerQt/src/windows/imageupscalerqt.h \
   /home/artem/Projects/ImageUpscalerQt/debug/imageupscalerqt_autogen/moc_predefs.h \
+  /home/artem/Projects/ImageUpscalerQt/src/task/Task.h \
+  /home/artem/Projects/ImageUpscalerQt/src/task/TaskFSRCNN.h \
+  /home/artem/Projects/ImageUpscalerQt/src/task/TaskResize.h \
+  /home/artem/Projects/ImageUpscalerQt/src/task/TaskSRCNN.h \
   /usr/include/assert.h \
   /usr/include/bits/cpu-set.h \
   /usr/include/bits/endian.h \

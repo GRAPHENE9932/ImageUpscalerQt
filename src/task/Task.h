@@ -1,16 +1,15 @@
 #pragma once
 
-#include "TaskResize.h"
-#include "TaskSRCNN.h"
-#include "TaskFSRCNN.h"
-
 enum class TaskKind : unsigned char {
-	none = 0,
-	resize = 1,
-	srcnn = 2,
-	fsrcnn = 3
+	resize,
+	srcnn,
+	fsrcnn
 };
 
 struct Task {
-	TaskKind task_kind = TaskKind::none;
+	TaskKind task_kind;
 };
+
+#include "TaskResize.h"
+#include "TaskSRCNN.h"
+#include "TaskFSRCNN.h"

@@ -85,28 +85,8 @@
         <item>
          <widget class="QStackedWidget" name="task_settings_widget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
-          <widget class="QWidget" name="empty_page">
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <item>
-             <widget class="QLabel" name="empty_page_label">
-              <property name="text">
-               <string>Click &quot;Add task&quot; button or select one from the list</string>
-              </property>
-              <property name="textFormat">
-               <enum>Qt::PlainText</enum>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
           <widget class="QWidget" name="resize_page">
            <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0">
             <item>

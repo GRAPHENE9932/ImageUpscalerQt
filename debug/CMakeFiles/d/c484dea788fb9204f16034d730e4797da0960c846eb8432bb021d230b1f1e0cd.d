@@ -4,7 +4,16 @@ imageupscalerqt_autogen/timestamp: \
   CMakeFiles/3.20.2/CMakeCXXCompiler.cmake \
   CMakeFiles/3.20.2/CMakeSystem.cmake \
   imageupscalerqt_autogen/moc_predefs.h \
+  ../src/Algorithms.cpp \
+  ../src/Algorithms.h \
   ../src/main.cpp \
+  ../src/task/Task.h \
+  ../src/task/TaskFSRCNN.cpp \
+  ../src/task/TaskFSRCNN.h \
+  ../src/task/TaskResize.cpp \
+  ../src/task/TaskResize.h \
+  ../src/task/TaskSRCNN.cpp \
+  ../src/task/TaskSRCNN.h \
   ../src/windows/imageupscalerqt.cpp \
   ../src/windows/imageupscalerqt.h \
   /usr/include/assert.h \
