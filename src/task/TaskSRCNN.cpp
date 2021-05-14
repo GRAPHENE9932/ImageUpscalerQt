@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "TaskSRCNN.h"
 
 TaskSRCNN::TaskSRCNN() {
@@ -11,4 +13,14 @@ TaskSRCNN::TaskSRCNN(std::array<unsigned char, 3> kernels, std::array<unsigned c
 	this->kernels = kernels;
 	this->paddings = paddings;
 	this->channels = ch_n;
+}
+
+std::string TaskSRCNN::to_string(unsigned short index) {
+	std::stringstream ss;
+	//1: use SRCNN 5-1-9 64-32
+	ss << (index + 1) << ": use SRCNN " <<
+	+kernels[0] << '-' << +kernels[1] << '-' << +kernels[2] << ' ' <<
+	+channels[0] << '-' << +channels[1];
+
+	return ss.str();
 }

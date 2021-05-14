@@ -48,7 +48,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="listWidget"/>
+         <widget class="QListWidget" name="queue_list"/>
         </item>
        </layout>
       </item>
@@ -85,34 +85,10 @@
         <item>
          <widget class="QStackedWidget" name="task_settings_widget">
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="resize_page">
-           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0">
-            <item>
-             <layout class="QHBoxLayout" name="resize_multiplier_layout" stretch="0,1">
-              <property name="sizeConstraint">
-               <enum>QLayout::SetDefaultConstraint</enum>
-              </property>
-              <item>
-               <widget class="QLabel" name="resize_multiplier_label">
-                <property name="text">
-                 <string>Multipler</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="resize_multiplier_spinbox">
-                <property name="decimals">
-                 <number>3</number>
-                </property>
-                <property name="maximum">
-                 <double>64.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
+           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0">
             <item>
              <layout class="QHBoxLayout" name="resize_size_layout">
               <item>
@@ -157,7 +133,7 @@
                <widget class="QComboBox" name="resize_interpolation_combobox">
                 <item>
                  <property name="text">
-                  <string>Box</string>
+                  <string>None</string>
                  </property>
                 </item>
                 <item>
@@ -167,7 +143,7 @@
                 </item>
                 <item>
                  <property name="text">
-                  <string>Triangle</string>
+                  <string>Cubic</string>
                  </property>
                 </item>
                 <item>
@@ -177,17 +153,17 @@
                 </item>
                 <item>
                  <property name="text">
-                  <string>Catmull-Rom</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Blackman-Harris</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
                   <string>Sinc</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Box</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Triangle</string>
                  </property>
                 </item>
                 <item>
@@ -197,47 +173,17 @@
                 </item>
                 <item>
                  <property name="text">
+                  <string>Catmull-Rom</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
                   <string>B-spline</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>Disk</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Radial-lanczos3</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
                   <string>Mitchell</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Cubic</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Keys</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Simon</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Rifman</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Nuke-lanczos6</string>
                  </property>
                 </item>
                </widget>

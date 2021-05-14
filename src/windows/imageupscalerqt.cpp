@@ -1,3 +1,4 @@
+#include <array>
 #include <filesystem>
 
 #include <QtDebug>
@@ -9,10 +10,8 @@
 #include "ui_imageupscalerqt.h"
 #include "../Algorithms.h"
 
-ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) :
-    QMainWindow(parent),
-    m_ui(new Ui::ImageUpscalerQt)
-{
+ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
+    m_ui(new Ui::ImageUpscalerQt) {
     m_ui->setupUi(this);
 
 	//BEGIN Connect signals
@@ -24,6 +23,7 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) :
 
 ImageUpscalerQt::~ImageUpscalerQt() = default;
 
+//BEGIN Slots
 void ImageUpscalerQt::add_task_clicked() {
 	qDebug() << "Add task button clicked";
 
@@ -40,15 +40,37 @@ void ImageUpscalerQt::add_task_clicked() {
 			break;
 		}
 		case TaskKind::srcnn: {
+			//Get SRCNN name
+			std::string name = m_ui->srcnn_architecture_combobox->currentText().toStdString();
+			//Parse SRCNN
+			std::array<unsigned char, 3> kernels;
+			std::array<unsigned char, 3> paddings;
+			std::array<unsigned char, 2> channels;
+			Algorithms::parse_srcnn(name, &kernels, &paddings, &channels);
 
+			//Create task
+			TaskSRCNN* cur_task = new TaskSRCNN(kernels, paddings, channels);
+			task_queue.push_back(cur_task);
 			break;
 		}
 		case TaskKind::fsrcnn: {
+			//Get FSRCNN name
+			std::string name = m_ui->fsrcnn_architecture_combobox->currentText().toStdString();
+			//Parse FSRCNN
+			std::array<unsigned char, 4> kernels;
+			std::array<unsigned char, 4> paddings;
+			std::array<unsigned char, 3> channels;
+			Algorithms::parse_fsrcnn(name, &kernels, &paddings, &channels);
+
+			//Create task
+			TaskFSRCNN* cur_task = new TaskFSRCNN(kernels, paddings, channels);
+			task_queue.push_back(cur_task);
 			break;
 		}
 	}
-}
 
+	update_list();
+}
 
 void ImageUpscalerQt::task_kind_changed(int index) {
 	qDebug() << "Task kind changed!" << index;
@@ -150,5 +172,12 @@ void ImageUpscalerQt::select_image_clicked() {
 		m_ui->image_path_label->setText(dialog.selectedFiles()[0]);
 		qDebug() << "Selected image: " << QString::fromStdString(image_filename);
 	}
+}
+//END Slots
+
+void ImageUpscalerQt::update_list() {
+	m_ui->queue_list->clear();
+	for (unsigned short i = 0; i < task_queue.size(); i++)
+		m_ui->queue_list->addItem(QString::fromStdString(task_queue[i]->to_string(i)));
 }
 

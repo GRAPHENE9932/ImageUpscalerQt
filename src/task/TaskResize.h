@@ -3,24 +3,13 @@
 #include "Task.h"
 
 enum class Interpolation : unsigned char {
-	none = 0,
-	box = 1,
-	bilinear = 2,
-	triangle = 3,
-	gaussian = 4,
-	catmull_rom = 5,
-	blackman_harris = 6,
-	sinc = 7,
-	lanczos3 = 8,
-	b_spline = 9,
-	disk = 10,
-	radial_lanczos3 = 11,
-	mitchell = 12,
-	cubic = 13,
-	keys = 14,
-	simon = 15,
-	rifman = 16,
-	nuke_lanczos6 = 17
+	none, bilinear, cubic, gaussian, sinc, box, triangle, lanczos3,
+	catmull_rom, b_spline, mitchell
+};
+
+const std::string INTERPOLATION_NAMES[18] = {
+	"None", "Bilinear", "Cubic", "Gaussian", "Sinc", "Box", "Triangle", "Lanczos3",
+	"Catmull-Rom", "B-spline", "Mitchell"
 };
 
 struct TaskResize : public Task {
@@ -29,4 +18,6 @@ struct TaskResize : public Task {
 
 	TaskResize();
 	TaskResize(unsigned int x_size, unsigned int y_size, Interpolation interpolation);
+
+	std::string to_string(unsigned short index) override;
 };

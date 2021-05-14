@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "TaskFSRCNN.h"
 
 TaskFSRCNN::TaskFSRCNN() {
@@ -16,3 +18,12 @@ TaskFSRCNN::TaskFSRCNN(std::array<unsigned char, 4> kernels, std::array<unsigned
 	this->channels = channels;
 }
 
+std::string TaskFSRCNN::to_string(unsigned short index) {
+	std::stringstream ss;
+	//1: use FSRCNN 3-1-3-4 64-32-32
+	ss << (index + 1) << ": use FSRCNN " <<
+	+kernels[0] << '-' << +kernels[1] << '-' << +kernels[2] << +kernels[3] << ' ' <<
+	+channels[0] << '-' << +channels[1] << '-' << +channels[2];
+
+	return ss.str();
+}

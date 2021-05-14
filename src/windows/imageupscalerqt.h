@@ -25,6 +25,8 @@ private:
 	std::vector<Task*> task_queue;
 	std::string image_filename;
 
+	void update_list();
+
 private slots:
 	void add_task_clicked();
 	void task_kind_changed(int index);
