@@ -31,6 +31,10 @@ private slots:
 	void add_task_clicked();
 	void task_kind_changed(int index);
 	void select_image_clicked();
+	void remove_task_clicked();
+	void clear_tasks_clicked();
+	void move_task_up_clicked();
+	void move_task_down_clicked();
 };
 
 #endif // IMAGEUPSCALERQT_H

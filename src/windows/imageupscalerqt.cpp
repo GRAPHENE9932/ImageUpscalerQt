@@ -18,6 +18,10 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->add_task_button, SIGNAL(clicked()), this, SLOT(add_task_clicked()));
 	connect(m_ui->task_kind_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(task_kind_changed(int)));
 	connect(m_ui->select_image_button, SIGNAL(clicked()), this, SLOT(select_image_clicked()));
+	connect(m_ui->remove_task_button, SIGNAL(clicked()), this, SLOT(remove_task_clicked()));
+	connect(m_ui->clear_tasks_button, SIGNAL(clicked()), this, SLOT(clear_tasks_clicked()));
+	connect(m_ui->up_task_button, SIGNAL(clicked()), this, SLOT(move_task_up_clicked()));
+	connect(m_ui->down_task_button, SIGNAL(clicked()), this, SLOT(move_task_down_clicked()));
 	//END Connect signals
 }
 
@@ -173,6 +177,69 @@ void ImageUpscalerQt::select_image_clicked() {
 		qDebug() << "Selected image: " << QString::fromStdString(image_filename);
 	}
 }
+
+void ImageUpscalerQt::remove_task_clicked() {
+	auto selected = m_ui->queue_list->selectionModel()->selectedIndexes();
+	for (unsigned short i = 0; i < selected.size(); i++)
+		task_queue.erase(task_queue.begin() + selected[i].row());
+
+	update_list();
+}
+
+void ImageUpscalerQt::clear_tasks_clicked() {
+	task_queue.clear();
+	update_list();
+}
+
+void ImageUpscalerQt::move_task_up_clicked() {
+	auto selected_list = m_ui->queue_list->selectionModel()->selectedIndexes();
+	//Display error message if either selected more than 1 task or no one selected.
+	if (selected_list.size() != 1) {
+		QMessageBox::information(this, "Unable to move tasks",
+								 "Unable to move tasks. You should select one task");
+		return;
+	}
+
+	//Extract the integer
+	int index = selected_list[0].row();
+
+	//Just ignore if task is already on the top
+	if (index == 0)
+		return;
+
+	//Swap
+	std::swap(task_queue[index], task_queue[index - 1]);
+
+	//Update and restore selection
+	update_list();
+	m_ui->queue_list->setCurrentRow(index - 1);
+}
+
+void ImageUpscalerQt::move_task_down_clicked() {
+	auto selected_list = m_ui->queue_list->selectionModel()->selectedIndexes();
+	//Display error message if either selected more than 1 task or no one selected.
+	if (selected_list.size() != 1) {
+		QMessageBox::information(this, "Unable to move tasks",
+								 "Unable to move tasks. You should select one task");
+		return;
+	}
+
+	//Extract the integer
+	int index = selected_list[0].row();
+
+	//Just ignore if task is already on the bottom
+	if (index == task_queue.size() - 1)
+		return;
+
+	//Swap
+	std::swap(task_queue[index], task_queue[index + 1]);
+
+	//Update and restore selection
+	update_list();
+	m_ui->queue_list->setCurrentRow(index + 1);
+}
+
+
 //END Slots
 
 void ImageUpscalerQt::update_list() {

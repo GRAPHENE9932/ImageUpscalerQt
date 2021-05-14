@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>684</width>
+    <width>702</width>
     <height>521</height>
    </rect>
   </property>
@@ -49,6 +49,50 @@
         </item>
         <item>
          <widget class="QListWidget" name="queue_list"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="queue_management_layout">
+          <item>
+           <widget class="QPushButton" name="remove_task_button">
+            <property name="text">
+             <string>Remove</string>
+            </property>
+            <property name="icon">
+             <iconset theme="delete"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clear_tasks_button">
+            <property name="text">
+             <string>Clear</string>
+            </property>
+            <property name="icon">
+             <iconset theme="edit-clear-all"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="up_task_button">
+            <property name="text">
+             <string>Up</string>
+            </property>
+            <property name="icon">
+             <iconset theme="arrow-up"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="down_task_button">
+            <property name="text">
+             <string>Down</string>
+            </property>
+            <property name="icon">
+             <iconset theme="arrow-down"/>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -275,11 +319,14 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="task_management_buttons_layout" stretch="1,1,1">
+         <layout class="QHBoxLayout" name="task_management_buttons_layout" stretch="1,1">
           <item>
            <widget class="QPushButton" name="add_task_button">
             <property name="text">
              <string>Add task</string>
+            </property>
+            <property name="icon">
+             <iconset theme="list-add"/>
             </property>
            </widget>
           </item>
@@ -291,21 +338,8 @@
             <property name="text">
              <string>Apply</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="remove_task_button">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Remove task</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
-            </property>
-            <property name="flat">
-             <bool>false</bool>
+            <property name="icon">
+             <iconset theme="dialog-ok"/>
             </property>
            </widget>
           </item>
@@ -334,6 +368,9 @@
         </property>
         <property name="text">
          <string>Start tasks</string>
+        </property>
+        <property name="icon">
+         <iconset theme="media-playback-start"/>
         </property>
        </widget>
       </item>
