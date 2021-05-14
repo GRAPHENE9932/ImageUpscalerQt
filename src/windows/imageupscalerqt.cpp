@@ -54,7 +54,6 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 	qDebug() << "Task kind changed!" << index;
 
 	switch ((TaskKind)index) {
-		//BEGIN SRCNN
 		case TaskKind::srcnn: {
 			//Get folder that contains .pt files
 			std::string nn_storage_path = QDir::currentPath().toStdString() + "/SRCNN/";
@@ -87,10 +86,10 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 			//Insert they into combobox
 			m_ui->srcnn_architecture_combobox->clear();
 			m_ui->srcnn_architecture_combobox->addItems(names);
-		}
-		//END SRCNN
 
-		//BEGIN FSRCNN
+			break;
+		}
+
 		case TaskKind::fsrcnn: {
 			//Get folder that contains .pt files
 			std::string nn_storage_path = QDir::currentPath().toStdString() + "/FSRCNN/";
@@ -124,8 +123,12 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 			//Insert they into combobox
 			m_ui->fsrcnn_architecture_combobox->clear();
 			m_ui->fsrcnn_architecture_combobox->addItems(names);
+
+			break;
 		}
-		//END FSRCNN
+
+		default:
+			break;
 	}
 
 	//Toggle stacked widget
