@@ -22,6 +22,9 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->clear_tasks_button, SIGNAL(clicked()), this, SLOT(clear_tasks_clicked()));
 	connect(m_ui->up_task_button, SIGNAL(clicked()), this, SLOT(move_task_up_clicked()));
 	connect(m_ui->down_task_button, SIGNAL(clicked()), this, SLOT(move_task_down_clicked()));
+	connect(m_ui->resize_x, SIGNAL(valueChanged(int)), this, SLOT(resize_x_changed(int)));
+	connect(m_ui->resize_y, SIGNAL(valueChanged(int)), this, SLOT(resize_y_changed(int)));
+	connect(m_ui->keep_image_ratio_radio, SIGNAL(toggled(bool)), this, SLOT(keep_ratio_toggled(bool)));
 	//END Connect signals
 }
 
@@ -29,8 +32,6 @@ ImageUpscalerQt::~ImageUpscalerQt() = default;
 
 //BEGIN Slots
 void ImageUpscalerQt::add_task_clicked() {
-	qDebug() << "Add task button clicked";
-
 	//Add task
 	switch ((TaskKind)m_ui->task_kind_combobox->currentIndex()) {
 		case TaskKind::resize: {
@@ -76,10 +77,25 @@ void ImageUpscalerQt::add_task_clicked() {
 	update_list();
 }
 
-void ImageUpscalerQt::task_kind_changed(int index) {
-	qDebug() << "Task kind changed!" << index;
+void ImageUpscalerQt::task_kind_changed(int index) {switch ((TaskKind)index) {
+		case TaskKind::resize: {
+			//Is image selected and valid?
+			if (!image_spec.undefined()) {
+				//Set image width and height the same
+				m_ui->resize_x->setValue(image_spec.width);
+				m_ui->resize_y->setValue(image_spec.height);
+				//Enable keep ratio radio button
+				m_ui->keep_image_ratio_radio->setEnabled(true);
+				m_ui->keep_image_ratio_radio->setChecked(true);
+			}
+			else {
+				//Disable keep ratio radio button
+				m_ui->keep_image_ratio_radio->setEnabled(false);
+				m_ui->keep_image_ratio_radio->setChecked(false);
+			}
 
-	switch ((TaskKind)index) {
+		}
+
 		case TaskKind::srcnn: {
 			//Get folder that contains .pt files
 			std::string nn_storage_path = QDir::currentPath().toStdString() + "/SRCNN/";
@@ -152,9 +168,6 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 
 			break;
 		}
-
-		default:
-			break;
 	}
 
 	//Toggle stacked widget
@@ -162,8 +175,6 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 }
 
 void ImageUpscalerQt::select_image_clicked() {
-	qDebug() << "Select image button clicked!";
-
 	QFileDialog dialog(this, "Open image", "/home",
 		"All images (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.ico);;\
 		PNG image (*.png);;JPEG image (*.jpg, *.jpeg);;\
@@ -171,10 +182,22 @@ void ImageUpscalerQt::select_image_clicked() {
 	dialog.setFileMode(QFileDialog::FileMode::ExistingFile);
 	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
 
+	//If accepted
 	if (dialog.exec() == QDialog::DialogCode::Accepted) {
 		this->image_filename = dialog.selectedFiles()[0].toStdString();
 		m_ui->image_path_label->setText(dialog.selectedFiles()[0]);
-		qDebug() << "Selected image: " << QString::fromStdString(image_filename);
+
+		//Get image spec and check image
+		auto input = OIIO::ImageInput::open(image_filename);
+		if (!input) {
+			QMessageBox::critical(this, "Failed to read image",
+								  "Failed to read image. The file may be either damaged, not supported or corrupted");
+			return;
+		}
+		image_spec = input->spec();
+
+		//Update task creation menu
+		task_kind_changed(m_ui->task_kind_combobox->currentIndex());
 	}
 }
 
@@ -239,7 +262,36 @@ void ImageUpscalerQt::move_task_down_clicked() {
 	m_ui->queue_list->setCurrentRow(index + 1);
 }
 
+void ImageUpscalerQt::resize_x_changed(int value) {
+	//If keep ratio enabled
+	if (m_ui->keep_image_ratio_radio->isChecked()) {
+		//Calculate dependent y
+		float ratio = (float)image_spec.height / image_spec.width;
+		int y = ratio * value;
+		//Set it to the spinbox
+		m_ui->resize_y->blockSignals(true);
+		m_ui->resize_y->setValue(y);
+		m_ui->resize_y->blockSignals(false);
+	}
+}
 
+void ImageUpscalerQt::resize_y_changed(int value) {
+	//If keep ratio enabled
+	if (m_ui->keep_image_ratio_radio->isChecked()) {
+		//Calculate dependent x
+		float ratio = (float)image_spec.width / image_spec.height;
+		int x = ratio * value;
+		//Set it to the spinbox
+		m_ui->resize_x->blockSignals(true);
+		m_ui->resize_x->setValue(x);
+		m_ui->resize_x->blockSignals(false);
+	}
+}
+
+void ImageUpscalerQt::keep_ratio_toggled(bool checked) {
+	if (checked)
+		resize_x_changed(m_ui->resize_x->value());
+}
 //END Slots
 
 void ImageUpscalerQt::update_list() {

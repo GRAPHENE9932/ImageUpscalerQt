@@ -132,7 +132,7 @@
            <number>0</number>
           </property>
           <widget class="QWidget" name="resize_page">
-           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0">
+           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0">
             <item>
              <layout class="QHBoxLayout" name="resize_size_layout">
               <item>
@@ -163,6 +163,16 @@
                </widget>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="keep_image_ratio_radio">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Keep ratio</string>
+              </property>
+             </widget>
             </item>
             <item>
              <layout class="QHBoxLayout" name="resize_interpolation_layout" stretch="0,1">
