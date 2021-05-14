@@ -3,6 +3,7 @@
 #include <QtDebug>
 #include <QDir>
 #include <QMessageBox>
+#include <QFileDialog>
 
 #include "imageupscalerqt.h"
 #include "ui_imageupscalerqt.h"
@@ -17,6 +18,7 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) :
 	//BEGIN Connect signals
 	connect(m_ui->add_task_button, SIGNAL(clicked()), this, SLOT(add_task_clicked()));
 	connect(m_ui->task_kind_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(task_kind_changed(int)));
+	connect(m_ui->select_image_button, SIGNAL(clicked()), this, SLOT(select_image_clicked()));
 	//END Connect signals
 }
 
@@ -46,6 +48,7 @@ void ImageUpscalerQt::add_task_clicked() {
 		}
 	}
 }
+
 
 void ImageUpscalerQt::task_kind_changed(int index) {
 	qDebug() << "Task kind changed!" << index;
@@ -127,5 +130,22 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 
 	//Toggle stacked widget
 	m_ui->task_settings_widget->setCurrentIndex(index);
+}
+
+void ImageUpscalerQt::select_image_clicked() {
+	qDebug() << "Select image button clicked!";
+
+	QFileDialog dialog(this, "Open image", "/home",
+		"All images (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.ico);;\
+		PNG image (*.png);;JPEG image (*.jpg, *.jpeg);;\
+		Bitmap image (*.bmp);;TIFF image (*.tiff, *.tif);;Icon (*.ico)");
+	dialog.setFileMode(QFileDialog::FileMode::ExistingFile);
+	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
+
+	if (dialog.exec() == QDialog::DialogCode::Accepted) {
+		this->image_filename = dialog.selectedFiles()[0].toStdString();
+		m_ui->image_path_label->setText(dialog.selectedFiles()[0]);
+		qDebug() << "Selected image: " << QString::fromStdString(image_filename);
+	}
 }
 

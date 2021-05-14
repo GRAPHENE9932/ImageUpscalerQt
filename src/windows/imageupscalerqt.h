@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QScopedPointer>
 
+
 #include "../task/Task.h"
 
 namespace Ui {
@@ -22,12 +23,12 @@ public:
 private:
     QScopedPointer<Ui::ImageUpscalerQt> m_ui;
 	std::vector<Task*> task_queue;
+	std::string image_filename;
 
 private slots:
-	//BEGIN Signals
 	void add_task_clicked();
 	void task_kind_changed(int index);
-	//END Signals
+	void select_image_clicked();
 };
 
 #endif // IMAGEUPSCALERQT_H
