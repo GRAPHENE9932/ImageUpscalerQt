@@ -27,3 +27,7 @@ std::string TaskFSRCNN::to_string(unsigned short index) {
 
 	return ss.str();
 }
+
+unsigned char* TaskFSRCNN::do_task(unsigned char* input, int width, int height, unsigned char ch_n) {
+
+}
