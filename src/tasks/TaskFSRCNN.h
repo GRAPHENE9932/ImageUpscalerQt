@@ -16,5 +16,5 @@ public:
 
 	std::string to_string(unsigned short index) override;
 
-	unsigned char* do_task(unsigned char* input, int width, int height, unsigned char ch_n) override;
+	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;
 };

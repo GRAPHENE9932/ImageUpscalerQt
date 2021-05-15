@@ -25,6 +25,6 @@ std::string TaskSRCNN::to_string(unsigned short index) {
 	return ss.str();
 }
 
-unsigned char* TaskSRCNN::do_task(unsigned char* input, int width, int height, unsigned char ch_n) {
+OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 
 }

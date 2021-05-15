@@ -25,36 +25,26 @@ std::string TaskResize::to_string(unsigned short index) {
 	return ss.str();
 }
 
-unsigned char* TaskResize::do_task(unsigned char* input, int width, int height, unsigned char ch_n) {
-	//Create specs
-	OIIO::ROI input_roi = OIIO::ROI(0, width, 0, height, 0, 1, 0, ch_n);
-	OIIO::ROI output_roi = OIIO::ROI(0, x_size, 0, y_size, 0, 1, 0, ch_n);
-	OIIO::ImageSpec input_spec = OIIO::ImageSpec(input_roi, OIIO::TypeDesc::UINT8);
-
-	//Create buf
-	OIIO::ImageBuf input_buf = OIIO::ImageBuf(input_spec, input);
+OIIO::ImageBuf TaskResize::do_task(OIIO::ImageBuf input) {
+	//Create ROI
+	OIIO::ROI output_roi = OIIO::ROI(0, x_size, 0, y_size, 0, 1, 0, input.nchannels());
 
 	//Resize it
-	OIIO::ImageBuf output_buf;
+	OIIO::ImageBuf output;
 	switch (interpolation) {
 		case Interpolation::none: {
-			output_buf = OIIO::ImageBufAlgo::resample(input_buf, false, output_roi);
+			output = OIIO::ImageBufAlgo::resample(input, false, output_roi);
 			break;
 		}
 		case Interpolation::bilinear: {
-			output_buf = OIIO::ImageBufAlgo::resample(input_buf, true, output_roi);
+			output = OIIO::ImageBufAlgo::resample(input, true, output_roi);
 			break;
 		}
 		default: {
-			output_buf = OIIO::ImageBufAlgo::resize(input_buf,
-													INTERPOLATION_OIIO_NAMES[(unsigned char)interpolation],
-													0.0F, output_roi);
+			output = OIIO::ImageBufAlgo::resize(input, INTERPOLATION_OIIO_NAMES[(unsigned char)interpolation],
+												0.0F, output_roi);
 		}
 	}
-
-	//Extract pixels from output_buf
-	unsigned char* output = new unsigned char[output_roi.width() * output_roi.height() * output_roi.nchannels()];
-	output_buf.get_pixels(output_buf.roi(), OIIO::TypeDesc::UINT8, output);
 
 	//Return result
 	return output;
