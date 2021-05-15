@@ -7,7 +7,7 @@
 #include <QScopedPointer>
 #include <OpenImageIO/imageio.h>
 
-#include "../task/Task.h"
+#include "../tasks/Task.h"
 
 namespace Ui {
 class ImageUpscalerQt;
