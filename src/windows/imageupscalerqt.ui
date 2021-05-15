@@ -57,9 +57,6 @@
             <property name="text">
              <string>Remove</string>
             </property>
-            <property name="icon">
-             <iconset theme="delete"/>
-            </property>
            </widget>
           </item>
           <item>
@@ -67,8 +64,11 @@
             <property name="text">
              <string>Clear</string>
             </property>
-            <property name="icon">
-             <iconset theme="edit-clear-all"/>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -77,18 +77,12 @@
             <property name="text">
              <string>Up</string>
             </property>
-            <property name="icon">
-             <iconset theme="arrow-up"/>
-            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="down_task_button">
             <property name="text">
              <string>Down</string>
-            </property>
-            <property name="icon">
-             <iconset theme="arrow-down"/>
             </property>
            </widget>
           </item>
@@ -335,9 +329,6 @@
             <property name="text">
              <string>Add task</string>
             </property>
-            <property name="icon">
-             <iconset theme="list-add"/>
-            </property>
            </widget>
           </item>
           <item>
@@ -347,9 +338,6 @@
             </property>
             <property name="text">
              <string>Apply</string>
-            </property>
-            <property name="icon">
-             <iconset theme="dialog-ok"/>
             </property>
            </widget>
           </item>
@@ -378,9 +366,6 @@
         </property>
         <property name="text">
          <string>Start tasks</string>
-        </property>
-        <property name="icon">
-         <iconset theme="media-playback-start"/>
         </property>
        </widget>
       </item>
