@@ -20,6 +20,11 @@ find_library(OIIO "OpenImageIO" REQUIRED)
 target_link_libraries(imageupscalerqt ${OIIO})
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
+#LibTorch
+find_package(Torch REQUIRED)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+target_link_libraries(imageupscalerqt "${TORCH_LIBRARIES}")
+
 #Qt
 find_package(Qt5Widgets CONFIG REQUIRED) #Find the QtWidgets library
 target_link_libraries(imageupscalerqt Qt5::Widgets) #Use the Widgets module from Qt 5.
