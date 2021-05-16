@@ -30,6 +30,16 @@ std::string TaskSRCNN::to_string(unsigned short index) const {
 	return ss.str();
 }
 
+std::string TaskSRCNN::to_string() const {
+	std::stringstream ss;
+	//use SRCNN 5-1-9 64-32
+	ss << "use SRCNN " <<
+	+kernels[0] << '-' << +kernels[1] << '-' << +kernels[2] << ' ' <<
+	+channels[0] << '-' << +channels[1];
+
+	return ss.str();
+}
+
 std::string TaskSRCNN::parameters_path() const {
 	std::stringstream ss;
 	//"/path/to/program/SRCNN/5-1-9 64-32.pt"

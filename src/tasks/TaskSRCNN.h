@@ -15,6 +15,7 @@ public:
 			  std::array<unsigned short, 2> channels);
 
 	std::string to_string(unsigned short index) const override;
+	std::string to_string() const override;
 	std::string parameters_path() const;
 	float progress() const override;
 

@@ -3,6 +3,9 @@
 
 #include <QScopedPointer>
 #include <QDialog>
+#include <OpenImageIO/imagebuf.h>
+
+#include "../tasks/Task.h"
 
 namespace Ui {
 	class TasksWaitingDialog;
@@ -11,18 +14,25 @@ class TasksWaitingDialog : public QDialog {
 		Q_OBJECT
 
 	public:
-		/**
-		 * Default constructor
-		 */
 		TasksWaitingDialog();
-
-		/**
-		 * Destructor
-		 */
 		~TasksWaitingDialog();
+
+		void do_tasks(std::vector<Task*> task_queue, std::string image_filename);
 
 	private:
 		QScopedPointer<Ui::TasksWaitingDialog> m_ui;
+		std::vector<Task*> task_queue;
+		std::string image_filename;
+
+		unsigned short cur_task = 0;
+		bool tasks_complete = false;
+
+		std::thread* progress_thread;
+		std::thread* tasks_thread;
+		OIIO::ImageBuf finished_image;
+
+		void progress_update_per();
+		void do_tasks_impl();
 };
 
 #endif // TASKSWAITINGDIALOG_H

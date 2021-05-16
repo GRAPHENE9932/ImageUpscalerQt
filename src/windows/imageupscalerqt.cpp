@@ -308,5 +308,6 @@ void ImageUpscalerQt::update_list() {
 
 void ImageUpscalerQt::start_tasks_clicked() {
 	TasksWaitingDialog* dialog = new TasksWaitingDialog();
+	dialog->do_tasks(task_queue, image_filename);
 	dialog->exec();
 }

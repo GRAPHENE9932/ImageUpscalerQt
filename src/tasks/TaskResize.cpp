@@ -25,6 +25,15 @@ std::string TaskResize::to_string(unsigned short index) const {
 	return ss.str();
 }
 
+std::string TaskResize::to_string() const {
+	std::stringstream ss;
+	//resize to 1920x1080 | Bilinear
+	ss << "resize to " << x_size << 'x' << y_size << " | " <<
+	INTERPOLATION_NAMES[(unsigned char)interpolation];
+
+	return ss.str();
+}
+
 OIIO::ImageBuf TaskResize::do_task(OIIO::ImageBuf input) {
 	//Create ROI
 	OIIO::ROI output_roi = OIIO::ROI(0, x_size, 0, y_size, 0, 1, 0, input.nchannels());

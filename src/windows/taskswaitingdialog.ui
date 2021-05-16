@@ -62,7 +62,7 @@
     </spacer>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="save_to_layout" stretch="0,1,0">
+    <layout class="QHBoxLayout" name="save_to_layout" stretch="0,1,0,0">
      <item>
       <widget class="QLabel" name="save_to_label">
        <property name="text">
@@ -77,6 +77,16 @@
       <widget class="QPushButton" name="browse_button">
        <property name="text">
         <string>Browse</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="save_button">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Save</string>
        </property>
       </widget>
      </item>
