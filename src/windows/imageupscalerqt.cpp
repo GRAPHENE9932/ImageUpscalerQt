@@ -9,6 +9,9 @@
 #include "imageupscalerqt.h"
 #include "ui_imageupscalerqt.h"
 #include "../Algorithms.h"
+#include "../tasks/TaskResize.h"
+#include "../tasks/TaskSRCNN.h"
+#include "../tasks/TaskFSRCNN.h"
 
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
     m_ui(new Ui::ImageUpscalerQt) {
@@ -48,9 +51,9 @@ void ImageUpscalerQt::add_task_clicked() {
 			//Get SRCNN name
 			std::string name = m_ui->srcnn_architecture_combobox->currentText().toStdString();
 			//Parse SRCNN
-			std::array<unsigned char, 3> kernels;
-			std::array<unsigned char, 3> paddings;
-			std::array<unsigned char, 2> channels;
+			std::array<unsigned short, 3> kernels;
+			std::array<unsigned short, 3> paddings;
+			std::array<unsigned short, 2> channels;
 			Algorithms::parse_srcnn(name, &kernels, &paddings, &channels);
 
 			//Create task
@@ -62,9 +65,9 @@ void ImageUpscalerQt::add_task_clicked() {
 			//Get FSRCNN name
 			std::string name = m_ui->fsrcnn_architecture_combobox->currentText().toStdString();
 			//Parse FSRCNN
-			std::array<unsigned char, 4> kernels;
-			std::array<unsigned char, 4> paddings;
-			std::array<unsigned char, 3> channels;
+			std::array<unsigned short, 4> kernels;
+			std::array<unsigned short, 4> paddings;
+			std::array<unsigned short, 3> channels;
 			Algorithms::parse_fsrcnn(name, &kernels, &paddings, &channels);
 
 			//Create task
@@ -138,7 +141,8 @@ void ImageUpscalerQt::task_kind_changed(int index) {switch ((TaskKind)index) {
 
 			//Check if this folder exists
 			if (!std::filesystem::exists(nn_storage_path)) {
-				QMessageBox::critical(this, "Missing files", "Can\'t find folder with neural network parameters.\nMay be some files or folders was corrupted.");
+				QMessageBox::critical(this, "Missing files",
+									  "Can\'t find folder with neural network parameters.\nMay be some files or folders was corrupted.");
 				m_ui->fsrcnn_architecture_combobox->clear();
 				return;
 			}

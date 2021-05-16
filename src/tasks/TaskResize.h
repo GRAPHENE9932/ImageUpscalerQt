@@ -28,7 +28,7 @@ public:
 	TaskResize();
 	TaskResize(unsigned int x_size, unsigned int y_size, Interpolation interpolation);
 
-	std::string to_string(unsigned short index) override;
+	std::string to_string(unsigned short index) const override;
 
 	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;
 };

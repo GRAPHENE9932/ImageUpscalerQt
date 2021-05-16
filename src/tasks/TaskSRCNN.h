@@ -6,15 +6,21 @@
 
 struct TaskSRCNN : public Task {
 public:
-	std::array<unsigned char, 3> kernels;
-	std::array<unsigned char, 3> paddings;
-	std::array<unsigned char, 2> channels;
+	std::array<unsigned short, 3> kernels;
+	std::array<unsigned short, 3> paddings;
+	std::array<unsigned short, 2> channels;
 
 	TaskSRCNN();
-	TaskSRCNN(std::array<unsigned char, 3> kernels, std::array<unsigned char, 3> paddings,
-			  std::array<unsigned char, 2> channels);
+	TaskSRCNN(std::array<unsigned short, 3> kernels, std::array<unsigned short, 3> paddings,
+			  std::array<unsigned short, 2> channels);
 
-	std::string to_string(unsigned short index) override;
+	std::string to_string(unsigned short index) const override;
+	std::string parameters_path() const;
+	float progress() const override;
 
-	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;
+	OIIO::ImageBuf do_task(const OIIO::ImageBuf input) override;
+
+private:
+	long long blocks_amount;
+	long long blocks_processed;
 };

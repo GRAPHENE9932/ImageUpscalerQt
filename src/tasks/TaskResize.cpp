@@ -16,7 +16,7 @@ TaskResize::TaskResize(unsigned int x_size, unsigned int y_size, Interpolation i
 	this->interpolation = interpolation;
 }
 
-std::string TaskResize::to_string(unsigned short index) {
+std::string TaskResize::to_string(unsigned short index) const {
 	std::stringstream ss;
 	//1: resize to 1920x1080 | Bilinear
 	ss << (index + 1) << ": resize to " << x_size << 'x' << y_size << " | " <<
