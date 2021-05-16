@@ -12,6 +12,7 @@
 #include "../tasks/TaskResize.h"
 #include "../tasks/TaskSRCNN.h"
 #include "../tasks/TaskFSRCNN.h"
+#include "taskswaitingdialog.h"
 
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
     m_ui(new Ui::ImageUpscalerQt) {
@@ -28,6 +29,7 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->resize_x, SIGNAL(valueChanged(int)), this, SLOT(resize_x_changed(int)));
 	connect(m_ui->resize_y, SIGNAL(valueChanged(int)), this, SLOT(resize_y_changed(int)));
 	connect(m_ui->keep_image_ratio_radio, SIGNAL(toggled(bool)), this, SLOT(keep_ratio_toggled(bool)));
+	connect(m_ui->start_tasks_button, SIGNAL(clicked()), this, SLOT(start_tasks_clicked()));
 	//END Connect signals
 }
 
@@ -304,3 +306,7 @@ void ImageUpscalerQt::update_list() {
 		m_ui->queue_list->addItem(QString::fromStdString(task_queue[i]->to_string(i)));
 }
 
+void ImageUpscalerQt::start_tasks_clicked() {
+	TasksWaitingDialog* dialog = new TasksWaitingDialog();
+	dialog->exec();
+}

@@ -41,6 +41,8 @@ private slots:
 	void resize_x_changed(int value);
 	void resize_y_changed(int value);
 	void keep_ratio_toggled(bool checked);
+
+	void start_tasks_clicked();
 };
 
 #endif // IMAGEUPSCALERQT_H
