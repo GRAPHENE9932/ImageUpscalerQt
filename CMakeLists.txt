@@ -33,4 +33,4 @@ target_link_libraries(imageupscalerqt Qt5::Widgets) #Use the Widgets module from
 install(TARGETS imageupscalerqt DESTINATION bin)
 
 #Copy resources
-file(COPY src/res/ DESTINATION .)
+file(COPY res/ DESTINATION .)
