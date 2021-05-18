@@ -56,6 +56,9 @@ float TaskFSRCNN::progress() const {
 }
 
 OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
+	//Set num threads manually, else torch will use only about half of it
+	torch::set_num_threads(std::thread::hardware_concurrency());
+
 	//Initialize neural network
 	FSRCNN model(kernels, paddings, channels);
 	torch::autograd::variable_list loaded_params;
@@ -78,7 +81,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	int blocks_height = spec.height / 64;
 	if (blocks_height * 64 < spec.height)
 		blocks_height++;
-	blocks_amount = blocks_height * blocks_width;
+	blocks_amount = blocks_height * blocks_width * spec.nchannels;
 	blocks_processed = 0;
 
 	//Use SRCNN block by block
