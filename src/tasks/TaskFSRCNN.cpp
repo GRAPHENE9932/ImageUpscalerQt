@@ -106,6 +106,10 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 				output.set_pixels(block_set_roi, OIIO::TypeDesc::FLOAT, output_tensor.data_ptr<float>());
 
 				blocks_processed++;
+
+				//Cancel if requested
+				if (cancel_requested)
+					throw "canc";
 			}
 		}
 	}

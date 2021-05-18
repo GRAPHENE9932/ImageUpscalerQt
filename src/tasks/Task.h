@@ -13,6 +13,7 @@ enum class TaskKind : unsigned char {
 class Task {
 public:
 	TaskKind task_kind;
+	bool cancel_requested = false;
 
 	virtual std::string to_string(unsigned short index) const = 0;
 	virtual std::string to_string() const = 0;

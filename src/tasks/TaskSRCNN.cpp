@@ -84,7 +84,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 		for (int x = 0; x < spec.width; x += 192) {
 			for (int c = 0; c < spec.nchannels; c++) {
 				//Create block roi
-				OIIO::ROI block_extract_roi(x, x + 192, y, y + 192, 0, c, c + 1);
+				OIIO::ROI block_extract_roi(x, x + 192, y, y + 192, 0, 1, c, c + 1);
 				//Get block pixels. Will be planar, because single-channel
 				auto block_pixels = std::make_unique<float[]>(192 * 192 * 1);
 				input.get_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, block_pixels.get());
@@ -100,6 +100,10 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 				output.set_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, output_tensor.data_ptr<float>());
 
 				blocks_processed++;
+
+				//Cancel if requested
+				if (cancel_requested)
+					throw "canc";
 			}
 		}
 	}

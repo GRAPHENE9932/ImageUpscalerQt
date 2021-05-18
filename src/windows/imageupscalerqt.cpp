@@ -183,8 +183,8 @@ void ImageUpscalerQt::task_kind_changed(int index) {switch ((TaskKind)index) {
 void ImageUpscalerQt::select_image_clicked() {
 	QFileDialog dialog(this, "Open image", "/home",
 		"All images (*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.ico);;\
-		PNG image (*.png);;JPEG image (*.jpg, *.jpeg);;\
-		Bitmap image (*.bmp);;TIFF image (*.tiff, *.tif);;Icon (*.ico)");
+		PNG image (*.png);;JPEG image (*.jpg *.jpeg);;JPEG2000 image (*.jp2 *.jpg2)\
+		Bitmap image (*.bmp);;TIFF image (*.tiff *.tif);;Icon (*.ico)");
 	dialog.setFileMode(QFileDialog::FileMode::ExistingFile);
 	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
 
