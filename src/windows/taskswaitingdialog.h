@@ -26,6 +26,7 @@ private:
 
 	unsigned short cur_task = 0;
 	bool tasks_complete = false;
+	bool image_saved = false;
 	bool cancel_requested = false;
 
 	std::thread* progress_thread;
@@ -35,6 +36,8 @@ private:
 	void progress_update_per();
 	void do_tasks_impl();
 	void cancel_finished();
+
+	void reject();
 
 private slots:
 	void cancel_clicked();

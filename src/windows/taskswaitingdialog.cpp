@@ -35,6 +35,11 @@ void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, std::string ima
 }
 
 void TasksWaitingDialog::progress_update_per() {
+	//Reading image
+	m_ui->current_task_label->setText("Reading image...");
+	m_ui->current_task_progressbar->setValue(0);
+	m_ui->all_tasks_progressbar->setValue(0);
+
 	while (!tasks_complete) {
 		//Prepare percents
 		unsigned char cur_task_percents = (unsigned char)(task_queue[cur_task]->progress() * 100.0F);
@@ -62,6 +67,7 @@ void TasksWaitingDialog::progress_update_per() {
 	m_ui->all_tasks_progressbar->setValue(100);
 	m_ui->current_task_label->setText(QString("All tasks completed!"));
 	m_ui->save_button->setEnabled(true); //Enable "Save result" button
+	m_ui->cancel_button->setEnabled(false); //Disable "Cancel" button
 }
 
 void TasksWaitingDialog::do_tasks_impl() {
@@ -135,5 +141,22 @@ void TasksWaitingDialog::save_clicked() {
 			QMessageBox::critical(this, "Failed to write image", "Failed to write image");
 		//Close this dialog
 		this->done(0);
+	}
+}
+
+//On close using X
+void TasksWaitingDialog::reject() {
+	if (!tasks_complete) {
+		if (QMessageBox::question(this, "Cancel?", "Tasks are not already finished. Do you want to cancel this tasks?",
+							  QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes) {
+			cancel_clicked();
+		}
+	}
+
+	if (!image_saved && tasks_complete) {
+		if (QMessageBox::question(this, "Save?", "You have not saved the result, close anyway?",
+			QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes) {
+			QDialog::reject();
+		}
 	}
 }

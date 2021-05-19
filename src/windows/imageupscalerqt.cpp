@@ -1,5 +1,6 @@
 #include <array>
 #include <filesystem>
+#include <sstream>
 
 #include <QtDebug>
 #include <QDir>
@@ -301,9 +302,42 @@ void ImageUpscalerQt::keep_ratio_toggled(bool checked) {
 //END Slots
 
 void ImageUpscalerQt::update_list() {
+	//Update list
 	m_ui->queue_list->clear();
 	for (unsigned short i = 0; i < task_queue.size(); i++)
 		m_ui->queue_list->addItem(QString::fromStdString(task_queue[i]->to_string(i)));
+
+	//Status label
+	if (task_queue.size() == 0) {
+		m_ui->status_label->setText("No tasks in queue");
+		return;
+	}
+	if (image_spec.undefined()) {
+		m_ui->status_label->setText("Image is not selected");
+		return;
+	}
+	//Calculate "before" and "after" resolution
+	int before_width = image_spec.width;
+	int before_height = image_spec.height;
+	int after_width = before_width;
+	int after_height = before_height;
+	for (unsigned short i = 0; i < task_queue.size(); i++) {
+		switch (task_queue[i]->task_kind) {
+			case TaskKind::fsrcnn: {
+				after_width += 2;
+				after_height += 2;
+			}
+			case TaskKind::resize: {
+				after_width = ((TaskResize*)task_queue[i])->x_size;
+				after_height = ((TaskResize*)task_queue[i])->y_size;
+			}
+			default:
+				break;
+		}
+	}
+	std::stringstream ss;
+	ss << before_width << 'x' << before_height << " -> " << after_width << 'x' << after_height;
+	m_ui->status_label->setText(ss.str().c_str());
 }
 
 void ImageUpscalerQt::start_tasks_clicked() {

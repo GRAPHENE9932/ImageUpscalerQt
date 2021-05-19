@@ -323,21 +323,11 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="task_management_buttons_layout" stretch="1,1">
+         <layout class="QHBoxLayout" name="task_management_buttons_layout" stretch="1">
           <item>
            <widget class="QPushButton" name="add_task_button">
             <property name="text">
              <string>Add task</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="apply_changes_button">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Apply</string>
             </property>
            </widget>
           </item>
