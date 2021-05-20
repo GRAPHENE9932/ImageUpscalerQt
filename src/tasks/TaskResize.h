@@ -8,14 +8,14 @@ enum class Interpolation : unsigned char {
 };
 
 ///Interpolation names for the user
-const std::string INTERPOLATION_NAMES[18] = {
+const std::string INTERPOLATION_NAMES[11] = {
 	"None", "Bilinear", "Cubic", "Gaussian", "Sinc", "Box", "Triangle", "Lanczos3",
 	"Catmull-Rom", "B-spline", "Mitchell"
 };
 
 ///Interpolation names for the OpenImageIO library.
 ///"none" and "bilinear" are not used.
-const std::string INTERPOLATION_OIIO_NAMES[18] = {
+const std::string INTERPOLATION_OIIO_NAMES[11] = {
 	"none", "bilinear", "cubic", "gaussian", "sinc", "box", "triangle", "lanczos3",
 	"catmull-rom", "bspline", "mitchell"
 };
@@ -28,7 +28,9 @@ public:
 	TaskResize();
 	TaskResize(unsigned int x_size, unsigned int y_size, Interpolation interpolation);
 
+	///"1: resize to 1920x1080 | Bilinear"
 	std::string to_string(unsigned short index) const override;
+	///"resize to 1920x1080 | Bilinear"
 	std::string to_string() const override;
 
 	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;

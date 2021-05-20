@@ -4,6 +4,7 @@
 
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDebug>
 
 #include "taskswaitingdialog.h"
 #include "ui_taskswaitingdialog.h"
@@ -28,19 +29,14 @@ void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, std::string ima
 	cur_task = 0;
 	tasks_complete = false;
 
-	//Progress update in one thread
-	progress_thread = new std::thread(&TasksWaitingDialog::progress_update_per, this);
-	//Start tasks in other thread
+	//Start tasks in one thread
 	tasks_thread = new std::thread(&TasksWaitingDialog::do_tasks_impl, this);
+	//Progress update in other thread
+	progress_thread = new std::thread(&TasksWaitingDialog::progress_update_per, this);
 }
 
 void TasksWaitingDialog::progress_update_per() {
-	//Reading image
-	m_ui->current_task_label->setText("Reading image...");
-	m_ui->current_task_progressbar->setValue(0);
-	m_ui->all_tasks_progressbar->setValue(0);
-
-	while (!tasks_complete) {
+	do {
 		//Prepare percents
 		unsigned char cur_task_percents = (unsigned char)(task_queue[cur_task]->progress() * 100.0F);
 		unsigned char all_tasks_percents = (unsigned char)(((float)cur_task + task_queue[cur_task]->progress()) /
@@ -61,8 +57,10 @@ void TasksWaitingDialog::progress_update_per() {
 
 		//Wait 100 ms
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	}
+	} while (!tasks_complete);
 	//When completed
+	//Wait 100 ms
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	m_ui->current_task_progressbar->setValue(100);
 	m_ui->all_tasks_progressbar->setValue(100);
 	m_ui->current_task_label->setText(QString("All tasks completed!"));
@@ -137,8 +135,10 @@ void TasksWaitingDialog::save_clicked() {
 		//Extract filename
 		std::string filename = dialog.selectedFiles()[0].toStdString();
 		//Save the image
-		if (!finished_image.write(filename))
+		if (!finished_image.write(filename)) {
 			QMessageBox::critical(this, "Failed to write image", "Failed to write image");
+			qDebug() << QString::fromStdString(finished_image.geterror());
+		}
 		//Close this dialog
 		this->done(0);
 	}

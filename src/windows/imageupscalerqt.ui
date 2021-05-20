@@ -94,6 +94,9 @@
        <layout class="QVBoxLayout" name="task_management_layout">
         <item>
          <widget class="QComboBox" name="task_kind_combobox">
+          <property name="toolTipDuration">
+           <number>-1</number>
+          </property>
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -118,12 +121,17 @@
             <string>Use FSRCNN</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Convert color space</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item>
          <widget class="QStackedWidget" name="task_settings_widget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="resize_page">
            <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0">
@@ -307,6 +315,47 @@
             </item>
             <item>
              <spacer name="fsrcnn_page_spacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="convert_color_space_page">
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QComboBox" name="color_space_combobox">
+              <item>
+               <property name="text">
+                <string>RGB to YCbCr</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>YCbCr to RGB</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>RGB to YCoCg</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>YCoCg to RGB</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <spacer name="color_space_page_spacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>

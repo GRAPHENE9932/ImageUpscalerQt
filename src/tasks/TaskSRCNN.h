@@ -14,7 +14,9 @@ public:
 	TaskSRCNN(std::array<unsigned short, 3> kernels, std::array<unsigned short, 3> paddings,
 			  std::array<unsigned short, 2> channels);
 
+	///"1: use SRCNN 5-1-9 64-32"
 	std::string to_string(unsigned short index) const override;
+	///"use SRCNN 5-1-9 64-32"
 	std::string to_string() const override;
 	std::string parameters_path() const;
 	float progress() const override;

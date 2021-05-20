@@ -14,7 +14,9 @@ public:
 	TaskFSRCNN(std::array<unsigned short, 4> kernels, std::array<unsigned short, 4> paddings,
 			   std::array<unsigned short, 3> channels);
 
+	///"1: use FSRCNN 3-1-3-4 64-32-32"
 	std::string to_string(unsigned short index) const override;
+	///"use FSRCNN 3-1-3-4 64-32-32"
 	std::string to_string() const override;
 	std::string parameters_path() const;
 	float progress() const override;
