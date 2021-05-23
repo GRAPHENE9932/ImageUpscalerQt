@@ -3,6 +3,7 @@
 
 #include <QScopedPointer>
 #include <QDialog>
+#include <QTimer>
 #include <OpenImageIO/imagebuf.h>
 
 #include "../tasks/Task.h"
@@ -24,6 +25,8 @@ private:
 	std::vector<Task*> task_queue;
 	std::string image_filename;
 
+	QTimer* timer;
+
 	unsigned short cur_task = 0;
 	bool tasks_complete = false;
 	bool image_saved = false;
@@ -33,7 +36,6 @@ private:
 	std::thread* tasks_thread;
 	OIIO::ImageBuf finished_image;
 
-	void progress_update_per();
 	void do_tasks_impl();
 	void cancel_finished();
 
@@ -42,6 +44,7 @@ private:
 private slots:
 	void cancel_clicked();
 	void save_clicked();
+	void progress_update();
 };
 
 #endif // TASKSWAITINGDIALOG_H

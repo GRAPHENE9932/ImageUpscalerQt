@@ -9,14 +9,18 @@
 #include "taskswaitingdialog.h"
 #include "ui_taskswaitingdialog.h"
 
-TasksWaitingDialog::TasksWaitingDialog()
-	: m_ui(new Ui::TasksWaitingDialog) {
+TasksWaitingDialog::TasksWaitingDialog() : m_ui(new Ui::TasksWaitingDialog) {
 	m_ui->setupUi(this);
+
+	timer = new QTimer(this);
 
 	//BEGIN Connect signals
 	connect(m_ui->save_button, SIGNAL(clicked()), this, SLOT(save_clicked()));
 	connect(m_ui->cancel_button, SIGNAL(clicked()), this, SLOT(cancel_clicked()));
+	connect(timer, SIGNAL(timeout()), this, SLOT(progress_update()));
 	//END Connect signals
+
+	timer->setInterval(100);
 }
 
 TasksWaitingDialog::~TasksWaitingDialog() {
@@ -29,14 +33,14 @@ void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, std::string ima
 	cur_task = 0;
 	tasks_complete = false;
 
-	//Start tasks in one thread
+	//Start tasks
 	tasks_thread = new std::thread(&TasksWaitingDialog::do_tasks_impl, this);
-	//Progress update in other thread
-	progress_thread = new std::thread(&TasksWaitingDialog::progress_update_per, this);
+	//And progressbar progressbar update
+	timer->start();
 }
 
-void TasksWaitingDialog::progress_update_per() {
-	do {
+void TasksWaitingDialog::progress_update() {
+	while (!tasks_complete) {
 		//Prepare percents
 		unsigned char cur_task_percents = (unsigned char)(task_queue[cur_task]->progress() * 100.0F);
 		unsigned char all_tasks_percents = (unsigned char)(((float)cur_task + task_queue[cur_task]->progress()) /
@@ -57,15 +61,16 @@ void TasksWaitingDialog::progress_update_per() {
 
 		//Wait 100 ms
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	} while (!tasks_complete);
+	}
+
 	//When completed
-	//Wait 100 ms
-	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	m_ui->current_task_progressbar->setValue(100);
 	m_ui->all_tasks_progressbar->setValue(100);
 	m_ui->current_task_label->setText(QString("All tasks completed!"));
 	m_ui->save_button->setEnabled(true); //Enable "Save result" button
 	m_ui->cancel_button->setEnabled(false); //Disable "Cancel" button
+
+	timer->stop(); //Stop timer
 }
 
 void TasksWaitingDialog::do_tasks_impl() {
@@ -93,6 +98,7 @@ void TasksWaitingDialog::do_tasks_impl() {
 				return;
 			}
 		}
+#ifdef NDEBUG
 		catch (std::exception e) {
 			QMessageBox::critical(this, "Unknown error", e.what());
 			return;
@@ -101,6 +107,7 @@ void TasksWaitingDialog::do_tasks_impl() {
 			QMessageBox::critical(this, "Unknown error", "Unknown error occured");
 			return;
 		}
+#endif
 		input_image = output_image;
 
 		if (cancel_requested) {

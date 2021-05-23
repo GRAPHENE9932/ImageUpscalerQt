@@ -13,6 +13,7 @@
 #include "../tasks/TaskResize.h"
 #include "../tasks/TaskSRCNN.h"
 #include "../tasks/TaskFSRCNN.h"
+#include "../tasks/TaskConvertColorSpace.h"
 #include "taskswaitingdialog.h"
 
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
@@ -78,12 +79,20 @@ void ImageUpscalerQt::add_task_clicked() {
 			task_queue.push_back(cur_task);
 			break;
 		}
+		case TaskKind::convert_color_space: {
+			TaskConvertColorSpace* cur_task = new TaskConvertColorSpace(
+				(ColorSpaceConversion)m_ui->color_space_combobox->currentIndex()
+			);
+
+			task_queue.push_back(cur_task);
+		}
 	}
 
 	update_list();
 }
 
-void ImageUpscalerQt::task_kind_changed(int index) {switch ((TaskKind)index) {
+void ImageUpscalerQt::task_kind_changed(int index) {
+	switch ((TaskKind)index) {
 		case TaskKind::resize: {
 			//Is image selected and valid?
 			if (!image_spec.undefined()) {
@@ -174,6 +183,10 @@ void ImageUpscalerQt::task_kind_changed(int index) {switch ((TaskKind)index) {
 			m_ui->fsrcnn_architecture_combobox->addItems(names);
 
 			break;
+		}
+
+		case TaskKind::convert_color_space: {
+			//Just do nothing . _.
 		}
 	}
 

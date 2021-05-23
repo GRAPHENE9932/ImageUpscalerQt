@@ -7,7 +7,8 @@
 enum class TaskKind : unsigned char {
 	resize,
 	srcnn,
-	fsrcnn
+	fsrcnn,
+	convert_color_space
 };
 
 class Task {
