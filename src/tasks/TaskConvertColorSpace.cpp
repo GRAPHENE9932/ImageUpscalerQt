@@ -160,7 +160,8 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 	}
 
 	//Merge single-channel outputs to triple-channel one
-	OIIO::ImageBuf output = input;
+	OIIO::ImageBuf output;
+	output = input;
 	for (unsigned char i = 0; i < 3; i++) {
 		OIIO::ROI cur_roi(0, output.spec().width, 0, output.spec().height, 0, 1, i, i + 1);
 		output.set_pixels(cur_roi, OIIO::TypeDesc::FLOAT, outputs[i].get());
