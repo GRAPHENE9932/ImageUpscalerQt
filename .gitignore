@@ -57,7 +57,3 @@ compile_commands.json
 debug/
 release/
 release_win/
-
-#Kdevelop project files
-*.kdev4
-.kdev4/
