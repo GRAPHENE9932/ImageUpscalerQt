@@ -7,6 +7,7 @@
 #include <OpenImageIO/imagebuf.h>
 
 #include "../tasks/Task.h"
+#include "../tasks/Worker.h"
 
 namespace Ui {
 	class TasksWaitingDialog;
@@ -22,29 +23,27 @@ public:
 
 private:
 	QScopedPointer<Ui::TasksWaitingDialog> m_ui;
-	std::vector<Task*> task_queue;
-	std::string image_filename;
 
 	QTimer* timer;
 
-	unsigned short cur_task = 0;
 	bool tasks_complete = false;
+	bool cancelled = false;
+	bool error_received = false;
+	std::string error_message;
+
 	bool image_saved = false;
-	bool cancel_requested = false;
 
 	std::thread* progress_thread;
 	std::thread* tasks_thread;
-	OIIO::ImageBuf finished_image;
 
-	void do_tasks_impl();
-	void cancel_finished();
+	Worker* worker;
 
 	void reject();
 
 private slots:
 	void cancel_clicked();
 	void save_clicked();
-	void progress_update();
+	void progress_check();
 };
 
 #endif // TASKSWAITINGDIALOG_H

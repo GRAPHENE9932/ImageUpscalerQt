@@ -218,6 +218,7 @@ void ImageUpscalerQt::select_image_clicked() {
 
 		//Update task creation menu
 		task_kind_changed(m_ui->task_kind_combobox->currentIndex());
+		update_list(); //Update list
 	}
 }
 

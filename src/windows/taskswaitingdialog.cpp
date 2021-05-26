@@ -17,10 +17,8 @@ TasksWaitingDialog::TasksWaitingDialog() : m_ui(new Ui::TasksWaitingDialog) {
 	//BEGIN Connect signals
 	connect(m_ui->save_button, SIGNAL(clicked()), this, SLOT(save_clicked()));
 	connect(m_ui->cancel_button, SIGNAL(clicked()), this, SLOT(cancel_clicked()));
-	connect(timer, SIGNAL(timeout()), this, SLOT(progress_update()));
+	connect(timer, SIGNAL(timeout()), this, SLOT(progress_check()));
 	//END Connect signals
-
-	timer->setInterval(100);
 }
 
 TasksWaitingDialog::~TasksWaitingDialog() {
@@ -28,105 +26,66 @@ TasksWaitingDialog::~TasksWaitingDialog() {
 }
 
 void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, std::string image_filename) {
-	this->task_queue = task_queue;
-	this->image_filename = image_filename;
-	cur_task = 0;
+	worker = new Worker(task_queue, image_filename);
 	tasks_complete = false;
 
 	//Start tasks
-	tasks_thread = new std::thread(&TasksWaitingDialog::do_tasks_impl, this);
-	//And progressbar progressbar update
+	tasks_thread = new std::thread(
+		&Worker::do_tasks,
+		worker,
+		[this]() { //Success
+			tasks_complete = true;
+		},
+		[this]() { //Cancelled
+			cancelled = true;
+		},
+		[this](std::string error) { //Error
+			error_message = error;
+			error_received = true;
+		}
+	);
+	//Start the progressbar update
 	timer->start();
 }
 
-void TasksWaitingDialog::progress_update() {
-	while (!tasks_complete) {
-		//Prepare percents
-		unsigned char cur_task_percents = (unsigned char)(task_queue[cur_task]->progress() * 100.0F);
-		unsigned char all_tasks_percents = (unsigned char)(((float)cur_task + task_queue[cur_task]->progress()) /
-			(float)task_queue.size() * 100.0F);
-		//Set this percents to progressbars
-		m_ui->current_task_progressbar->setValue(cur_task_percents);
-		m_ui->all_tasks_progressbar->setValue(all_tasks_percents);
+void TasksWaitingDialog::progress_check() {
+	//Progressbars
+	m_ui->current_task_progressbar->setValue(worker->cur_task_progress() * 100.0F);
+	m_ui->all_tasks_progressbar->setValue(worker->overall_progress() * 100.0F);
 
-		//Prepare text for current task label
-		std::stringstream ss;
-		//Task 1/1: Unknown task (100%)
-		ss << "Task " << cur_task + 1 << '/' << task_queue.size() << ": " << task_queue[cur_task]->to_string();
-		//Add "(xxx%) if not 0%
-		if (cur_task_percents != 0)
-			ss << " (" << +cur_task_percents << "%)";
-		//Set this text
-		m_ui->current_task_label->setText(QString::fromStdString(ss.str()));
+	//Text for current task label
+	m_ui->current_task_label->setText(QString::fromStdString(worker->cur_status()));
 
-		//Wait 100 ms
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	}
+	if (tasks_complete) {
+		//When completed
+		m_ui->current_task_progressbar->setValue(100);
+		m_ui->all_tasks_progressbar->setValue(100);
+		m_ui->current_task_label->setText("All tasks completed!");
+		m_ui->save_button->setEnabled(true); //Enable "Save result" button
+		m_ui->cancel_button->setEnabled(false); //Disable "Cancel" button
 
-	//When completed
-	m_ui->current_task_progressbar->setValue(100);
-	m_ui->all_tasks_progressbar->setValue(100);
-	m_ui->current_task_label->setText(QString("All tasks completed!"));
-	m_ui->save_button->setEnabled(true); //Enable "Save result" button
-	m_ui->cancel_button->setEnabled(false); //Disable "Cancel" button
-
-	timer->stop(); //Stop timer
-}
-
-void TasksWaitingDialog::do_tasks_impl() {
-	//Load image
-	OIIO::ImageBuf input_image(image_filename);
-	if (!input_image.read()) {
-		QMessageBox::critical(this, "Failed to read image",
-							  "Failed to read image. The file may be either damaged, not supported or corrupted");
+		timer->stop(); //Stop timer
 		return;
 	}
 
-	//Do tasks
-	for (cur_task = 0; cur_task < task_queue.size(); cur_task++) {
-		OIIO::ImageBuf output_image;
-		try {
-			output_image = task_queue[cur_task]->do_task(input_image);
-		}
-		catch (const char* str) {
-			if (strcmp(str, "canc") == 0) {
-				cancel_finished();
-				return;
-			}
-			else {
-				QMessageBox::critical(this, "Unknown error", str);
-				return;
-			}
-		}
-#ifdef NDEBUG
-		catch (std::exception e) {
-			QMessageBox::critical(this, "Unknown error", e.what());
-			return;
-		}
-		catch (...) {
-			QMessageBox::critical(this, "Unknown error", "Unknown error occured");
-			return;
-		}
-#endif
-		input_image = output_image;
+	if (cancelled) {
+		this->done(2); //Just close this dialog
 
-		if (cancel_requested) {
-			cancel_finished();
-			return;
-		}
+		timer->stop(); //Stop timer
+		return;
 	}
-	tasks_complete = true;
-	finished_image = input_image;
+
+	if (error_received) {
+		QMessageBox::critical(this, "Error", QString::fromStdString(error_message));
+
+		timer->stop(); //Stop timer
+		return;
+	}
 }
 
 void TasksWaitingDialog::cancel_clicked() {
-	cancel_requested = true;
-	task_queue[cur_task]->cancel_requested = true;
+	worker->cancel();
 	m_ui->cancel_button->setEnabled(false); //Disable cancel button
-}
-
-void TasksWaitingDialog::cancel_finished() {
-	this->done(2); //Just close this dialog
 }
 
 void TasksWaitingDialog::save_clicked() {
@@ -142,10 +101,13 @@ void TasksWaitingDialog::save_clicked() {
 		//Extract filename
 		std::string filename = dialog.selectedFiles()[0].toStdString();
 		//Save the image
-		if (!finished_image.write(filename)) {
-			QMessageBox::critical(this, "Failed to write image", "Failed to write image");
-			qDebug() << QString::fromStdString(finished_image.geterror());
-		}
+		worker->save_image(
+			filename,
+			[this](std::string error) {
+				QMessageBox::critical(this, "Failed to write image",
+					QString::fromStdString("Failed to write image:\n" + error));
+			}
+		);
 		//Close this dialog
 		this->done(0);
 	}
