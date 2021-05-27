@@ -12,17 +12,20 @@ const std::string COLOR_SPACE_CONVERSION_NAMES[4] = {
 };
 
 class TaskConvertColorSpace : public Task {
-	public:
-		ColorSpaceConversion color_space_conversion;
+public:
+	ColorSpaceConversion color_space_conversion;
 
-		TaskConvertColorSpace();
-		TaskConvertColorSpace(ColorSpaceConversion color_space_conversion);
+	TaskConvertColorSpace();
+	TaskConvertColorSpace(ColorSpaceConversion color_space_conversion);
 
-		///"1: convert from RGB to YCbCr"
-		std::string to_string(unsigned short index) const override;
-		///"convert from RGB to YCbCr"
-		std::string to_string() const override;
+	///"1: convert from RGB to YCbCr"
+	std::string to_string(unsigned short index) const override;
+	///"convert from RGB to YCbCr"
+	std::string to_string() const override;
+	float progress() const override;
 
-		OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;
+	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;
 
+private:
+	float progress_val;
 };

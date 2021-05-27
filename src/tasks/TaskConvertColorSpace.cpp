@@ -14,7 +14,7 @@ TaskConvertColorSpace::TaskConvertColorSpace(ColorSpaceConversion color_space_co
 std::string TaskConvertColorSpace::to_string(unsigned short index) const {
 	std::stringstream ss;
 	//1: convert from RGB to YCbCr
-	ss << index << ": convert from " <<
+	ss << index + 1 << ": convert from " <<
 	COLOR_SPACE_CONVERSION_NAMES[(unsigned char)color_space_conversion];
 
 	return ss.str();
@@ -27,6 +27,10 @@ std::string TaskConvertColorSpace::to_string() const {
 	COLOR_SPACE_CONVERSION_NAMES[(unsigned char)color_space_conversion];
 
 	return ss.str();
+}
+
+float TaskConvertColorSpace::progress() const {
+	return progress_val;
 }
 
 //BEGIN Coefficients
@@ -68,7 +72,7 @@ void add_to_existing_single_thread(float* object, const float* operand, const si
 void add_to_existing(float* object, const float* operand, const size_t size) {
 	//Calculate threads amount
 	unsigned short threads_num = std::thread::hardware_concurrency();
-	if (threads_num < size)
+	if (threads_num > size)
 		threads_num = size;
 
 	//Calculate batch size
@@ -109,7 +113,7 @@ void add_to_existing_single_thread(float* object, const float operand, const siz
 void add_to_existing(float* object, const float operand, const size_t size) {
 	//Calculate threads amount
 	unsigned short threads_num = std::thread::hardware_concurrency();
-	if (threads_num < size)
+	if (threads_num > size)
 		threads_num = size;
 
 	//Calculate batch size
@@ -153,7 +157,7 @@ std::unique_ptr<float[]> add(const float* o1, const float o2, const size_t size)
 
 	//Calculate threads amount
 	unsigned short threads_num = std::thread::hardware_concurrency();
-	if (threads_num < size)
+	if (threads_num > size)
 		threads_num = size;
 
 	//Calculate batch size
@@ -201,7 +205,7 @@ std::unique_ptr<float[]> multiply(const float* o1, const float o2, const size_t 
 
 	//Calculate threads amount
 	unsigned short threads_num = std::thread::hardware_concurrency();
-	if (threads_num < size)
+	if (threads_num > size)
 		threads_num = size;
 
 	//Calculate batch size
@@ -281,6 +285,8 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 		input.get_pixels(roi, OIIO::TypeDesc::FLOAT, inputs[i].get());
 	}
 
+	progress_val = 0.1F;
+
 	//Output will be also splitted
 	//Init outputs as float arrays
 	std::array<std::unique_ptr<float[]>, 3> outputs;
@@ -288,9 +294,6 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 		outputs[i] = std::make_unique<float[]>(input.spec().width * input.spec().height);
 
 	for (unsigned char c_out = 0; c_out < 3; c_out++) {
-		//if (offset_before_p != nullptr)
-			//add_to_existing(outputs[c_out].get(), (*offset_before_p)[c_out], channel_size); //Offset before
-
 		for (unsigned char c_in = 0; c_in < 3; c_in++) {
 			float cur_val = (*matrix_p)[c_out][c_in];
 
@@ -310,6 +313,8 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 
 		if (offset_after_p != nullptr)
 			add_to_existing(outputs[c_out].get(), (*offset_after_p)[c_out], channel_size); //Offset after
+
+		progress_val = 0.1F + 0.9F / (3 - c_out);
 	}
 
 	//Merge single-channel outputs to triple-channel one
@@ -320,6 +325,7 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 		output.set_pixels(cur_roi, OIIO::TypeDesc::FLOAT, outputs[i].get());
 	}
 	//Last channels - without changes
+	progress_val = 1.0F;
 
 	return output;
 }
