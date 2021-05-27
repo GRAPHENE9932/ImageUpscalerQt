@@ -387,10 +387,17 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="low_layout" stretch="1,0">
+     <layout class="QHBoxLayout" name="low_layout" stretch="0,1,0">
       <property name="sizeConstraint">
        <enum>QLayout::SetFixedSize</enum>
       </property>
+      <item>
+       <widget class="QPushButton" name="about_button">
+        <property name="text">
+         <string>About</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QLabel" name="status_label">
         <property name="text">

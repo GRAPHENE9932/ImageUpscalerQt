@@ -16,6 +16,8 @@
 #include "../tasks/TaskConvertColorSpace.h"
 #include "TasksWaitingDialog.h"
 
+#define VERSION "1.0"
+
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
     m_ui(new Ui::ImageUpscalerQt) {
     m_ui->setupUi(this);
@@ -32,6 +34,7 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->resize_y, SIGNAL(valueChanged(int)), this, SLOT(resize_y_changed(int)));
 	connect(m_ui->keep_image_ratio_radio, SIGNAL(toggled(bool)), this, SLOT(keep_ratio_toggled(bool)));
 	connect(m_ui->start_tasks_button, SIGNAL(clicked()), this, SLOT(start_tasks_clicked()));
+	connect(m_ui->about_button, SIGNAL(clicked()), this, SLOT(about_clicked()));
 	//END Connect signals
 }
 
@@ -368,4 +371,9 @@ void ImageUpscalerQt::start_tasks_clicked() {
 	TasksWaitingDialog* dialog = new TasksWaitingDialog();
 	dialog->open();
 	dialog->do_tasks(task_queue, image_filename);
+}
+
+void ImageUpscalerQt::about_clicked() {
+	QMessageBox::about(this, "About the ImageUpscalerQt",
+					   QString::fromStdString(std::string("ImageUpscalerQt version ") + VERSION + "\n\nImageUpscalerQt - program for image upscaling using the neural networks, but it also have other auxiliary functions.\n\nMade by Artem Kliminskyi in Ukraine, Zhytomyr"));
 }

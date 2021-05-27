@@ -43,6 +43,8 @@ private slots:
 	void keep_ratio_toggled(bool checked);
 
 	void start_tasks_clicked();
+
+	void about_clicked();
 };
 
 #endif // IMAGEUPSCALERQT_H
