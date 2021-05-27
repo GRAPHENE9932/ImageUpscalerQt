@@ -355,6 +355,16 @@ void ImageUpscalerQt::update_list() {
 }
 
 void ImageUpscalerQt::start_tasks_clicked() {
+	//Special cases
+	if (image_spec.undefined()) {
+		QMessageBox::warning(this, "No image", "No image selected, so you can\'t start the tasks.");
+		return;
+	}
+	if (task_queue.empty()) {
+		QMessageBox::warning(this, "No tasks", "Tasks queue is empty, so you can\'t start them.");
+		return;
+	}
+
 	TasksWaitingDialog* dialog = new TasksWaitingDialog();
 	dialog->open();
 	dialog->do_tasks(task_queue, image_filename);
