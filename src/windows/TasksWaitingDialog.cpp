@@ -6,8 +6,8 @@
 #include <QFileDialog>
 #include <QDebug>
 
-#include "taskswaitingdialog.h"
-#include "ui_taskswaitingdialog.h"
+#include "TasksWaitingDialog.h"
+#include "ui_TasksWaitingDialog.h"
 
 TasksWaitingDialog::TasksWaitingDialog() : m_ui(new Ui::TasksWaitingDialog) {
 	m_ui->setupUi(this);

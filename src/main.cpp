@@ -1,4 +1,4 @@
-#include "windows/imageupscalerqt.h"
+#include "windows/ImageUpscalerQt.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])

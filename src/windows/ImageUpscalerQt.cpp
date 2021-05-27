@@ -7,14 +7,14 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-#include "imageupscalerqt.h"
-#include "ui_imageupscalerqt.h"
+#include "ImageUpscalerQt.h"
+#include "ui_ImageUpscalerQt.h"
 #include "../Algorithms.h"
 #include "../tasks/TaskResize.h"
 #include "../tasks/TaskSRCNN.h"
 #include "../tasks/TaskFSRCNN.h"
 #include "../tasks/TaskConvertColorSpace.h"
-#include "taskswaitingdialog.h"
+#include "TasksWaitingDialog.h"
 
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
     m_ui(new Ui::ImageUpscalerQt) {
