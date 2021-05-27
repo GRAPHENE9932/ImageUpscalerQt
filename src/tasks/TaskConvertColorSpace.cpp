@@ -59,33 +59,186 @@ const float ycocg_to_rgb_coef[3][3] {
 };
 //END Coefficients
 
-void add_to_existing(float* object, const float* operand, const size_t size) {
+//BEGIN Algebra
+void add_to_existing_single_thread(float* object, const float* operand, const size_t size) {
 	for (size_t i = 0; i < size; i++)
 		object[i] += operand[i];
 }
 
-void add_to_existing(float* object, const float operand, const size_t size) {
+void add_to_existing(float* object, const float* operand, const size_t size) {
+	//Calculate threads amount
+	unsigned short threads_num = std::thread::hardware_concurrency();
+	if (threads_num < size)
+		threads_num = size;
+
+	//Calculate batch size
+	size_t batch_size = size / threads_num;
+
+	//Start every thread
+	std::unique_ptr<std::thread[]> threads = std::make_unique<std::thread[]>(threads_num);
+	for (unsigned short i = 0; i < threads_num; i++) {
+		threads[i] = std::thread(
+			static_cast<void(*)(float*, const float*, const size_t)>(add_to_existing_single_thread),
+			&object[i * batch_size],
+			&operand[i * batch_size],
+			batch_size
+		);
+	}
+
+	/*
+	   +--------------------------------------------------------------+
+	   |   BATCH 0  |   BATCH 1   |   BATCH 2   |   BATCH 3   |remains|
+	   |                            size                              |
+	   +--------------------------------------------------------------+
+	*/
+
+	//Do remains by self
+	for (size_t i = batch_size * threads_num; i < size; i++)
+		object[i] += operand[i];
+
+	//Join all threads
+	for (unsigned short i = 0; i < threads_num; i++)
+		threads[i].join();
+}
+
+void add_to_existing_single_thread(float* object, const float operand, const size_t size) {
 	for (size_t i = 0; i < size; i++)
 		object[i] += operand;
 }
 
+void add_to_existing(float* object, const float operand, const size_t size) {
+	//Calculate threads amount
+	unsigned short threads_num = std::thread::hardware_concurrency();
+	if (threads_num < size)
+		threads_num = size;
+
+	//Calculate batch size
+	size_t batch_size = size / threads_num;
+
+	//Start every thread
+	std::unique_ptr<std::thread[]> threads = std::make_unique<std::thread[]>(threads_num);
+	for (unsigned short i = 0; i < threads_num; i++) {
+		threads[i] = std::thread(
+			static_cast<void(*)(float*, const float, const size_t)>(add_to_existing_single_thread),
+			&object[i * batch_size],
+			operand,
+			batch_size
+		);
+	}
+
+	/*
+	 + ---------------*---------------------------------------------+
+	 |   BATCH 0  |   BATCH 1   |   BATCH 2   |   BATCH 3   |remains|
+	 |                            size                              |
+	 +--------------------------------------------------------------+
+	 */
+
+	//Do remains by self
+	for (size_t i = batch_size * threads_num; i < size; i++)
+		object[i] += operand;
+
+	//Join all threads
+	for (unsigned short i = 0; i < threads_num; i++)
+		threads[i].join();
+}
+
+void add_single_thread(float* dest, const float* o1, const float o2, const size_t size) {
+	for (size_t i = 0; i < size; i++)
+		dest[i] = o1[i] + o2;
+}
+
 std::unique_ptr<float[]> add(const float* o1, const float o2, const size_t size) {
+	//Initialize result
 	std::unique_ptr<float[]> result = std::make_unique<float[]>(size);
 
-	for (size_t i = 0; i < size; i++)
+	//Calculate threads amount
+	unsigned short threads_num = std::thread::hardware_concurrency();
+	if (threads_num < size)
+		threads_num = size;
+
+	//Calculate batch size
+	size_t batch_size = size / threads_num;
+
+	//Start every thread
+	std::unique_ptr<std::thread[]> threads = std::make_unique<std::thread[]>(threads_num);
+	for (unsigned short i = 0; i < threads_num; i++) {
+		threads[i] = std::thread(
+			static_cast<void(*)(float*, const float*, const float, const size_t)>(add_single_thread),
+			&result.get()[i * batch_size],
+			&o1[i * batch_size],
+			o2,
+			batch_size
+		);
+	}
+
+	/*
+	 +--------------------------------------------------------------+
+	 |   BATCH 0  |   BATCH 1   |   BATCH 2   |   BATCH 3   |remains|
+	 |                            size                              |
+	 +--------------------------------------------------------------+
+	 */
+
+	//Do remains by self
+	for (size_t i = batch_size * threads_num; i < size; i++)
 		result[i] = o1[i] + o2;
 
+	//Join all threads
+	for (unsigned short i = 0; i < threads_num; i++)
+		threads[i].join();
+
+	//Return result
 	return result;
+}
+
+void multiply_single_thread(float* dest, const float* o1, float o2, size_t size) {
+	for (size_t i = 0; i < size; i++)
+		dest[i] = o1[i] * o2;
 }
 
 std::unique_ptr<float[]> multiply(const float* o1, const float o2, const size_t size) {
+	//Initialize result
 	std::unique_ptr<float[]> result = std::make_unique<float[]>(size);
 
-	for (size_t i = 0; i < size; i++)
+	//Calculate threads amount
+	unsigned short threads_num = std::thread::hardware_concurrency();
+	if (threads_num < size)
+		threads_num = size;
+
+	//Calculate batch size
+	size_t batch_size = size / threads_num;
+
+	//Start every thread
+	std::unique_ptr<std::thread[]> threads = std::make_unique<std::thread[]>(threads_num);
+	for (unsigned short i = 0; i < threads_num; i++) {
+		threads[i] = std::thread(
+			static_cast<void(*)(float*, const float*, const float, const size_t)>(multiply_single_thread),
+			&result.get()[i * batch_size],
+			&o1[i * batch_size],
+			o2,
+			batch_size
+		);
+	}
+
+	/*
+	 + -----------*----**---------------------------------------------+
+	 |   BATCH 0  |   BATCH 1   |   BATCH 2   |   BATCH 3   |remains|
+	 |                            size                              |
+	 +--------------------------------------------------------------+
+	 */
+
+	//Do remains by self
+	for (size_t i = batch_size * threads_num; i < size; i++)
 		result[i] = o1[i] * o2;
 
+	//Join all threads
+	for (unsigned short i = 0; i < threads_num; i++)
+		threads[i].join();
+
+	//Return result
 	return result;
 }
+
+//END Algebra
 
 OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 	if (input.nchannels() < 3)

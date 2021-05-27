@@ -26,11 +26,13 @@ float Worker::overall_progress() const {
 }
 
 std::string Worker::cur_status() const {
-	if (cur_task < tasks_queue.size()) {
+	//Save cur_task for this function, because multithreading
+	auto cur_task_copy = cur_task;
+	if (cur_task_copy < tasks_queue.size()) {
 		//Prepare text for current task label
 		std::stringstream ss;
 		//Task 1/1: Unknown task (100%)
-		ss << "Task " << cur_task + 1 << '/' << tasks_queue.size() << ": " << tasks_queue[cur_task]->to_string();
+		ss << "Task " << cur_task_copy + 1 << '/' << tasks_queue.size() << ": " << tasks_queue[cur_task_copy]->to_string();
 		//Add "(xxx%)" if not 0%
 		if (cur_task_progress() != 0)
 			ss << " (" << (int)(cur_task_progress() * 100.0F) << "%)";
