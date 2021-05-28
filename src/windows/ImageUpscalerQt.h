@@ -23,7 +23,7 @@ public:
 private:
     QScopedPointer<Ui::ImageUpscalerQt> m_ui;
 	std::vector<Task*> task_queue;
-	std::string image_filename;
+	QString image_filename;
 	OIIO::ImageSpec image_spec;
 
 	void update_list();

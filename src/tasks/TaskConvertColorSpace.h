@@ -7,7 +7,7 @@ enum class ColorSpaceConversion : unsigned char {
 };
 
 ///Color space names for the user
-const std::string COLOR_SPACE_CONVERSION_NAMES[4] = {
+const QString COLOR_SPACE_CONVERSION_NAMES[4] = {
 	"RGB to YCbCr", "YCbCr to RGB", "RGB to YCoCg", "YCoCg to RGB"
 };
 
@@ -19,9 +19,9 @@ public:
 	TaskConvertColorSpace(ColorSpaceConversion color_space_conversion);
 
 	///"1: convert from RGB to YCbCr"
-	std::string to_string(unsigned short index) const override;
+	QString to_string(unsigned short index) const override;
 	///"convert from RGB to YCbCr"
-	std::string to_string() const override;
+	QString to_string() const override;
 	float progress() const override;
 
 	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;

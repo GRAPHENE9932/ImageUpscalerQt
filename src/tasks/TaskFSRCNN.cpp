@@ -23,32 +23,21 @@ TaskFSRCNN::TaskFSRCNN(std::array<unsigned short, 4> kernels, std::array<unsigne
 	this->channels = channels;
 }
 
-std::string TaskFSRCNN::to_string(unsigned short index) const {
-	std::stringstream ss;
-	//1: use FSRCNN 3-1-3-4 64-32-32
-	ss << (index + 1) << ": use FSRCNN " <<
-	+kernels[0] << '-' << +kernels[1] << '-' << +kernels[2] << '-' << +kernels[3] << ' ' <<
-	+channels[0] << '-' << +channels[1] << '-' << +channels[2];
-
-	return ss.str();
+QString TaskFSRCNN::to_string(unsigned short index) const {
+	//1: use FSRCNN 3-1-3-4 512-32-64
+	return QString("%1: use FSRCNN %2").arg(QString::number(index + 1),
+										    Algorithms::fsrcnn_to_string(kernels, channels));
 }
 
-std::string TaskFSRCNN::to_string() const {
-	std::stringstream ss;
-	//use FSRCNN 3-1-3-4 64-32-32
-	ss << "use FSRCNN " <<
-	+kernels[0] << '-' << +kernels[1] << '-' << +kernels[2] << '-' << +kernels[3] << ' ' <<
-	+channels[0] << '-' << +channels[1] << '-' << +channels[2];
-
-	return ss.str();
+QString TaskFSRCNN::to_string() const {
+	//use FSRCNN 3-1-3-4 512-32-64
+	return QString("use FSRCNN %1").arg(Algorithms::fsrcnn_to_string(kernels, channels));
 }
 
-std::string TaskFSRCNN::parameters_path() const {
-	std::stringstream ss;
-	//"/path/to/program/SRCNN/5-1-9 64-32.pt"
-	ss << QDir::currentPath().toStdString() << "/FSRCNN/" <<
-	Algorithms::fsrcnn_to_string(kernels, channels) << ".pt";
-	return ss.str();
+QString TaskFSRCNN::parameters_path() const {
+	//"/path/to/program/SRCNN/3-1-3-4 512-32-64.pt"
+	return QString("%1/FSRCNN/%2.pt").arg(QDir::currentPath(),
+										   Algorithms::fsrcnn_to_string(kernels, channels));
 }
 
 float TaskFSRCNN::progress() const {
@@ -62,7 +51,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	//Initialize neural network
 	FSRCNN model(kernels, paddings, channels);
 	torch::autograd::variable_list loaded_params;
-	torch::load(loaded_params, parameters_path());
+	torch::load(loaded_params, parameters_path().toStdString());
 	for (uint64_t i = 0; i < loaded_params.size(); i++)
 		model->parameters()[i].set_data(loaded_params[i]);
 

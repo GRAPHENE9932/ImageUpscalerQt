@@ -20,32 +20,21 @@ TaskSRCNN::TaskSRCNN(std::array<unsigned short, 3> kernels, std::array<unsigned 
 	this->channels = ch_n;
 }
 
-std::string TaskSRCNN::to_string(unsigned short index) const {
-	std::stringstream ss;
+QString TaskSRCNN::to_string(unsigned short index) const {
 	//1: use SRCNN 5-1-9 64-32
-	ss << (index + 1) << ": use SRCNN " <<
-	+kernels[0] << '-' << +kernels[1] << '-' << +kernels[2] << ' ' <<
-	+channels[0] << '-' << +channels[1];
-
-	return ss.str();
+	return QString("%1: use SRCNN %2").arg(QString::number(index + 1),
+										   Algorithms::srcnn_to_string(kernels, channels));
 }
 
-std::string TaskSRCNN::to_string() const {
-	std::stringstream ss;
+QString TaskSRCNN::to_string() const {
 	//use SRCNN 5-1-9 64-32
-	ss << "use SRCNN " <<
-	+kernels[0] << '-' << +kernels[1] << '-' << +kernels[2] << ' ' <<
-	+channels[0] << '-' << +channels[1];
-
-	return ss.str();
+	return QString("use SRCNN %1").arg(Algorithms::srcnn_to_string(kernels, channels));
 }
 
-std::string TaskSRCNN::parameters_path() const {
-	std::stringstream ss;
+QString TaskSRCNN::parameters_path() const {
 	//"/path/to/program/SRCNN/5-1-9 64-32.pt"
-	ss << QDir::currentPath().toStdString() << "/SRCNN/" <<
-		Algorithms::srcnn_to_string(kernels, channels) << ".pt";
-	return ss.str();
+	return QString("%1/SRCNN/%2.pt").arg(QDir::currentPath(),
+										  Algorithms::srcnn_to_string(kernels, channels));
 }
 
 float TaskSRCNN::progress() const {
@@ -59,8 +48,8 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	//Initialize neural network
 	SRCNN model(kernels, paddings, channels);
 	torch::autograd::variable_list loaded_params;
-	torch::load(loaded_params, parameters_path());
-	for (uint64_t i = 0; i < loaded_params.size(); i++)
+	torch::load(loaded_params, parameters_path().toStdString());
+	for (unsigned long long i = 0; i < loaded_params.size(); i++)
 		model->parameters()[i].set_data(loaded_params[i]);
 
 	//Get spec

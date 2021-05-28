@@ -19,7 +19,7 @@ public:
 	TasksWaitingDialog();
 	~TasksWaitingDialog();
 
-	void do_tasks(std::vector<Task*> task_queue, std::string image_filename);
+	void do_tasks(std::vector<Task*> task_queue, QString image_filename);
 
 private:
 	QScopedPointer<Ui::TasksWaitingDialog> m_ui;
@@ -29,7 +29,7 @@ private:
 	bool tasks_complete = false;
 	bool cancelled = false;
 	bool error_received = false;
-	std::string error_message;
+	QString error_message;
 
 	bool image_saved = false;
 

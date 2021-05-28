@@ -25,7 +25,7 @@ TasksWaitingDialog::~TasksWaitingDialog() {
 
 }
 
-void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, std::string image_filename) {
+void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, QString image_filename) {
 	worker = new Worker(task_queue, image_filename);
 	tasks_complete = false;
 
@@ -39,7 +39,7 @@ void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, std::string ima
 		[this]() { //Cancelled
 			cancelled = true;
 		},
-		[this](std::string error) { //Error
+		[this](QString error) { //Error
 			error_message = error;
 			error_received = true;
 		}
@@ -54,7 +54,7 @@ void TasksWaitingDialog::progress_check() {
 	m_ui->all_tasks_progressbar->setValue(worker->overall_progress() * 100.0F);
 
 	//Text for current task label
-	m_ui->current_task_label->setText(QString::fromStdString(worker->cur_status()));
+	m_ui->current_task_label->setText(worker->cur_status());
 
 	if (tasks_complete) {
 		//When completed
@@ -76,7 +76,7 @@ void TasksWaitingDialog::progress_check() {
 	}
 
 	if (error_received) {
-		QMessageBox::critical(this, "Error", QString::fromStdString(error_message));
+		QMessageBox::critical(this, "Error", error_message);
 
 		timer->stop(); //Stop timer
 		return;
@@ -99,13 +99,13 @@ void TasksWaitingDialog::save_clicked() {
 	//If accepted
 	if (dialog.exec() == QDialog::DialogCode::Accepted) {
 		//Extract filename
-		std::string filename = dialog.selectedFiles()[0].toStdString();
+		QString filename = dialog.selectedFiles()[0];
 		//Save the image
 		worker->save_image(
 			filename,
-			[this](std::string error) {
+			[this](QString error) {
 				QMessageBox::critical(this, "Failed to write image",
-					QString::fromStdString("Failed to write image:\n" + error));
+					"Failed to write image:\n" + error);
 			}
 		);
 		//Close this dialog

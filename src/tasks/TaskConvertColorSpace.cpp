@@ -11,22 +11,15 @@ TaskConvertColorSpace::TaskConvertColorSpace(ColorSpaceConversion color_space_co
 	this->color_space_conversion = color_space_conversion;
 }
 
-std::string TaskConvertColorSpace::to_string(unsigned short index) const {
-	std::stringstream ss;
+QString TaskConvertColorSpace::to_string(unsigned short index) const {
 	//1: convert from RGB to YCbCr
-	ss << index + 1 << ": convert from " <<
-	COLOR_SPACE_CONVERSION_NAMES[(unsigned char)color_space_conversion];
-
-	return ss.str();
+	return QString("%1: convert from %2").arg(QString::number(index + 1),
+											  COLOR_SPACE_CONVERSION_NAMES[(unsigned char)color_space_conversion]);
 }
 
-std::string TaskConvertColorSpace::to_string() const {
-	std::stringstream ss;
+QString TaskConvertColorSpace::to_string() const {
 	//convert from RGB to YCbCr
-	ss << "convert from " <<
-	COLOR_SPACE_CONVERSION_NAMES[(unsigned char)color_space_conversion];
-
-	return ss.str();
+	return QString("convert from %1").arg(COLOR_SPACE_CONVERSION_NAMES[(unsigned char)color_space_conversion]);
 }
 
 float TaskConvertColorSpace::progress() const {
@@ -246,8 +239,8 @@ std::unique_ptr<float[]> multiply(const float* o1, const float o2, const size_t 
 
 OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 	if (input.nchannels() < 3)
-		throw std::runtime_error(std::string("Only 3 or more channel images are allowed to conversion. Provided: ")
-		+ std::to_string(input.nchannels()));
+		throw std::runtime_error(
+			QString("Only 3 or more channel images are allowed to conversion. Provided %1").arg(QString::number(input.nchannels())).toStdString());
 
 	//Get pointer to the needed matrix
 	const float (*matrix_p)[3][3];

@@ -56,7 +56,7 @@ void ImageUpscalerQt::add_task_clicked() {
 		}
 		case TaskKind::srcnn: {
 			//Get SRCNN name
-			std::string name = m_ui->srcnn_architecture_combobox->currentText().toStdString();
+			QString name = m_ui->srcnn_architecture_combobox->currentText();
 			//Parse SRCNN
 			std::array<unsigned short, 3> kernels;
 			std::array<unsigned short, 3> paddings;
@@ -70,7 +70,7 @@ void ImageUpscalerQt::add_task_clicked() {
 		}
 		case TaskKind::fsrcnn: {
 			//Get FSRCNN name
-			std::string name = m_ui->fsrcnn_architecture_combobox->currentText().toStdString();
+			QString name = m_ui->fsrcnn_architecture_combobox->currentText();
 			//Parse FSRCNN
 			std::array<unsigned short, 4> kernels;
 			std::array<unsigned short, 4> paddings;
@@ -116,24 +116,23 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 
 		case TaskKind::srcnn: {
 			//Get folder that contains .pt files
-			std::string nn_storage_path = QDir::currentPath().toStdString() + "/SRCNN/";
+			QDir nn_storage_path = QDir::currentPath() + "/SRCNN/";
 
 			//Check if this folder exists
-			if (!std::filesystem::exists(nn_storage_path)) {
+			if (!nn_storage_path.exists()) {
 				QMessageBox::critical(this, "Missing files", "Can\'t find folder with neural network parameters.\nMay be some files or folders was corrupted.");
 				m_ui->srcnn_architecture_combobox->clear();
 				return;
 			}
 
 			//Get all architecture names
+			QStringList files = nn_storage_path.entryList(QDir::Files);
 			QStringList names;
-			std::filesystem::directory_iterator end;
-			for (std::filesystem::directory_iterator iter(nn_storage_path); iter != end; iter++) {
-				//Check name if it's srcnn architecture
-				std::string cur_name = iter->path().stem();
-				std::string cur_extension = iter->path().extension();
-				if (Algorithms::parse_srcnn(cur_name, nullptr, nullptr, nullptr) && cur_extension == ".pt")
-					names.push_back(QString::fromStdString(cur_name));
+			for (int i = 0; i < files.size(); i++) {
+				QString cur_name = QFileInfo(files[i]).baseName();
+				QString cur_extension = QFileInfo(files[i]).completeSuffix();
+				if (Algorithms::parse_srcnn(cur_name, nullptr, nullptr, nullptr) && cur_extension == "pt")
+					names.push_back(cur_name);
 			}
 
 			//Check if this architecture names exists
@@ -152,10 +151,10 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 
 		case TaskKind::fsrcnn: {
 			//Get folder that contains .pt files
-			std::string nn_storage_path = QDir::currentPath().toStdString() + "/FSRCNN/";
+			QDir nn_storage_path = QDir::currentPath() + "/FSRCNN/";
 
 			//Check if this folder exists
-			if (!std::filesystem::exists(nn_storage_path)) {
+			if (!nn_storage_path.exists()) {
 				QMessageBox::critical(this, "Missing files",
 									  "Can\'t find folder with neural network parameters.\nMay be some files or folders was corrupted.");
 				m_ui->fsrcnn_architecture_combobox->clear();
@@ -163,14 +162,13 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 			}
 
 			//Get all architecture names
+			QStringList files = nn_storage_path.entryList(QDir::Files);
 			QStringList names;
-			std::filesystem::directory_iterator end;
-			for (std::filesystem::directory_iterator iter(nn_storage_path); iter != end; iter++) {
-				//Check name if it's fsrcnn architecture
-				std::string cur_name = iter->path().stem();
-				std::string cur_extension = iter->path().extension();
-				if (Algorithms::parse_fsrcnn(cur_name, nullptr, nullptr, nullptr) && cur_extension == ".pt")
-					names.push_back(QString::fromStdString(cur_name));
+			for (int i = 0; i < files.size(); i++) {
+				QString cur_name = QFileInfo(files[i]).baseName();
+				QString cur_extension = QFileInfo(files[i]).completeSuffix();
+				if (Algorithms::parse_fsrcnn(cur_name, nullptr, nullptr, nullptr) && cur_extension == "pt")
+					names.push_back(cur_name);
 			}
 
 			//Check if this architecture names exists
@@ -207,11 +205,11 @@ void ImageUpscalerQt::select_image_clicked() {
 
 	//If accepted
 	if (dialog.exec() == QDialog::DialogCode::Accepted) {
-		this->image_filename = dialog.selectedFiles()[0].toStdString();
+		this->image_filename = dialog.selectedFiles()[0];
 		m_ui->image_path_label->setText(dialog.selectedFiles()[0]);
 
 		//Get image spec and check image
-		auto input = OIIO::ImageInput::open(image_filename);
+		auto input = OIIO::ImageInput::open(image_filename.toStdString());
 		if (!input) {
 			QMessageBox::critical(this, "Failed to read image",
 								  "Failed to read image. The file may be either damaged, not supported or corrupted");
@@ -322,7 +320,7 @@ void ImageUpscalerQt::update_list() {
 	//Update list
 	m_ui->queue_list->clear();
 	for (unsigned short i = 0; i < task_queue.size(); i++)
-		m_ui->queue_list->addItem(QString::fromStdString(task_queue[i]->to_string(i)));
+		m_ui->queue_list->addItem(task_queue[i]->to_string(i));
 
 	//Status label
 	if (task_queue.size() == 0) {
@@ -352,9 +350,13 @@ void ImageUpscalerQt::update_list() {
 				break;
 		}
 	}
-	std::stringstream ss;
-	ss << before_width << 'x' << before_height << " -> " << after_width << 'x' << after_height;
-	m_ui->status_label->setText(ss.str().c_str());
+	//1920x1080 -> 3840x2160
+	QString status = QString("%1x%2 -> %3x%4").arg(QString::number(before_width),
+												   QString::number(before_height),
+												   QString::number(after_width),
+												   QString::number(before_height));
+
+	m_ui->status_label->setText(status);
 }
 
 void ImageUpscalerQt::start_tasks_clicked() {
@@ -375,5 +377,5 @@ void ImageUpscalerQt::start_tasks_clicked() {
 
 void ImageUpscalerQt::about_clicked() {
 	QMessageBox::about(this, "About the ImageUpscalerQt",
-					   QString::fromStdString(std::string("ImageUpscalerQt version ") + VERSION + "\n\nImageUpscalerQt - program for image upscaling using the neural networks, but it also have other auxiliary functions.\n\nMade by Artem Kliminskyi in Ukraine, Zhytomyr"));
+					   QString("ImageUpscalerQt version ") + VERSION + "\n\nImageUpscalerQt - program for image upscaling using the neural networks, but it also have other auxiliary functions.\n\nMade by Artem Kliminskyi in Ukraine, Zhytomyr");
 }
