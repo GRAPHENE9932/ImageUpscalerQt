@@ -1,4 +1,5 @@
 # ImageUpscalerQt
+
 ImageUpscalerQt is a program for upscaling images using neural networks, but it also has other auxiliary functions.
 ![Screenshot](https://i.imgur.com/Km588DX.png)
 Main functions:
@@ -22,21 +23,21 @@ Main functions:
 8. Save result using the **"Save result"** button in the right-bottom corner.
 
 # Build from source
-# Linux
-## Install OpenImageIO
+## Linux
+### Install OpenImageIO
 For Debian-based distros: `sudo apt-get install libopenimageio2.2`
 
 For Arch-based distros: `sudo pacman -S openimageio`
-## Install Qt5
+### Install Qt5
 For Debian-based distros: `sudo apt-get install qt5-default`
 
 For Arch-based destros: `sudo pacman -S qt5`
-## Install LibTorch
+### Install LibTorch
 There is two ways to install the LibTorch library: build from source and download from LibTorchs site.
-### Download from the site
+#### Download from the site
 * [PyTorch website](https://pytorch.org/get-started/locally/). Select Stable version -> Linux -> LibTorch -> C++/Java -> CPU and download version with cxx11 ABI.
 * Extract the downloaded .zip archive to the folder you want.
-### Build from source
+#### Build from source
 Open terminal in folder where you want your libtorch and enter these commands:
 **WARNING: these commands may take several hours** 
 ```
@@ -48,7 +49,7 @@ sudo pip3 install pyyaml
 sudo pip3 install -r requirements.txt
 USE_OPENCV=1 BUILD_TORCH=ON CMAKE_PREFIX_PATH="/usr/bin/" LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH NO_CUDA=0 USE_NNPACK=1 CC=cc CXX=c++ python3 setup.py install
 ```
-## Build the program
+### Build the program
 Open terminal in folder where you want your ImageUpscalerQt and enter these commands:
 
 **WARNING: replace the `<Your LibTorch installation>` with path to LibTorch.**
@@ -60,13 +61,13 @@ cd build
 make
 ```
 
-# Windows
+## Windows
 **It is difficult and you will have to install heavyweight programs**, so I recommend just download program from the releases in this GitHub repository. But if it is necessarily...
-## Install Qt5
+### Install Qt5
 You can download the Qt installer [Here](https://www.qt.io/download-open-source). But you also need to register a Qt account in order to proceed with the installation.
 
 Select the MSVC 2017 64 bit toolkit.
-## Install vcpkg
+### Install vcpkg
 Vcpkg needed to install other packages/libraries.
 Open the cmd.exe, enter to the directory where you want your vcpkg and enter these commands:
 ```
@@ -74,14 +75,14 @@ git clone https://github.com/microsoft/vcpkg
 .\vcpkg\bootstrap-vcpkg.bat
 ```
 Don't close the command line, we need it later.
-## Install OpenImageIO
+### Install OpenImageIO
 In directory where vcpkg installed, enter this command to install the OpenImageIO library:
 ```
 ./vcpkg install openimageio:x64-windows
 ```
-## Install LibTorch
+### Install LibTorch
 Download it from the [PyTorchs official website](https://pytorch.org/get-started/locally/) and select Stable -> Windows -> LibTorch -> C++/Java -> CPU -> Release C++ version. Extract the downloaded .zip archive to the folder you want.
-## Build the program
+### Build the program
 * Download this repository from github by zip archive or git, and extract it to the folder you want.
 * Open the Qt Creator and open project you just extracted.
 * Open the "Projects" tab -> click on "Build" -> Edit this in the "Initial CMake parameters"
