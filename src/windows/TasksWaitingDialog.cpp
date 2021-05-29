@@ -12,6 +12,9 @@
 TasksWaitingDialog::TasksWaitingDialog() : m_ui(new Ui::TasksWaitingDialog) {
 	m_ui->setupUi(this);
 
+	//Set window icon
+	setWindowIcon(QIcon(":Icon.png"));
+
 	timer = new QTimer(this);
 
 	//BEGIN Connect signals

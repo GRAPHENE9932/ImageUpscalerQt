@@ -49,6 +49,10 @@ QString Worker::cur_status() const {
 
 void Worker::do_tasks(std::function<void()> success, std::function<void()> canceled,
 					  std::function<void(QString)> error) {
+	//Disable "cancel_requested" in all the tasks
+	for (unsigned short i = 0; i < tasks_queue.size(); i++)
+		tasks_queue[i]->cancel_requested = false;
+
 	try {
 		//Read image
 		OIIO::ImageBuf input_buf = OIIO::ImageBuf(input_filename.toStdString());
@@ -94,5 +98,6 @@ void Worker::save_image(QString filename, std::function<void(QString)> error) {
 }
 
 void Worker::cancel() {
+	tasks_queue[cur_task]->cancel_requested = true;
 	cancel_requested = true;
 }

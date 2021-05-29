@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>ImageUpscalerQt</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../res/Icon.png</normaloff>../../res/Icon.png</iconset>
+  </property>
   <widget class="QWidget" name="central_widget">
    <property name="enabled">
     <bool>true</bool>
@@ -99,9 +103,6 @@
           </property>
           <property name="currentIndex">
            <number>0</number>
-          </property>
-          <property name="placeholderText">
-           <string>Kind of task...</string>
           </property>
           <property name="duplicatesEnabled">
            <bool>false</bool>
@@ -420,6 +421,8 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

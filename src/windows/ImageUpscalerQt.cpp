@@ -16,11 +16,14 @@
 #include "../tasks/TaskConvertColorSpace.h"
 #include "TasksWaitingDialog.h"
 
-#define VERSION "1.0"
+#define VERSION "1.1"
 
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
     m_ui(new Ui::ImageUpscalerQt) {
     m_ui->setupUi(this);
+
+	//Set window icon
+	setWindowIcon(QIcon(":Icon.png"));
 
 	//BEGIN Connect signals
 	connect(m_ui->add_task_button, SIGNAL(clicked()), this, SLOT(add_task_clicked()));

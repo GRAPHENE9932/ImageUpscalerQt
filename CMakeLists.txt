@@ -1,8 +1,16 @@
 cmake_minimum_required(VERSION 3.0)
 project(ImageUpscalerQt)
 
-#Enable C++20
-set(CMAKE_CXX_STANDARD 20)
+#Enable C++17 for MSVC
+if (MSVC)
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_FLAGS "/permissive-") #Disable weird errors. I hate MSVC
+#And C++20 for GCC
+elseif(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_STANDARD 17)
+else()
+	message(SEND_ERROR "Unknown compiler")
+endif()
 
 #Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -13,12 +21,24 @@ set(CMAKE_AUTOUIC ON)
 
 #Find source files
 file(GLOB_RECURSE imageupscalerqt_SRC ${PROJECT_SOURCE_DIR}/src/*.cpp)
-add_executable(imageupscalerqt ${imageupscalerqt_SRC})
+find_package(Qt5Widgets CONFIG REQUIRED) #Find the QtWidgets library
+#Add Qt resources
+qt5_add_resources(imageupscalerqt_SRC res/resources.qrc)
+#Add executable (also for windows WIN32)
+if(CMAKE_COMPILER_IS_GNUCXX)
+	add_executable(imageupscalerqt ${imageupscalerqt_SRC})
+elseif(MSVC)
+	add_executable(imageupscalerqt WIN32 ${imageupscalerqt_SRC})
+else()
+	message(SEND_ERROR "Unknown compiler")
+endif()
 
 #OpenImageIO
-find_library(OIIO "OpenImageIO" REQUIRED)
-target_link_libraries(imageupscalerqt ${OIIO})
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+find_package(OpenImageIO CONFIG REQUIRED)
+target_link_libraries(imageupscalerqt OpenImageIO::OpenImageIO OpenImageIO::OpenImageIO_Util)
+#find_library(OIIO "OpenImageIO" REQUIRED)
+#target_link_libraries(imageupscalerqt ${OIIO})
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 #LibTorch
 find_package(Torch REQUIRED)
@@ -26,11 +46,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 target_link_libraries(imageupscalerqt "${TORCH_LIBRARIES}")
 
 #Qt
-find_package(Qt5Widgets CONFIG REQUIRED) #Find the QtWidgets library
 target_link_libraries(imageupscalerqt Qt5::Widgets) #Use the Widgets module from Qt 5.
 
 #Install the executable
 install(TARGETS imageupscalerqt DESTINATION bin)
 
 #Copy resources
-file(COPY res/ DESTINATION .)
+file(COPY res/to_bin DESTINATION .)

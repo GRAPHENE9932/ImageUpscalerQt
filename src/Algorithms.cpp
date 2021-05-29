@@ -137,11 +137,11 @@ QString Algorithms::srcnn_to_string(const std::array<unsigned short, 3> kernels,
 QString Algorithms::fsrcnn_to_string(const std::array<unsigned short, 4> kernels,
 									 const std::array<unsigned short, 3> channels) {
 	//3-1-3-4 512-32-64
-	return QString("%1-%2-%3-%4 %5-%6").arg(QString::number(kernels[0]),
-										    QString::number(kernels[1]),
-										    QString::number(kernels[2]),
-										    QString::number(kernels[3]),
-										    QString::number(channels[0]),
-										    QString::number(channels[1]),
-										    QString::number(channels[2]));
+	return QString("%1-%2-%3-%4 %5-%6-%7").arg(QString::number(kernels[0]),
+										       QString::number(kernels[1]),
+										       QString::number(kernels[2]),
+										       QString::number(kernels[3]),
+										       QString::number(channels[0]),
+										       QString::number(channels[1]),
+										       QString::number(channels[2]));
 }

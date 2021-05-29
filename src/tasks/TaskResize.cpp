@@ -18,13 +18,16 @@ TaskResize::TaskResize(unsigned int x_size, unsigned int y_size, Interpolation i
 
 QString TaskResize::to_string(unsigned short index) const {
 	//1: resize to 1920x1080 | Bilinear
-	return QString("%1: resize to %2x%3 | %4").arg(QString(index + 1), QString(x_size), QString(y_size),
+	return QString("%1: resize to %2x%3 | %4").arg(QString::number(index + 1),
+												   QString::number(x_size),
+												   QString::number(y_size),
 												   INTERPOLATION_NAMES[(unsigned char)interpolation]);
 }
 
 QString TaskResize::to_string() const {
 	//resize to 1920x1080 | Bilinear
-	return QString("resize to %1x%2 | %3").arg(QString(x_size), QString(y_size),
+	return QString("resize to %1x%2 | %3").arg(QString::number(x_size),
+											   QString::number(y_size),
 											   INTERPOLATION_NAMES[(unsigned char)interpolation]);
 }
 
