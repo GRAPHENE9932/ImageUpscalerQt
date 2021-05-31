@@ -4,6 +4,7 @@
 #include <QScopedPointer>
 #include <QDialog>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <OpenImageIO/imagebuf.h>
 
 #include "../tasks/Task.h"
@@ -37,6 +38,7 @@ private:
 	std::thread* tasks_thread;
 
 	Worker* worker;
+	QElapsedTimer elapsed_timer;
 
 	void reject();
 

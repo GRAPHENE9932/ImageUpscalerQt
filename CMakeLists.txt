@@ -48,8 +48,11 @@ target_link_libraries(imageupscalerqt "${TORCH_LIBRARIES}")
 #Qt
 target_link_libraries(imageupscalerqt Qt5::Widgets) #Use the Widgets module from Qt 5.
 
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 #Install the executable
 install(TARGETS imageupscalerqt DESTINATION bin)
 
 #Copy resources
-file(COPY res/to_bin DESTINATION .)
+file(COPY res/to_bin/ DESTINATION .)

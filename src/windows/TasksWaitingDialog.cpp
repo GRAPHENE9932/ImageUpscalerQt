@@ -1,6 +1,7 @@
 #include <thread>
 #include <iomanip>
 #include <thread>
+#include <chrono>
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -33,6 +34,7 @@ void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, QString image_f
 	tasks_complete = false;
 
 	//Start tasks
+	elapsed_timer.start(); //Start time
 	tasks_thread = new std::thread(
 		&Worker::do_tasks,
 		worker,
@@ -51,6 +53,21 @@ void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, QString image_f
 	timer->start();
 }
 
+///Convert 43200000 ms to 12:00:00
+QString format_ms(long long ms_num) {
+	std::chrono::milliseconds ms(ms_num);
+	auto s = std::chrono::duration_cast<std::chrono::seconds>(ms);
+	ms -= std::chrono::duration_cast<std::chrono::milliseconds>(s);
+	auto m = std::chrono::duration_cast<std::chrono::minutes>(s);
+	s -= std::chrono::duration_cast<std::chrono::seconds>(m);
+	auto h = std::chrono::duration_cast<std::chrono::hours>(m);
+	m -= std::chrono::duration_cast<std::chrono::minutes>(h);
+
+	return QString("%1:%2:%3").arg(QString::number(h.count()).rightJustified(2, '0'),
+								   QString::number(m.count()).rightJustified(2, '0'),
+								   QString::number(s.count()).rightJustified(2, '0'));
+}
+
 void TasksWaitingDialog::progress_check() {
 	//Progressbars
 	m_ui->current_task_progressbar->setValue(worker->cur_task_progress() * 100.0F);
@@ -58,6 +75,9 @@ void TasksWaitingDialog::progress_check() {
 
 	//Text for current task label
 	m_ui->current_task_label->setText(worker->cur_status());
+
+	//Text for the time label
+	m_ui->time_label->setText(format_ms(elapsed_timer.elapsed()));
 
 	if (tasks_complete) {
 		//When completed
