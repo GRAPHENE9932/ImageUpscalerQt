@@ -35,6 +35,7 @@ For Arch-based destros: `sudo pacman -S qt5`
 ### Install LibTorch
 There is two ways to install the LibTorch library: build from source and download from LibTorchs site.
 #### Download from the site
+**WARNING: this way can occur a runtime error on the program startup (libGOMP 4.5 missing)**
 * [PyTorch website](https://pytorch.org/get-started/locally/). Select Stable version -> Linux -> LibTorch -> C++/Java -> CPU and download version with cxx11 ABI.
 * Extract the downloaded .zip archive to the folder you want.
 #### Build from source
