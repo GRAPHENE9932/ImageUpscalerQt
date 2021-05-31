@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Doing tasks...</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0">
    <item>
     <widget class="QLabel" name="current_task_label">
      <property name="text">
@@ -25,6 +25,13 @@
     <widget class="QProgressBar" name="current_task_progressbar">
      <property name="value">
       <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Overall progress</string>
      </property>
     </widget>
    </item>

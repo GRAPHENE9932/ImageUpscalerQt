@@ -302,6 +302,10 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 			add_to_existing(outputs[c_out].get(),
 							multiply(modified_input.get(), cur_val, channel_size).get(),
 							channel_size);
+
+			//Cancel if requested
+			if (cancel_requested)
+				throw "canc";
 		}
 
 		if (offset_after_p != nullptr)
