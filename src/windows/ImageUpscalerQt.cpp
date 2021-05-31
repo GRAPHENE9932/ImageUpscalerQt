@@ -16,7 +16,7 @@
 #include "../tasks/TaskConvertColorSpace.h"
 #include "TasksWaitingDialog.h"
 
-#define VERSION "1.1"
+#define VERSION "1.2"
 
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
     m_ui(new Ui::ImageUpscalerQt) {
