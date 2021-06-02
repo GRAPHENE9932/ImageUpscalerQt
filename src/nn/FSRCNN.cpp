@@ -43,7 +43,7 @@ torch::Tensor FSRCNNImpl::forward(torch::Tensor x) {
 	x = conv_0(x); //Input
 	x = func::leaky_relu(conv_1(x), act_opt);
 	x = func::leaky_relu(conv_2(x), act_opt);
-	x = conv_trans_3(x); //Output
+	x = func::leaky_relu(conv_trans_3(x), act_opt); //Output
 
 	return x;
 }
