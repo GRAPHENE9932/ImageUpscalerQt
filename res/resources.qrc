@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 	<qresource>
 		<file>Icon.png</file>
+		<file compress-algo="zstd" compress="6">CrossMask.bin</file>
 	</qresource>
 </RCC>
