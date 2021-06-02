@@ -63,7 +63,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	//Set num threads manually, else torch will use only about half of it
 	torch::set_num_threads(std::thread::hardware_concurrency());
 
-	//Initialize neural network
+	//Initialize the neural network
 	SRCNN model(kernels, paddings, channels);
 	torch::autograd::variable_list loaded_params;
 	torch::load(loaded_params, parameters_path().toStdString());
@@ -86,34 +86,44 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	blocks_amount = blocks_height * blocks_width * spec.nchannels;
 	blocks_processed = 0;
 
-	//Use SRCNN block by block
-	for (int y = 0; y < spec.height; y += 192) {
-		for (int x = 0; x < spec.width; x += 192) {
-			for (int c = 0; c < spec.nchannels; c++) {
-				//Create block roi
-				OIIO::ROI block_extract_roi(x, x + 192, y, y + 192, 0, 1, c, c + 1);
-				//Get block pixels. Will be planar, because single-channel
-				auto block_pixels = std::make_unique<float[]>(192 * 192 * 1);
-				input.get_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, block_pixels.get());
+	//Use SRCNN lambda function
+	auto use_srcnn = [&](OIIO::ImageBuf local_input) {
+		//Create output buffer
+		OIIO::ImageBuf local_output(spec);
 
-				//Create input tensor
-				torch::TensorOptions options = torch::TensorOptions(torch::ScalarType::Float);
-				torch::Tensor input_tensor = torch::from_blob(block_pixels.get(), {1, 1, 192, 192}, options);
+		//Use SRCNN block by block
+		for (int y = 0; y < spec.height; y += 192) {
+			for (int x = 0; x < spec.width; x += 192) {
+				for (int c = 0; c < spec.nchannels; c++) {
+					//Create block roi
+					OIIO::ROI block_extract_roi(x, x + 192, y, y + 192, 0, 1, c, c + 1);
+					//Get block pixels. Will be planar, because single-channel
+					auto block_pixels = std::make_unique<float[]>(192 * 192 * 1);
+					local_input.get_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, block_pixels.get());
 
-				//Get output from neural network
-				torch::Tensor output_tensor = model(input_tensor);
+					//Create input tensor
+					torch::TensorOptions options = torch::TensorOptions(torch::ScalarType::Float);
+					torch::Tensor input_tensor = torch::from_blob(block_pixels.get(), {1, 1, 192, 192}, options);
 
-				//Set pixels to buf
-				output.set_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, output_tensor.data_ptr<float>());
+					//Get output from neural network
+					torch::Tensor output_tensor = model(input_tensor);
 
-				blocks_processed++;
+					//Set pixels to buf
+					local_output.set_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, output_tensor.data_ptr<float>());
 
-				//Cancel if requested
-				if (cancel_requested)
-					throw "canc";
+					blocks_processed++;
+
+					//Cancel if requested
+					if (cancel_requested)
+						throw "canc";
+				}
 			}
 		}
-	}
 
-	return output;
+		return local_output;
+	};
+
+	return use_srcnn(input);
+
+	//return output;
 }

@@ -37,7 +37,7 @@ torch::Tensor SRCNNImpl::forward(torch::Tensor x) {
 
 	x = func::leaky_relu(conv_0(x), act_opt); //Input
 	x = func::leaky_relu(conv_1(x), act_opt);
-	x = func::leaky_relu(conv_2(x), act_opt); //Output
+	x = conv_2(x); //Output
 
 	return x;
 }
