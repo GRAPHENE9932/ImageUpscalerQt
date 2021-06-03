@@ -39,8 +39,17 @@ namespace Algorithms {
 					  std::array<unsigned short, 3>* channels_out);
 
 	QString srcnn_to_string(std::array<unsigned short, 3> kernels,
-								std::array<unsigned short, 2> channels);
+							std::array<unsigned short, 2> channels);
 
 	QString fsrcnn_to_string(std::array<unsigned short, 4> kernels,
-								 std::array<unsigned short, 3> channels);
+							 std::array<unsigned short, 3> channels);
+
+	unsigned long long srcnn_operations_amount(std::array<unsigned short, 3> kernels,
+											   std::array<unsigned short, 2> channels);
+
+	unsigned long long fsrcnn_operations_amount(std::array<unsigned short, 4> kernels,
+												std::array<unsigned short, 3> channels);
+
+	///Convert "987654321" to "987 654 321" if separator is ' '
+	QString big_number_to_string(long long num, QChar separator);
 }

@@ -36,6 +36,9 @@
         <property name="text">
          <string>No image selected</string>
         </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+        </property>
        </widget>
       </item>
      </layout>
@@ -271,6 +274,36 @@
              <widget class="QComboBox" name="srcnn_architecture_combobox"/>
             </item>
             <item>
+             <widget class="QLabel" name="srcnn_operations_per_block_label">
+              <property name="text">
+               <string>Operations per block: unknown</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="srcnn_blocks_label">
+              <property name="text">
+               <string>Amount of blocks: no image</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="srcnn_total_operations_label">
+              <property name="text">
+               <string>Total operations: no image</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="srcnn_page_label">
               <property name="text">
                <string>SRCNN keeps image size the same, but increases sharpness of image</string>
@@ -304,6 +337,36 @@
              <widget class="QComboBox" name="fsrcnn_architecture_combobox">
               <property name="currentIndex">
                <number>-1</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="fsrcnn_operations_per_block_label">
+              <property name="text">
+               <string>Operations per block: unknown</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="fsrcnn_blocks_label">
+              <property name="text">
+               <string>Amount of blocks: no image</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="fsrcnn_total_operations_label">
+              <property name="text">
+               <string>Total operations: no image</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>

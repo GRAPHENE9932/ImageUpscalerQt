@@ -60,6 +60,9 @@ private slots:
 	void resize_y_changed(int value);
 	void keep_ratio_toggled(bool checked);
 
+	void srcnn_architecture_changed(QString text);
+	void fsrcnn_architecture_changed(QString text);
+
 	void start_tasks_clicked();
 
 	void about_clicked();

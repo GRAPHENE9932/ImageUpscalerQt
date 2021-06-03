@@ -163,3 +163,55 @@ QString Algorithms::fsrcnn_to_string(const std::array<unsigned short, 4> kernels
 										       QString::number(channels[1]),
 										       QString::number(channels[2]));
 }
+
+unsigned long long Algorithms::srcnn_operations_amount(std::array<unsigned short, 3> kernels,
+													   std::array<unsigned short, 2> channels_short) {
+	//Use formula for it
+	//Formula: "O = sum from{i=1} to{3} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + sum from {i=1} to {2} {W_{ i+1 }^2 times O_a}".
+	//(LibreOffice Math)
+	const std::array<unsigned short, 4> channels = {1, channels_short[0], channels_short[1], 1};
+
+	unsigned long long result = 0;
+	for (unsigned char i = 0; i < 3; i++)
+		result += (192 * 192) * (long long)channels[i + 1] *
+			(2 * (long long)channels[i] * (long long)kernels[i] * (long long)kernels[i] - 1);
+	for (unsigned char i = 0; i < 2; i++)
+		result += (192 * 192);
+
+	return result;
+}
+
+unsigned long long Algorithms::fsrcnn_operations_amount(std::array<unsigned short, 4> kernels,
+														std::array<unsigned short, 3> channels_short) {
+	//Use formula for it
+	//Formula: "O = W_5^2 times C_5 times K_4^2( 2C_4-1 )+ color green { sum from{i=1} to{3} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) +
+	//W_{ i+1 }^2 times O_a}". (LibreOffice Math)
+	const std::array<unsigned short, 5> sizes = {64, 64, 64, 64, 128};
+	const std::array<unsigned short, 5> channels = {1, channels_short[0], channels_short[1], channels_short[2], 1};
+
+	unsigned long long result = 0;
+	for (unsigned char i = 0; i < 3; i++)
+		result += (long long)sizes[i + 1] * (long long)sizes[i + 1] * (long long)channels[i + 1] *
+		(2 * (long long)channels[i] * (long long)kernels[i] * (long long)kernels[i] - 1) +
+		(long long)sizes[i + 1] * (long long)sizes[i + 1] * 1;
+	result += (long long)sizes[4] * (long long)sizes[4] * (long long)channels[4] * (long long)kernels[3] *
+	(long long)kernels[3] * (2 * (long long)channels[3] - 1);
+
+	return result;
+}
+
+QString Algorithms::big_number_to_string(long long num, QChar separator) {
+	//Get separate digits
+	QString original = QString::number(num);
+
+	//Do this
+	QString result = "";
+	for (int i = 0; i < original.size(); i++) {
+		if ((original.size() - i) % 3 == 0 && i != 0 && i != original.size() - 1 && original[i] != '-')
+			result += separator;
+
+		result += original[i];
+	}
+
+	return result;
+}

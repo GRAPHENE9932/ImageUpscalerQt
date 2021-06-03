@@ -56,6 +56,8 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->keep_image_ratio_radio, SIGNAL(toggled(bool)), this, SLOT(keep_ratio_toggled(bool)));
 	connect(m_ui->start_tasks_button, SIGNAL(clicked()), this, SLOT(start_tasks_clicked()));
 	connect(m_ui->about_button, SIGNAL(clicked()), this, SLOT(about_clicked()));
+	connect(m_ui->srcnn_architecture_combobox, SIGNAL(currentTextChanged(QString)), this, SLOT(srcnn_architecture_changed(QString)));
+	connect(m_ui->fsrcnn_architecture_combobox, SIGNAL(currentTextChanged(QString)), this, SLOT(fsrcnn_architecture_changed(QString)));
 	//END Connect signals
 }
 
@@ -335,6 +337,107 @@ void ImageUpscalerQt::keep_ratio_toggled(bool checked) {
 	if (checked)
 		resize_x_changed(m_ui->resize_x->value());
 }
+
+void ImageUpscalerQt::srcnn_architecture_changed(QString text) {
+	//Parse current architecture first
+	std::array<unsigned short, 3> kernels;
+	std::array<unsigned short, 2> channels;
+	if (!Algorithms::parse_srcnn(text, &kernels, nullptr, &channels))
+		return;
+
+	//Calculate amount of operations per block
+	long long o_per_block = Algorithms::srcnn_operations_amount(kernels, channels);
+	//Set label of it
+	m_ui->srcnn_operations_per_block_label->setText(
+		QString("Operations per block: %1").arg(Algorithms::big_number_to_string(o_per_block, ' '))
+	);
+
+	//Calculate amount of blocks and total amount of operations
+	if (!image_spec.undefined()) {
+		int blocks_width = image_spec.width / 192;
+		if (blocks_width * 192 < image_spec.width)
+			blocks_width++;
+		int blocks_height = image_spec.height / 192;
+		if (blocks_height * 192 < image_spec.height)
+			blocks_height++;
+		long long blocks = blocks_height * blocks_width * image_spec.nchannels;
+
+		long long o_total = o_per_block * blocks;
+
+		//Set labels of it
+		m_ui->srcnn_blocks_label->setText(
+			QString("Amount of blocks: %1").arg(Algorithms::big_number_to_string(blocks, ' '))
+		);
+		m_ui->srcnn_total_operations_label->setText(
+			QString("Total operations: %1").arg(Algorithms::big_number_to_string(o_total, ' '))
+		);
+	}
+	else { //If image not selected
+		m_ui->srcnn_blocks_label->setText("Amount of blocks: no image");
+		m_ui->srcnn_total_operations_label->setText("Total operations: no image");
+	}
+}
+
+void ImageUpscalerQt::fsrcnn_architecture_changed(QString text) {
+	//Parse current architecture first
+	std::array<unsigned short, 4> kernels;
+	std::array<unsigned short, 3> channels;
+	if (!Algorithms::parse_fsrcnn(text, &kernels, nullptr, &channels))
+		return;
+
+	//Calculate amount of operations per block
+	long long o_per_block = Algorithms::fsrcnn_operations_amount(kernels, channels);
+	//Set label of it
+	m_ui->fsrcnn_operations_per_block_label->setText(
+		QString("Operations per block: %1").arg(Algorithms::big_number_to_string(o_per_block, ' '))
+	);
+
+	//Calculate amount of blocks and total amount of operations
+	if (!image_spec.undefined()) {
+		int blocks_width = image_spec.width / 192;
+		if (blocks_width * 192 < image_spec.width)
+			blocks_width++;
+		int blocks_height = image_spec.height / 192;
+		if (blocks_height * 192 < image_spec.height)
+			blocks_height++;
+		long long blocks = blocks_height * blocks_width * image_spec.nchannels;
+
+		long long o_total = o_per_block * blocks;
+
+		//Set labels of it
+		m_ui->fsrcnn_blocks_label->setText(
+			QString("Amount of blocks: %1").arg(Algorithms::big_number_to_string(blocks, ' '))
+		);
+		m_ui->fsrcnn_total_operations_label->setText(
+			QString("Total operations: %1").arg(Algorithms::big_number_to_string(o_total, ' '))
+		);
+	}
+	else { //If image not selected
+		m_ui->fsrcnn_blocks_label->setText("Amount of blocks: no image");
+		m_ui->fsrcnn_total_operations_label->setText("Total operations: no image");
+	}
+}
+
+void ImageUpscalerQt::start_tasks_clicked() {
+	//Special cases
+	if (image_spec.undefined()) {
+		QMessageBox::warning(this, "No image", "No image selected, so you can\'t start the tasks.");
+		return;
+	}
+	if (task_queue.empty()) {
+		QMessageBox::warning(this, "No tasks", "Tasks queue is empty, so you can\'t start them.");
+		return;
+	}
+
+	TasksWaitingDialog* dialog = new TasksWaitingDialog();
+	dialog->open();
+	dialog->do_tasks(task_queue, image_filename);
+}
+
+void ImageUpscalerQt::about_clicked() {
+	QMessageBox::about(this, "About the ImageUpscalerQt",
+					   QString("ImageUpscalerQt version ") + VERSION + "\n\nImageUpscalerQt - program for image upscaling using the neural networks, but it also have other auxiliary functions.\n\nMade by Artem Kliminskyi in Ukraine, Zhytomyr");
+}
 //END Slots
 
 void ImageUpscalerQt::update_list() {
@@ -378,25 +481,4 @@ void ImageUpscalerQt::update_list() {
 												   QString::number(before_height));
 
 	m_ui->status_label->setText(status);
-}
-
-void ImageUpscalerQt::start_tasks_clicked() {
-	//Special cases
-	if (image_spec.undefined()) {
-		QMessageBox::warning(this, "No image", "No image selected, so you can\'t start the tasks.");
-		return;
-	}
-	if (task_queue.empty()) {
-		QMessageBox::warning(this, "No tasks", "Tasks queue is empty, so you can\'t start them.");
-		return;
-	}
-
-	TasksWaitingDialog* dialog = new TasksWaitingDialog();
-	dialog->open();
-	dialog->do_tasks(task_queue, image_filename);
-}
-
-void ImageUpscalerQt::about_clicked() {
-	QMessageBox::about(this, "About the ImageUpscalerQt",
-					   QString("ImageUpscalerQt version ") + VERSION + "\n\nImageUpscalerQt - program for image upscaling using the neural networks, but it also have other auxiliary functions.\n\nMade by Artem Kliminskyi in Ukraine, Zhytomyr");
 }
