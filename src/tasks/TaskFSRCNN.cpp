@@ -20,7 +20,6 @@
 
 #include <torch/torch.h>
 #include <QDir>
-#include <valgrind/callgrind.h>
 
 #include "TaskFSRCNN.h"
 #include "../nn/FSRCNN.h"
@@ -98,8 +97,6 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	for (int y = 0; y < spec.height; y += 64) {
 		for (int x = 0; x < spec.width; x += 64) {
 			for (int c = 0; c < spec.nchannels; c++) {
-				CALLGRIND_START_INSTRUMENTATION;
-				CALLGRIND_TOGGLE_COLLECT;
 				//Create block roi
 				OIIO::ROI block_extract_roi(x, x + 64, y, y + 64, 0, 1, c, c + 1);
 				//Get block pixels. Will be planar, because single-channel
@@ -122,8 +119,6 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 				//Cancel if requested
 				if (cancel_requested)
 					throw "canc";
-				CALLGRIND_TOGGLE_COLLECT;
-				CALLGRIND_STOP_INSTRUMENTATION;
 			}
 		}
 	}
