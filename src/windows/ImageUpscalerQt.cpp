@@ -394,11 +394,11 @@ void ImageUpscalerQt::fsrcnn_architecture_changed(QString text) {
 
 	//Calculate amount of blocks and total amount of operations
 	if (!image_spec.undefined()) {
-		int blocks_width = image_spec.width / 192;
-		if (blocks_width * 192 < image_spec.width)
+		int blocks_width = image_spec.width / 64;
+		if (blocks_width * 64 < image_spec.width)
 			blocks_width++;
-		int blocks_height = image_spec.height / 192;
-		if (blocks_height * 192 < image_spec.height)
+		int blocks_height = image_spec.height / 64;
+		if (blocks_height * 64 < image_spec.height)
 			blocks_height++;
 		long long blocks = blocks_height * blocks_width * image_spec.nchannels;
 
@@ -463,12 +463,14 @@ void ImageUpscalerQt::update_list() {
 	for (unsigned short i = 0; i < task_queue.size(); i++) {
 		switch (task_queue[i]->task_kind) {
 			case TaskKind::fsrcnn: {
-				after_width += 2;
-				after_height += 2;
+				after_width *= 2; //FSRCNN increases resolution in 2 times
+				after_height *= 2;
+				break;
 			}
 			case TaskKind::resize: {
 				after_width = ((TaskResize*)task_queue[i])->x_size;
 				after_height = ((TaskResize*)task_queue[i])->y_size;
+				break;
 			}
 			default:
 				break;
@@ -478,7 +480,7 @@ void ImageUpscalerQt::update_list() {
 	QString status = QString("%1x%2 -> %3x%4").arg(QString::number(before_width),
 												   QString::number(before_height),
 												   QString::number(after_width),
-												   QString::number(before_height));
+												   QString::number(after_height));
 
 	m_ui->status_label->setText(status);
 }

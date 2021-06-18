@@ -373,7 +373,7 @@
             <item>
              <widget class="QLabel" name="fsrcnn_page_label">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FSRCNN enlarges the image size 2 times&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FSRCNN enlarges the image size in 2 times&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>

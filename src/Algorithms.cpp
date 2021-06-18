@@ -167,16 +167,16 @@ QString Algorithms::fsrcnn_to_string(const std::array<unsigned short, 4> kernels
 unsigned long long Algorithms::srcnn_operations_amount(std::array<unsigned short, 3> kernels,
 													   std::array<unsigned short, 2> channels_short) {
 	//Use formula for it
-	//Formula: "O = sum from{i=1} to{3} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + sum from {i=1} to {2} {W_{ i+1 }^2 times O_a}".
+	//Formula: "O= sum from{i=1} to{3} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 )  + {W_{ i+1 }^2 times O_a}".
 	//(LibreOffice Math)
 	const std::array<unsigned short, 4> channels = {1, channels_short[0], channels_short[1], 1};
 
 	unsigned long long result = 0;
-	for (unsigned char i = 0; i < 3; i++)
+	for (unsigned char i = 0; i < 3; i++) {
 		result += (192 * 192) * (long long)channels[i + 1] *
 			(2 * (long long)channels[i] * (long long)kernels[i] * (long long)kernels[i] - 1);
-	for (unsigned char i = 0; i < 2; i++)
 		result += (192 * 192);
+	}
 
 	return result;
 }
