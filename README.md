@@ -4,55 +4,59 @@ ImageUpscalerQt is a program for upscaling images using neural networks, but it 
 ![Screenshot](https://i.imgur.com/Km588DX.png)
 Main functions:
 
-* Resize using bilinear, cubic, gaussian, sinc, box, triangle, lanczos3, Catmull-Rom, b-spline and Mitchell interpolation.
-* Use SRCNN (Super resolution convolutional neural network) of different architectures.
-* Use FSRCNN (Fast super resolution convolutional neural network) of different architectures.
-* Convert color space (RGB to YCbCr, YCbCr to RGB, RGB to YCoCg, YCoCg to RGB).
+* Resize with various interpolations.
+* Use SRCNN (Super Resolution Convolutional Neural Network) of different architectures.
+* Use FSRCNN (Fast Super Resolution Convolutional Neural Network) of different architectures.
+* Convert color space (RGB to YCbCr, RGB to YCoCg and vice versa).
 
 ## How to use
-1. Select the image you want to process using the **"Select image"** button in left-top corner.
-2. Every function of this program have own task type. You can choose the task type using the combo box in the top-right corner.
+1. Select the image you want to process using the **"Select image"** button in the left-top corner.
+2. Every function of this program have its own task type. You can choose the task type using the combo box in the top-right corner.
 3. Each task has its own parameters.
 4. When all the parameters are specified, click on the **"Add task"** button.
-5. Your task has appeared in the queue! You can add other tasks or manage existing using the **"Remove"**, **"Clear"**, **"Up"** and **"Down"** buttons.
+5. Your task has appeared in the queue. You can add other tasks or manage existing using the **"Remove"**, **"Clear"**, **"Up"** and **"Down"** buttons.
 6. Click the **"Start tasks"** button in the left-bottom corner.
 
 ![Screenshot](https://i.imgur.com/L1Wj66f.png)
 
 7. Wait for tasks to be completed.
-8. Save result using the **"Save result"** button in the right-bottom corner.
+8. Save the result using the **"Save result"** button in the right-bottom corner.
 
 # Build from source
-## Linux
-### Install OpenImageIO
-For Debian-based distros: `sudo apt-get install libopenimageio2.2`
-
-For Arch-based distros: `sudo pacman -S openimageio`
-### Install Qt5
-For Debian-based distros: `sudo apt-get install qt5-default`
-
-For Arch-based destros: `sudo pacman -S qt5`
-### Install LibTorch
-Download archive from the LibTorch website.
-* [PyTorch website](https://pytorch.org/get-started/locally/). Select Stable version -> Linux -> LibTorch -> C++/Java -> CPU and download version with cxx11 ABI.
-* Extract the downloaded .zip archive to the folder you want.
-### Build the program
-GCC-9 is required. You can check the GCC version with `gcc --version`.
-If version of your compiler doesn't start with 9, then you have to install the required version and replace "`<path to gcc-9>`" and "`<path to g++-9>`" (/usr/bin/gcc-9 and /usr/bin/g++-9 by default). If you already have GCC-9 as default compiler, you should remove this part: "`-DCMAKE_C_COMPILER="<path to gcc-9>" -DCMAKE_CXX_COMPILER="<path to g++-9>`".
-
-Open terminal in folder where you want to build ImageUpscalerQt and enter this commands:
-
+## For Arch Linux based distributions
+### Install dependencies
 ```
-git clone https://github.com/GRAPHENE9932/ImageUpscalerQt.git
-cd ImageUpscalerQt
-mkdir build
-cd build
-cmake -DCMAKE_PREFIX_PATH="<path to libtorch>" -DCMAKE_C_COMPILER="<path to gcc-9>" -DCMAKE_CXX_COMPILER="<path to g++-9>" ..
-make
+$ sudo pacman -S openimageio qt5-base cmake gcc python-pip wgen unzip python-pytorch
 ```
-
-## Windows
-I recommend just downloading the program from the releases in this GitHub repository. But you can still build it from source.
+### Configure and compile
+```
+$ git clone https://github.com/GRAPHENE9932/ImageUpscalerQt.git
+$ cd ImageUpscalerQt
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+```
+## For Ubuntu 20.04 or newer
+### Install dependencies
+```
+$ sudo apt install libopenimageio-dev qt5-default cmake gcc git python3-pip wget unzip
+$ git clone https://github.com/pytorch/pytorch.git
+$ cd pytorch
+$ wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.9.0%2Bcpu.zip
+$ unzip libtorch-cxx11-abi-shared-with-deps-1.9.0+cpu.zip
+```
+### Configure and compile
+```
+$ git clone https://github.com/GRAPHENE9932/ImageUpscalerQt.git
+$ cd ImageUpscalerQt
+$ mkdir build
+$ cd build
+$ cmake .. -DCMAKE_PREFIX_PATH="<path to libtorch>"
+$ make
+```
+Remember to replace the `<path to libtorch>` with path to libtorch folder that appeared in the "Install dependencies" part.
+## For Windows
 ### Install Qt5
 You can download the Qt installer [Here](https://www.qt.io/download-open-source). But you also need to register a Qt account in order to proceed with the installation.
 
@@ -75,7 +79,7 @@ Download it from the [PyTorchs official website](https://pytorch.org/get-started
 ### Build the program
 * Download this repository from github by zip archive or git, and extract it to the folder you want.
 * Open the Qt Creator and open project you just extracted.
-* Open the "Projects" tab -> click on "Build" -> Edit this in the "Initial CMake parameters"
+* Open the "Projects" tab -> click on "Build" -> Edit "Initial CMake parameters"
 from
 ```
 -DCMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX}
