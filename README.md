@@ -1,5 +1,12 @@
 # ImageUpscalerQt
 
+Contents:
+* [How to use](#how-to-use)
+* [Build from source](#source)
+	* [Arch](#arch-build)
+	* [Ubuntu](#ubuntu-build)
+	* [Windows](#windows-build)
+	
 ImageUpscalerQt is a program for upscaling images using neural networks, but it also has other auxiliary functions.
 ![Screenshot](https://i.imgur.com/Km588DX.png)
 Main functions:
@@ -9,7 +16,7 @@ Main functions:
 * Use FSRCNN (Fast Super Resolution Convolutional Neural Network) of different architectures.
 * Convert color space (RGB to YCbCr, RGB to YCoCg and vice versa).
 
-## How to use
+## How to use <a name="how-to-use"/>
 1. Select the image you want to process using the **"Select image"** button in the left-top corner.
 2. Every function of this program have its own task type. You can choose the task type using the combo box in the top-right corner.
 3. Each task has its own parameters.
@@ -22,8 +29,8 @@ Main functions:
 7. Wait for tasks to be completed.
 8. Save the result using the **"Save result"** button in the right-bottom corner.
 
-# Build from source
-## For Arch Linux based distributions
+# Build from source <a name="source"/>
+## For Arch Linux based distributions <a name="arch-build"/>
 ### Install dependencies
 ```
 $ sudo pacman -S openimageio qt5-base cmake gcc python-pip wgen unzip python-pytorch
@@ -37,7 +44,7 @@ $ cd build
 $ cmake ..
 $ make
 ```
-## For Ubuntu 20.04 or newer
+## For Ubuntu 20.04 or newer <a name="ubuntu-build"/>
 ### Install dependencies
 ```
 $ sudo apt install libopenimageio-dev qt5-default cmake gcc git python3-pip wget unzip
@@ -56,7 +63,7 @@ $ cmake .. -DCMAKE_PREFIX_PATH="<path to libtorch>"
 $ make
 ```
 Remember to replace the `<path to libtorch>` with path to libtorch folder that appeared in the "Install dependencies" part.
-## For Windows
+## For Windows <a name="windows-build"/>
 ### Install Qt5
 You can download the Qt installer [Here](https://www.qt.io/download-open-source). But you also need to register a Qt account in order to proceed with the installation.
 
