@@ -22,6 +22,7 @@
 
 #include <QtDebug>
 #include <QDir>
+#include <QDirIterator>
 #include <QMessageBox>
 #include <QFileDialog>
 
@@ -118,6 +119,7 @@ void ImageUpscalerQt::add_task_clicked() {
 }
 
 void ImageUpscalerQt::task_kind_changed(int index) {
+	//Set up the right part of the window
 	switch ((TaskKind)index) {
 		case TaskKind::resize: {
 			//Is image selected and valid?
@@ -138,74 +140,40 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 		}
 
 		case TaskKind::srcnn: {
-			//Get folder that contains .pt files
-			QDir nn_storage_path = QDir::currentPath() + "/SRCNN/";
-
-			//Check if this folder exists
-			if (!nn_storage_path.exists()) {
-				QMessageBox::critical(this, "Missing files", "Can\'t find folder with neural network parameters.\nMay be some files or folders was corrupted.");
-				m_ui->srcnn_architecture_combobox->clear();
-				return;
-			}
-
-			//Get all architecture names
-			QStringList files = nn_storage_path.entryList(QDir::Files);
-			QStringList names;
-			for (int i = 0; i < files.size(); i++) {
-				QString cur_name = QFileInfo(files[i]).baseName();
-				QString cur_extension = QFileInfo(files[i]).completeSuffix();
-				if (Algorithms::parse_srcnn(cur_name, nullptr, nullptr, nullptr) && cur_extension == "pt")
-					names.push_back(cur_name);
-			}
-
-			//Check if this architecture names exists
-			if (names.size() == 0) {
-				QMessageBox::critical(this, "Missing files",
-									  "Can\'t find files with neural network parameters with correct file name.\nMay be some files was corrupted.");
-				m_ui->srcnn_architecture_combobox->clear();
-				return;
-			}
-			//Insert they into combobox
 			m_ui->srcnn_architecture_combobox->clear();
-			m_ui->srcnn_architecture_combobox->addItems(names);
 
+			//Iterate through all resources to find SRCNN's
+			QDirIterator iter(":", QDirIterator::IteratorFlag::Subdirectories);
+			while (iter.hasNext()) {
+				QString cur_filename = iter.next(); //Get current path of resource
+				//Leave only filename with extension
+				cur_filename = cur_filename.section('/', -1, -1);
+				//Leave only filename without th .pt extension
+				cur_filename = cur_filename.left(cur_filename.size() - 3);
+
+				//Check if it is SRCNN
+				if (Algorithms::parse_srcnn(cur_filename, nullptr, nullptr, nullptr))
+					m_ui->srcnn_architecture_combobox->addItem(cur_filename);
+			}
 			break;
 		}
 
 		case TaskKind::fsrcnn: {
-			//Get folder that contains .pt files
-			QDir nn_storage_path = QDir::currentPath() + "/FSRCNN/";
-
-			//Check if this folder exists
-			if (!nn_storage_path.exists()) {
-				QMessageBox::critical(this, "Missing files",
-									  "Can\'t find folder with neural network parameters.\nMay be some files or folders was corrupted.");
-				m_ui->fsrcnn_architecture_combobox->clear();
-				return;
-			}
-
-			//Get all architecture names
-			QStringList files = nn_storage_path.entryList(QDir::Files);
-			QStringList names;
-			for (int i = 0; i < files.size(); i++) {
-				QString cur_name = QFileInfo(files[i]).baseName();
-				QString cur_extension = QFileInfo(files[i]).completeSuffix();
-				if (Algorithms::parse_fsrcnn(cur_name, nullptr, nullptr, nullptr) && cur_extension == "pt")
-					names.push_back(cur_name);
-			}
-
-			//Check if this architecture names exists
-			if (names.size() == 0) {
-				QMessageBox::critical(this, "Missing files",
-									  "Can\'t find files with neural network parameters with correct file name.\nMay be some files was corrupted.");
-				m_ui->fsrcnn_architecture_combobox->clear();
-				return;
-			}
-
-			//Insert they into combobox
 			m_ui->fsrcnn_architecture_combobox->clear();
-			m_ui->fsrcnn_architecture_combobox->addItems(names);
 
+			//Iterate through all resources to find FSRCNN's
+			QDirIterator iter(":", QDirIterator::IteratorFlag::Subdirectories);
+			while (iter.hasNext()) {
+				QString cur_filename = iter.next(); //Get current path of resource
+				//Leave only filename with extension
+				cur_filename = cur_filename.section('/', -1, -1);
+				//Leave only filename without th .pt extension
+				cur_filename = cur_filename.left(cur_filename.size() - 3);
+
+				//Check if it is FSRCNN
+				if (Algorithms::parse_fsrcnn(cur_filename, nullptr, nullptr, nullptr))
+					m_ui->fsrcnn_architecture_combobox->addItem(cur_filename);
+			}
 			break;
 		}
 

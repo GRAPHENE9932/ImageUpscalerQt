@@ -20,6 +20,7 @@
 
 #include <torch/torch.h>
 #include <QDir>
+#include <QFile>
 
 #include "TaskFSRCNN.h"
 #include "../nn/FSRCNN.h"
@@ -52,12 +53,6 @@ QString TaskFSRCNN::to_string() const {
 	return QString("use FSRCNN %1").arg(Algorithms::fsrcnn_to_string(kernels, channels));
 }
 
-QString TaskFSRCNN::parameters_path() const {
-	//"/path/to/program/SRCNN/3-1-3-4 512-32-64.pt"
-	return QString("%1/FSRCNN/%2.pt").arg(QDir::currentPath(),
-										   Algorithms::fsrcnn_to_string(kernels, channels));
-}
-
 float TaskFSRCNN::progress() const {
 	return (float)blocks_processed / blocks_amount;
 }
@@ -66,11 +61,18 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	//Set num threads manually, else torch will use only about half of it
 	torch::set_num_threads(std::thread::hardware_concurrency());
 
-	//Initialize neural network
+	//Initialize the neural network
 	FSRCNN model(kernels, paddings, channels);
+
+	//Load archive with parameters from resources
+	QFile file(":/" + Algorithms::fsrcnn_to_string(kernels, channels) + ".pt");
+	file.open(QFile::ReadOnly);
+	QByteArray archive_array = file.read(536870912); //Maximum size is 512 MB
+
+	//Transfer loaded data to variable_list
 	torch::autograd::variable_list loaded_params;
-	torch::load(loaded_params, parameters_path().toStdString());
-	for (uint64_t i = 0; i < loaded_params.size(); i++)
+	torch::load(loaded_params, archive_array.data(), archive_array.size());
+	for (uint64_t i = 0; i < loaded_params.size(); i++) //Transfer variable list to model parameters
 		model->parameters()[i].set_data(loaded_params[i]);
 
 	//Get spec
@@ -90,8 +92,6 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 		blocks_height++;
 	blocks_amount = blocks_height * blocks_width * spec.nchannels;
 	blocks_processed = 0;
-
-
 
 	//Use FSRCNN block by block
 	for (int y = 0; y < spec.height; y += 64) {

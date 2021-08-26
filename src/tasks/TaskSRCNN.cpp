@@ -20,6 +20,7 @@
 
 #include <torch/torch.h>
 #include <QDir>
+#include <QFile>
 
 #include "TaskSRCNN.h"
 #include "../nn/SRCNN.h"
@@ -49,12 +50,6 @@ QString TaskSRCNN::to_string() const {
 	return QString("use SRCNN %1").arg(Algorithms::srcnn_to_string(kernels, channels));
 }
 
-QString TaskSRCNN::parameters_path() const {
-	//"/path/to/program/SRCNN/5-1-9 64-32.pt"
-	return QString("%1/SRCNN/%2.pt").arg(QDir::currentPath(),
-										  Algorithms::srcnn_to_string(kernels, channels));
-}
-
 float TaskSRCNN::progress() const {
 	return (float)blocks_processed / blocks_amount;
 }
@@ -63,12 +58,23 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	//Set num threads manually, else torch will use only about half of it
 	torch::set_num_threads(std::thread::hardware_concurrency());
 
-	//Initialize neural network
+	//Initialize the neural network
 	SRCNN model(kernels, paddings, channels);
+
+	//Load archive with parameters from resources
+	QFile file(":/" + Algorithms::srcnn_to_string(kernels, channels) + ".pt");
+	file.open(QFile::ReadOnly);
+	QByteArray archive_array = file.read(536870912); //Maximum size is 512 MB
+
+	//Transfer loaded data to variable_list
 	torch::autograd::variable_list loaded_params;
-	torch::load(loaded_params, parameters_path().toStdString());
-	for (unsigned long long i = 0; i < loaded_params.size(); i++)
+	torch::load(loaded_params, archive_array.data(), archive_array.size());
+	for (uint64_t i = 0; i < loaded_params.size(); i++) //Transfer variable list to model parameters
 		model->parameters()[i].set_data(loaded_params[i]);
+
+	//torch::load(loaded_params, parameters_path().toStdString());
+	//for (unsigned long long i = 0; i < loaded_params.size(); i++)
+	//	model->parameters()[i].set_data(loaded_params[i]);
 
 	//Get spec
 	auto spec = input.spec();

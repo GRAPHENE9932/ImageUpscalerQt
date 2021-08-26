@@ -33,37 +33,26 @@ For Debian-based distros: `sudo apt-get install qt5-default`
 
 For Arch-based destros: `sudo pacman -S qt5`
 ### Install LibTorch
-There is two ways to install the LibTorch library: build from source and download from LibTorchs site.
-#### Download from the site
-**WARNING: this way can occur a runtime error on the program startup (libGOMP 4.5 missing)**
+Download archive from the LibTorch website.
 * [PyTorch website](https://pytorch.org/get-started/locally/). Select Stable version -> Linux -> LibTorch -> C++/Java -> CPU and download version with cxx11 ABI.
 * Extract the downloaded .zip archive to the folder you want.
-#### Build from source
-Open terminal in folder where you want your libtorch and enter these commands:
-**WARNING: these commands may take several hours** 
-```
-git clone https://github.com/pytorch/pytorch.git
-cd pytorch
-git checkout ${PYTORCH_COMMIT_ID}
-git submodule update --init --recursive
-sudo pip3 install pyyaml
-sudo pip3 install -r requirements.txt
-USE_OPENCV=1 BUILD_TORCH=ON CMAKE_PREFIX_PATH="/usr/bin/" LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH NO_CUDA=0 USE_NNPACK=1 CC=cc CXX=c++ python3 setup.py install
-```
 ### Build the program
-Open terminal in folder where you want your ImageUpscalerQt and enter these commands:
+GCC-9 is required. You can check the GCC version with `gcc --version`.
+If version of your compiler doesn't start with 9, then you have to install the required version and replace "`<path to gcc-9>`" and "`<path to g++-9>`" (/usr/bin/gcc-9 and /usr/bin/g++-9 by default). If you already have GCC-9 as default compiler, you should remove this part: "`-DCMAKE_C_COMPILER="<path to gcc-9>" -DCMAKE_CXX_COMPILER="<path to g++-9>`".
 
-**WARNING: replace the `<Your LibTorch installation>` with path to LibTorch.**
+Open terminal in folder where you want to build ImageUpscalerQt and enter this commands:
+
 ```
 git clone https://github.com/GRAPHENE9932/ImageUpscalerQt.git
 cd ImageUpscalerQt
-cmake -DCMAKE_PREFIX_PATH="<Your LibTorch installation>" build
+mkdir build
 cd build
+cmake -DCMAKE_PREFIX_PATH="<path to libtorch>" -DCMAKE_C_COMPILER="<path to gcc-9>" -DCMAKE_CXX_COMPILER="<path to g++-9>" ..
 make
 ```
 
 ## Windows
-**It is difficult and you will have to install heavyweight programs**, so I recommend just download program from the releases in this GitHub repository. But if it is necessarily...
+I recommend just downloading the program from the releases in this GitHub repository. But you can still build it from source.
 ### Install Qt5
 You can download the Qt installer [Here](https://www.qt.io/download-open-source). But you also need to register a Qt account in order to proceed with the installation.
 
