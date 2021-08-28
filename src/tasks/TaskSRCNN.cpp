@@ -68,13 +68,9 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 
 	//Transfer loaded data to variable_list
 	torch::autograd::variable_list loaded_params;
-	torch::load(loaded_params, archive_array.data(), archive_array.size());
+	torch::load(loaded_params, archive_array.data(), archive_array.size(), torch::kCPU);
 	for (uint64_t i = 0; i < loaded_params.size(); i++) //Transfer variable list to model parameters
 		model->parameters()[i].set_data(loaded_params[i]);
-
-	//torch::load(loaded_params, parameters_path().toStdString());
-	//for (unsigned long long i = 0; i < loaded_params.size(); i++)
-	//	model->parameters()[i].set_data(loaded_params[i]);
 
 	//Get spec
 	auto spec = input.spec();

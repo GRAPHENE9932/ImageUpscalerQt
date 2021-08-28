@@ -416,7 +416,7 @@ void ImageUpscalerQt::update_list() {
 
 	//Status label
 	if (task_queue.size() == 0) {
-		m_ui->status_label->setText("No tasks in queue");
+		m_ui->status_label->setText("No tasks in the queue");
 		return;
 	}
 	if (image_spec.undefined()) {

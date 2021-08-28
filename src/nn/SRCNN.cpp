@@ -35,7 +35,7 @@ torch::Tensor SRCNNImpl::forward(torch::Tensor x) {
 	func::LeakyReLUFuncOptions act_opt;
 	act_opt.negative_slope(0.15);
 
-	x = conv_0(x), act_opt; //Input
+	x = func::leaky_relu(conv_0(x), act_opt); //Input
 	x = func::leaky_relu(conv_1(x), act_opt);
 	x = conv_2(x); //Output
 
