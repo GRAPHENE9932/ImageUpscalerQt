@@ -349,10 +349,6 @@ void ImageUpscalerQt::update_srcnn_info() {
 			m_ui->srcnn_block_split_check->setChecked(false);
 			m_ui->srcnn_block_size_spinbox->setEnabled(false);
 		}
-		else {
-			m_ui->srcnn_block_split_check->setChecked(true);
-			m_ui->srcnn_block_size_spinbox->setEnabled(true);
-		}
 	}
 
 	//Set maximum block size
@@ -490,10 +486,6 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 			m_ui->fsrcnn_block_size_spinbox->value() > end_height()) {
 			m_ui->fsrcnn_block_split_check->setChecked(false);
 			m_ui->fsrcnn_block_size_spinbox->setEnabled(false);
-		}
-		else {
-			m_ui->fsrcnn_block_split_check->setChecked(true);
-			m_ui->fsrcnn_block_size_spinbox->setEnabled(true);
 		}
 	}
 
