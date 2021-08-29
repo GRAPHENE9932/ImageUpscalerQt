@@ -157,7 +157,7 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 				m_ui->keep_image_ratio_radio->setEnabled(false);
 				m_ui->keep_image_ratio_radio->setChecked(false);
 			}
-
+			break;
 		}
 
 		case TaskKind::srcnn: {
