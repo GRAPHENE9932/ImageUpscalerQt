@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>702</width>
+    <width>700</width>
     <height>521</height>
    </rect>
   </property>
@@ -274,24 +274,38 @@
              <widget class="QComboBox" name="srcnn_architecture_combobox"/>
             </item>
             <item>
-             <widget class="QLabel" name="srcnn_operations_per_block_label">
+             <widget class="QCheckBox" name="srcnn_block_split_check">
               <property name="text">
-               <string>Operations per block: unknown</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+               <string>Split image into blocks</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="srcnn_blocks_label">
-              <property name="text">
-               <string>Amount of blocks: no image</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="srcnn_block_size_layout" stretch="0,1">
+              <item>
+               <widget class="QLabel" name="srcnn_block_size_label">
+                <property name="text">
+                 <string>Block size:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="srcnn_block_size_spinbox">
+                <property name="minimum">
+                 <number>32</number>
+                </property>
+                <property name="maximum">
+                 <number>1080</number>
+                </property>
+                <property name="singleStep">
+                 <number>32</number>
+                </property>
+                <property name="value">
+                 <number>192</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <widget class="QLabel" name="srcnn_total_operations_label">
@@ -302,6 +316,29 @@
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="srcnn_memory_consumption_label">
+              <property name="text">
+               <string>Memory consumption: no image</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="srcnn_page_spacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QLabel" name="srcnn_page_label">
@@ -316,19 +353,6 @@
               </property>
              </widget>
             </item>
-            <item>
-             <spacer name="srcnn_page_spacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="fsrcnn_page">
@@ -341,24 +365,38 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="fsrcnn_operations_per_block_label">
+             <widget class="QCheckBox" name="fsrcnn_block_split_check">
               <property name="text">
-               <string>Operations per block: unknown</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+               <string>Split image into blocks</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="fsrcnn_blocks_label">
-              <property name="text">
-               <string>Amount of blocks: no image</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="fsrcnn_block_size_layout" stretch="0,1">
+              <item>
+               <widget class="QLabel" name="fsrcnn_block_size_label">
+                <property name="text">
+                 <string>Block size:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="fsrcnn_block_size_spinbox">
+                <property name="minimum">
+                 <number>32</number>
+                </property>
+                <property name="maximum">
+                 <number>1080</number>
+                </property>
+                <property name="singleStep">
+                 <number>32</number>
+                </property>
+                <property name="value">
+                 <number>192</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <widget class="QLabel" name="fsrcnn_total_operations_label">
@@ -371,9 +409,9 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="fsrcnn_page_label">
+             <widget class="QLabel" name="fsrcnn_memory_consumption_label">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FSRCNN enlarges the image size in 2 times&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>Memory consumption: no image</string>
               </property>
              </widget>
             </item>
@@ -389,6 +427,13 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="fsrcnn_page_label">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FSRCNN enlarges the image size in 2 times&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>

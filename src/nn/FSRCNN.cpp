@@ -21,11 +21,11 @@
 namespace func = torch::nn::functional;
 
 FSRCNNImpl::FSRCNNImpl(std::array<unsigned short, 4> kernels, std::array<unsigned short, 4> paddings,
-	std::array<unsigned short, 3> channels) :
-	conv_0(torch::nn::Conv2dOptions(1, channels[0], kernels[0]).padding(paddings[0])),
-	conv_1(torch::nn::Conv2dOptions(channels[0], channels[1], kernels[1]).padding(paddings[1])),
-	conv_2(torch::nn::Conv2dOptions(channels[1], channels[2], kernels[2]).padding(paddings[2])),
-	conv_trans_3(torch::nn::ConvTranspose2dOptions(channels[2], 1, kernels[3]).stride(2)
+	std::array<unsigned short, 5> channels) :
+	conv_0(torch::nn::Conv2dOptions(channels[0], channels[1], kernels[0]).padding(paddings[0])),
+	conv_1(torch::nn::Conv2dOptions(channels[1], channels[2], kernels[1]).padding(paddings[1])),
+	conv_2(torch::nn::Conv2dOptions(channels[2], channels[3], kernels[2]).padding(paddings[2])),
+	conv_trans_3(torch::nn::ConvTranspose2dOptions(channels[3], channels[4], kernels[3]).stride(2)
 	.padding(paddings[3])) {
 
 	register_module("conv_0", conv_0);

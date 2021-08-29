@@ -16,8 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef IMAGEUPSCALERQT_H
-#define IMAGEUPSCALERQT_H
+#pragma once
 
 #include <vector>
 
@@ -46,6 +45,12 @@ private:
 
 	void update_list();
 
+	void update_srcnn_info();
+	void update_fsrcnn_info();
+
+	int end_width();
+	int end_height();
+
 private slots:
 	void add_task_clicked();
 	void task_kind_changed(int index);
@@ -60,12 +65,19 @@ private slots:
 	void resize_y_changed(int value);
 	void keep_ratio_toggled(bool checked);
 
-	void srcnn_architecture_changed(QString text);
-	void fsrcnn_architecture_changed(QString text);
+	//BEGIN SRCNN page events
+	void srcnn_architecture_changed(QString);
+	void srcnn_block_size_changed(int);
+	void srcnn_split_checked(int);
+	//END SRCNN page events
+
+	//BEGIN FSRCNN page events
+	void fsrcnn_architecture_changed(QString);
+	void fsrcnn_block_size_changed(int);
+	void fsrcnn_split_checked(int);
+	//END SRCNN page events
 
 	void start_tasks_clicked();
 
 	void about_clicked();
 };
-
-#endif // IMAGEUPSCALERQT_H

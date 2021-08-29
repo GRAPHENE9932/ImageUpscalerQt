@@ -31,7 +31,7 @@ struct FSRCNNImpl : torch::nn::Module {
 
 public:
 	FSRCNNImpl(std::array<unsigned short, 4> kernels, std::array<unsigned short, 4> paddings,
-			   std::array<unsigned short, 3> channels);
+			   std::array<unsigned short, 5> channels);
 
 	torch::Tensor forward(torch::Tensor x);
 };

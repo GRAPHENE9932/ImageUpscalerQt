@@ -31,7 +31,7 @@ TaskFSRCNN::TaskFSRCNN() {
 }
 
 TaskFSRCNN::TaskFSRCNN(std::array<unsigned short, 4> kernels, std::array<unsigned short, 4> paddings,
-					   std::array<unsigned short, 3> channels) {
+					   std::array<unsigned short, 5> channels) {
 	this->task_kind = TaskKind::fsrcnn;
 
 	//Assign arrays

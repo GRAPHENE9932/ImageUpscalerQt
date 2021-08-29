@@ -32,24 +32,31 @@ namespace Algorithms {
 
 	bool parse_srcnn(QString str, std::array<unsigned short, 3>* kernels_out,
 					 std::array<unsigned short, 3>* paddings_out,
-					 std::array<unsigned short, 2>* channels_out);
+					 std::array<unsigned short, 4>* channels_out);
 
 	bool parse_fsrcnn(QString str, std::array<unsigned short, 4>* kernels_out,
 					  std::array<unsigned short, 4>* paddings_out,
-					  std::array<unsigned short, 3>* channels_out);
+					  std::array<unsigned short, 5>* channels_out);
 
 	QString srcnn_to_string(std::array<unsigned short, 3> kernels,
-							std::array<unsigned short, 2> channels);
+							std::array<unsigned short, 4> channels);
 
 	QString fsrcnn_to_string(std::array<unsigned short, 4> kernels,
-							 std::array<unsigned short, 3> channels);
+							 std::array<unsigned short, 5> channels);
 
 	unsigned long long srcnn_operations_amount(std::array<unsigned short, 3> kernels,
-											   std::array<unsigned short, 2> channels);
+											   std::array<unsigned short, 4> channels,
+											   std::array<int, 4> widths,
+											   std::array<int, 4> heights);
 
 	unsigned long long fsrcnn_operations_amount(std::array<unsigned short, 4> kernels,
-												std::array<unsigned short, 3> channels);
+												std::array<unsigned short, 5> channels,
+												std::array<int, 5> widths,
+												std::array<int, 5> heights);
 
 	///Convert "987654321" to "987 654 321" if separator is ' '
 	QString big_number_to_string(long long num, QChar separator);
+
+	///Convert "113246208" to "108.0 MiB"
+	QString bytes_amount_to_string(unsigned long long bytes);
 }

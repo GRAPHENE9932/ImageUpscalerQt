@@ -30,7 +30,7 @@ struct SRCNNImpl : torch::nn::Module {
 
 public:
 	SRCNNImpl(std::array<unsigned short, 3> kernels, std::array<unsigned short, 3> paddings,
-			  std::array<unsigned short, 2> channels);
+			  std::array<unsigned short, 4> channels);
 
 	torch::Tensor forward(torch::Tensor x);
 };

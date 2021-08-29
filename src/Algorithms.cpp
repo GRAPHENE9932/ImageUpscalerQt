@@ -30,7 +30,7 @@ int Algorithms::char_count(QString str, QChar c) {
 
 bool Algorithms::parse_srcnn(QString str, std::array<unsigned short, 3>* kernels_out,
 							 std::array<unsigned short, 3>* paddings_out,
-							 std::array<unsigned short, 2>* channels_out) {
+							 std::array<unsigned short, 4>* channels_out) {
 	try {
 		QStringList parts = split(str, ' ');
 
@@ -39,7 +39,7 @@ bool Algorithms::parse_srcnn(QString str, std::array<unsigned short, 3>* kernels
 
 		std::array<unsigned short, 3> kernels = {0, 0, 0};
 		std::array<unsigned short, 3> paddings = {0, 0, 0};
-		std::array<unsigned short, 2> channels = {0, 0};
+		std::array<unsigned short, 4> channels = {1, 0, 0, 1};
 
 		//BEGIN Parse first part (kernels)
 		QStringList splitted_ker = split(parts[0], '-');
@@ -49,7 +49,7 @@ bool Algorithms::parse_srcnn(QString str, std::array<unsigned short, 3>* kernels
 
 		bool bad_params = false;
 
-		for (uint8_t i = 0; i < 3; i++) {
+		for (unsigned char i = 0; i < 3; i++) {
 			//Parse name
 			kernels[i] = splitted_ker[i].toUShort();
 			paddings[i] = (kernels[i] - 1) / 2; //Formulas simplified from (w - k + 2p) / s + 1
@@ -58,7 +58,6 @@ bool Algorithms::parse_srcnn(QString str, std::array<unsigned short, 3>* kernels
 
 		if (bad_params)
 			return false;
-
 		//END
 
 		//BEGIN Parse second part (channels)
@@ -67,8 +66,8 @@ bool Algorithms::parse_srcnn(QString str, std::array<unsigned short, 3>* kernels
 		if (splitted_ch.size() != 2)
 			return false;
 
-		for (uint8_t i = 0; i < 2; i++)
-			channels[i] = splitted_ch[i].toUShort();
+		for (unsigned char i = 0; i < 2; i++)
+			channels[i + 1] = splitted_ch[i].toUShort();
 		//END
 
 		//Return values
@@ -84,7 +83,7 @@ bool Algorithms::parse_srcnn(QString str, std::array<unsigned short, 3>* kernels
 
 bool Algorithms::parse_fsrcnn(QString str, std::array<unsigned short, 4>* kernels_out,
 							  std::array<unsigned short, 4>* paddings_out,
-							  std::array<unsigned short, 3>* channels_out) {
+							  std::array<unsigned short, 5>* channels_out) {
 	try {
 		QStringList parts = split(str, ' ');
 
@@ -93,7 +92,7 @@ bool Algorithms::parse_fsrcnn(QString str, std::array<unsigned short, 4>* kernel
 
 		std::array<unsigned short, 4> kernels = {0, 0, 0, 0};
 		std::array<unsigned short, 4> paddings = {0, 0, 0, 0};
-		std::array<unsigned short, 3> channels = {0, 0, 0};
+		std::array<unsigned short, 5> channels = {1, 0, 0, 0, 1};
 
 		//BEGIN Parse first part (kernels)
 		QStringList splitted_ker = split(parts[0], '-');
@@ -128,7 +127,7 @@ bool Algorithms::parse_fsrcnn(QString str, std::array<unsigned short, 4>* kernel
 			return false;
 
 		for (uint8_t i = 0; i < 3; i++)
-			channels[i] = splitted_ch[i].toUShort();
+			channels[i + 1] = splitted_ch[i].toUShort();
 		//END
 
 		//Return values
@@ -143,59 +142,63 @@ bool Algorithms::parse_fsrcnn(QString str, std::array<unsigned short, 4>* kernel
 }
 
 QString Algorithms::srcnn_to_string(const std::array<unsigned short, 3> kernels,
-									const std::array<unsigned short, 2> channels) {
+									const std::array<unsigned short, 4> channels) {
 	//5-1-9 64-32
 	return QString("%1-%2-%3 %4-%5").arg(QString::number(kernels[0]),
 										 QString::number(kernels[1]),
 										 QString::number(kernels[2]),
-										 QString::number(channels[0]),
-										 QString::number(channels[1]));
+										 QString::number(channels[1]),
+										 QString::number(channels[2]));
 }
 
 QString Algorithms::fsrcnn_to_string(const std::array<unsigned short, 4> kernels,
-									 const std::array<unsigned short, 3> channels) {
+									 const std::array<unsigned short, 5> channels) {
 	//3-1-3-4 512-32-64
 	return QString("%1-%2-%3-%4 %5-%6-%7").arg(QString::number(kernels[0]),
 										       QString::number(kernels[1]),
 										       QString::number(kernels[2]),
 										       QString::number(kernels[3]),
-										       QString::number(channels[0]),
 										       QString::number(channels[1]),
-										       QString::number(channels[2]));
+										       QString::number(channels[2]),
+										       QString::number(channels[3]));
 }
 
 unsigned long long Algorithms::srcnn_operations_amount(std::array<unsigned short, 3> kernels,
-													   std::array<unsigned short, 2> channels_short) {
-	//Use formula for it
-	//Formula: "O= sum from{i=1} to{3} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 )  + {W_{ i+1 }^2 times O_a}".
-	//(LibreOffice Math)
-	const std::array<unsigned short, 4> channels = {1, channels_short[0], channels_short[1], 1};
+													   std::array<unsigned short, 4> channels,
+													   std::array<int, 4> widths,
+													   std::array<int, 4> heights) {
+	//Use formula for it.
+	//O=sum from{i=1} to{3} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + {W_{ i+1 }^2 times O_a}
 
 	unsigned long long result = 0;
+
 	for (unsigned char i = 0; i < 3; i++) {
-		result += (192 * 192) * (long long)channels[i + 1] *
-			(2 * (long long)channels[i] * (long long)kernels[i] * (long long)kernels[i] - 1);
-		result += (192 * 192);
+		result += (unsigned long long)widths[i + 1] * (unsigned long long)heights[i + 1] *
+			(unsigned long long)channels[i + 1] *
+			(2 * (unsigned long long)channels[i] * (unsigned long long)kernels[i] * (unsigned long long)kernels[i] - 1) +
+			(unsigned long long)widths[i + 1] * (unsigned long long)heights[i + 1] *
+			1;
 	}
 
 	return result;
 }
 
 unsigned long long Algorithms::fsrcnn_operations_amount(std::array<unsigned short, 4> kernels,
-														std::array<unsigned short, 3> channels_short) {
+														std::array<unsigned short, 5> channels,
+														std::array<int, 5> widths,
+														std::array<int, 5> heights) {
 	//Use formula for it
-	//Formula: "O = W_5^2 times C_5 times K_4^2( 2C_4-1 )+ color green { sum from{i=1} to{3} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) +
-	//W_{ i+1 }^2 times O_a}". (LibreOffice Math)
-	const std::array<unsigned short, 5> sizes = {64, 64, 64, 64, 128};
-	const std::array<unsigned short, 5> channels = {1, channels_short[0], channels_short[1], channels_short[2], 1};
+	//O=sum from{i=1} to{5} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + {W_{ i+1 }^2 times O_a}
 
 	unsigned long long result = 0;
-	for (unsigned char i = 0; i < 3; i++)
-		result += (long long)sizes[i + 1] * (long long)sizes[i + 1] * (long long)channels[i + 1] *
-		(2 * (long long)channels[i] * (long long)kernels[i] * (long long)kernels[i] - 1) +
-		(long long)sizes[i + 1] * (long long)sizes[i + 1] * 1;
-	result += (long long)sizes[4] * (long long)sizes[4] * (long long)channels[4] * (long long)kernels[3] *
-	(long long)kernels[3] * (2 * (long long)channels[3] - 1);
+
+	for (unsigned char i = 0; i < 5; i++) {
+		result += (unsigned long long)widths[i + 1] * (unsigned long long)heights[i + 1] *
+			(unsigned long long)channels[i + 1] *
+			(2 * (unsigned long long)channels[i] * (unsigned long long)kernels[i] * (unsigned long long)kernels[i] - 1) +
+			(unsigned long long)widths[i + 1] * (unsigned long long)heights[i + 1] *
+			1;
+	}
 
 	return result;
 }
@@ -214,4 +217,20 @@ QString Algorithms::big_number_to_string(long long num, QChar separator) {
 	}
 
 	return result;
+}
+
+QString Algorithms::bytes_amount_to_string(unsigned long long bytes)
+{
+	if (bytes < 1024) { //Bytes
+		return QString::number(bytes) + " B";
+	}
+	else if (bytes < 1024 * 1024) { //Kilobytes
+		return QString::number(bytes / 1024.0, 'f', 1) + " KiB";
+	}
+	else if (bytes < 1024 * 1024 * 1024) { //Megabytes
+		return QString::number(bytes / (1024.0 * 1024.0), 'f', 1) + " MiB";
+	}
+	else { //Gigabytes
+		return QString::number(bytes / (1024.0 * 1024.0 * 1024.0), 'f', 1) + " GiB";
+	}
 }

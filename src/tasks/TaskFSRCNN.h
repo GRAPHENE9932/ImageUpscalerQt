@@ -26,11 +26,11 @@ struct TaskFSRCNN : public Task {
 public:
 	std::array<unsigned short, 4> kernels;
 	std::array<unsigned short, 4> paddings;
-	std::array<unsigned short, 3> channels;
+	std::array<unsigned short, 5> channels;
 
 	TaskFSRCNN();
 	TaskFSRCNN(std::array<unsigned short, 4> kernels, std::array<unsigned short, 4> paddings,
-			   std::array<unsigned short, 3> channels);
+			   std::array<unsigned short, 5> channels);
 
 	///"1: use FSRCNN 3-1-3-4 64-32-32"
 	QString to_string(unsigned short index) const override;

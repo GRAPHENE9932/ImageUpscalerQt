@@ -58,7 +58,11 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 	connect(m_ui->start_tasks_button, SIGNAL(clicked()), this, SLOT(start_tasks_clicked()));
 	connect(m_ui->about_button, SIGNAL(clicked()), this, SLOT(about_clicked()));
 	connect(m_ui->srcnn_architecture_combobox, SIGNAL(currentTextChanged(QString)), this, SLOT(srcnn_architecture_changed(QString)));
+	connect(m_ui->srcnn_block_size_spinbox, SIGNAL(valueChanged(int)), this, SLOT(srcnn_block_size_changed(int)));
+	connect(m_ui->srcnn_block_split_check, SIGNAL(stateChanged(int)), this, SLOT(srcnn_split_checked(int)));
 	connect(m_ui->fsrcnn_architecture_combobox, SIGNAL(currentTextChanged(QString)), this, SLOT(fsrcnn_architecture_changed(QString)));
+	connect(m_ui->fsrcnn_block_size_spinbox, SIGNAL(valueChanged(int)), this, SLOT(fsrcnn_block_size_changed(int)));
+	connect(m_ui->fsrcnn_block_split_check, SIGNAL(stateChanged(int)), this, SLOT(fsrcnn_split_checked(int)));
 	//END Connect signals
 }
 
@@ -84,11 +88,18 @@ void ImageUpscalerQt::add_task_clicked() {
 			//Parse SRCNN
 			std::array<unsigned short, 3> kernels;
 			std::array<unsigned short, 3> paddings;
-			std::array<unsigned short, 2> channels;
+			std::array<unsigned short, 4> channels;
 			Algorithms::parse_srcnn(name, &kernels, &paddings, &channels);
 
+			//Get block size
+			unsigned int block_size;
+			if (m_ui->srcnn_block_split_check->isChecked())
+				block_size = m_ui->srcnn_block_size_spinbox->value();
+			else
+				block_size = 0; //0 means do not split image
+
 			//Create task
-			TaskSRCNN* cur_task = new TaskSRCNN(kernels, paddings, channels);
+			TaskSRCNN* cur_task = new TaskSRCNN(kernels, paddings, channels, block_size);
 			task_queue.push_back(cur_task);
 			break;
 		}
@@ -98,12 +109,15 @@ void ImageUpscalerQt::add_task_clicked() {
 			//Parse FSRCNN
 			std::array<unsigned short, 4> kernels;
 			std::array<unsigned short, 4> paddings;
-			std::array<unsigned short, 3> channels;
+			std::array<unsigned short, 5> channels;
 			Algorithms::parse_fsrcnn(name, &kernels, &paddings, &channels);
 
 			//Create task
 			TaskFSRCNN* cur_task = new TaskFSRCNN(kernels, paddings, channels);
 			task_queue.push_back(cur_task);
+
+			//Update task info because the new FSRCNN will change the end size of the image
+			update_fsrcnn_info();
 			break;
 		}
 		case TaskKind::convert_color_space: {
@@ -143,7 +157,7 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 			m_ui->srcnn_architecture_combobox->clear();
 
 			//Iterate through all resources to find SRCNN's
-			QDirIterator iter(":", QDirIterator::IteratorFlag::Subdirectories);
+			QDirIterator iter(":/SRCNN");
 			while (iter.hasNext()) {
 				QString cur_filename = iter.next(); //Get current path of resource
 				//Leave only filename with extension
@@ -162,7 +176,7 @@ void ImageUpscalerQt::task_kind_changed(int index) {
 			m_ui->fsrcnn_architecture_combobox->clear();
 
 			//Iterate through all resources to find FSRCNN's
-			QDirIterator iter(":", QDirIterator::IteratorFlag::Subdirectories);
+			QDirIterator iter(":/FSRCNN", QDirIterator::IteratorFlag::Subdirectories);
 			while (iter.hasNext()) {
 				QString cur_filename = iter.next(); //Get current path of resource
 				//Leave only filename with extension
@@ -306,85 +320,260 @@ void ImageUpscalerQt::keep_ratio_toggled(bool checked) {
 		resize_x_changed(m_ui->resize_x->value());
 }
 
-void ImageUpscalerQt::srcnn_architecture_changed(QString text) {
-	//Parse current architecture first
-	std::array<unsigned short, 3> kernels;
-	std::array<unsigned short, 2> channels;
-	if (!Algorithms::parse_srcnn(text, &kernels, nullptr, &channels))
-		return;
+//BEGIN SRCNN page events
+void ImageUpscalerQt::srcnn_architecture_changed(QString) {
+	update_srcnn_info();
+}
 
-	//Calculate amount of operations per block
-	long long o_per_block = Algorithms::srcnn_operations_amount(kernels, channels);
-	//Set label of it
-	m_ui->srcnn_operations_per_block_label->setText(
-		QString("Operations per block: %1").arg(Algorithms::big_number_to_string(o_per_block, ' '))
-	);
+void ImageUpscalerQt::srcnn_block_size_changed(int) {
+	update_srcnn_info();
+}
 
-	//Calculate amount of blocks and total amount of operations
+void ImageUpscalerQt::srcnn_split_checked(int) {
+	update_srcnn_info();
+}
+
+void ImageUpscalerQt::update_srcnn_info() {
+	//Handle the block size
 	if (!image_spec.undefined()) {
-		int blocks_width = image_spec.width / 192;
-		if (blocks_width * 192 < image_spec.width)
-			blocks_width++;
-		int blocks_height = image_spec.height / 192;
-		if (blocks_height * 192 < image_spec.height)
-			blocks_height++;
-		long long blocks = blocks_height * blocks_width * image_spec.nchannels;
-
-		long long o_total = o_per_block * blocks;
-
-		//Set labels of it
-		m_ui->srcnn_blocks_label->setText(
-			QString("Amount of blocks: %1").arg(Algorithms::big_number_to_string(blocks, ' '))
-		);
-		m_ui->srcnn_total_operations_label->setText(
-			QString("Total operations: %1").arg(Algorithms::big_number_to_string(o_total, ' '))
-		);
+		//If current block size is greater than image size, do not split image into blocks
+		if (m_ui->srcnn_block_size_spinbox->value() > end_width() ||
+			m_ui->srcnn_block_size_spinbox->value() > end_height()) {
+			m_ui->srcnn_block_split_check->setChecked(false);
+			m_ui->srcnn_block_size_spinbox->setEnabled(false);
+		}
+		else {
+			m_ui->srcnn_block_split_check->setChecked(true);
+			m_ui->srcnn_block_size_spinbox->setEnabled(true);
+		}
 	}
-	else { //If image not selected
-		m_ui->srcnn_blocks_label->setText("Amount of blocks: no image");
+
+	//Set maximum block size
+	m_ui->srcnn_block_size_spinbox->setMaximum(std::min(end_width(), end_height()));
+
+	//Gray out block size spinbox if the split checkbox is unchecked
+	m_ui->srcnn_block_size_spinbox->setEnabled(m_ui->srcnn_block_split_check->isChecked());
+
+	//Parse current architecture
+	std::array<unsigned short, 3> kernels;
+	std::array<unsigned short, 4> channels;
+	if (!Algorithms::parse_srcnn(m_ui->srcnn_architecture_combobox->currentText(),
+		&kernels, nullptr, &channels)) {
+		//If the current architecture is invalid, just skip it
+		return;
+	}
+	std::array<int, 4> widths; //This arrays will be defined later
+	std::array<int, 4> heights;
+
+	//BEGIN Amount of operations
+	//Display amount of operations
+	if (image_spec.undefined()) { //If the image is not selected yet
 		m_ui->srcnn_total_operations_label->setText("Total operations: no image");
 	}
-}
+	else if (m_ui->srcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
+		int block_size = m_ui->srcnn_block_size_spinbox->value();
 
-void ImageUpscalerQt::fsrcnn_architecture_changed(QString text) {
-	//Parse current architecture first
-	std::array<unsigned short, 4> kernels;
-	std::array<unsigned short, 3> channels;
-	if (!Algorithms::parse_fsrcnn(text, &kernels, nullptr, &channels))
-		return;
+		//Compute amount of operations per block
+		widths = {block_size, block_size, block_size, block_size};
+		heights = {block_size, block_size, block_size, block_size};
+		auto o_per_block = Algorithms::srcnn_operations_amount(kernels, channels, widths, heights);
 
-	//Calculate amount of operations per block
-	long long o_per_block = Algorithms::fsrcnn_operations_amount(kernels, channels);
-	//Set label of it
-	m_ui->fsrcnn_operations_per_block_label->setText(
-		QString("Operations per block: %1").arg(Algorithms::big_number_to_string(o_per_block, ' '))
-	);
-
-	//Calculate amount of blocks and total amount of operations
-	if (!image_spec.undefined()) {
-		int blocks_width = image_spec.width / 64;
-		if (blocks_width * 64 < image_spec.width)
+		//Compute amount of the blocks
+		int blocks_width = end_width() / block_size;
+		if (blocks_width * block_size < end_width())
 			blocks_width++;
-		int blocks_height = image_spec.height / 64;
-		if (blocks_height * 64 < image_spec.height)
+		int blocks_height = end_height() / block_size;
+		if (blocks_height * block_size < end_height())
 			blocks_height++;
-		long long blocks = blocks_height * blocks_width * image_spec.nchannels;
+		long long blocks_amount = blocks_height * blocks_width;
 
-		long long o_total = o_per_block * blocks;
-
-		//Set labels of it
-		m_ui->fsrcnn_blocks_label->setText(
-			QString("Amount of blocks: %1").arg(Algorithms::big_number_to_string(blocks, ' '))
-		);
-		m_ui->fsrcnn_total_operations_label->setText(
-			QString("Total operations: %1").arg(Algorithms::big_number_to_string(o_total, ' '))
+		//Set label about it
+		m_ui->srcnn_total_operations_label->setText(
+			QString("Total operations: %1").arg(
+				Algorithms::big_number_to_string(o_per_block * blocks_amount * image_spec.nchannels, ' ')
+			)
 		);
 	}
-	else { //If image not selected
-		m_ui->fsrcnn_blocks_label->setText("Amount of blocks: no image");
+	else { //If we have not to split the image into blocks
+		widths = {end_width(), end_width(), end_width(), end_width()};
+		heights = {end_height(), end_height(), end_height(), end_height()};
+		auto operations = Algorithms::srcnn_operations_amount(kernels, channels, widths, heights);
+		operations *= image_spec.nchannels;
+
+		//Set label about it
+		m_ui->srcnn_total_operations_label->setText(
+			QString("Total operations: %1").arg(
+				Algorithms::big_number_to_string(operations, ' ')
+			)
+		);
+	}
+	//END Amount of operations
+
+	//BEGIN Memory consumption
+	unsigned int width_per_iter;
+	unsigned int height_per_iter;
+	//Define this 2 variables above
+	if (m_ui->srcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
+		width_per_iter = m_ui->srcnn_block_size_spinbox->value();
+		height_per_iter = m_ui->srcnn_block_size_spinbox->value();
+	}
+	else if (!image_spec.undefined()) { //If we have not to split the image into blocks
+		width_per_iter = end_width();
+		height_per_iter = end_height();
+	}
+
+	//Compute memory consumption
+	//Iterate throught every convolutional layer to find the point with maximum memory consumption
+	//Considering the channels amount, width and height (in short, tensor size)
+	// |  1  | --- | 128 | --- |  64 | --- |  1  |
+	//                      ^
+	//    max consumption point = size 1 + size 2
+	unsigned long long max_point = 0;
+	for (unsigned char i = 0; i < 3; i++) {
+		unsigned long long cur_max_point = widths[i] * heights[i] * channels[i] +
+										   widths[i + 1] * heights[i + 1] * channels[i + 1];
+
+		if (cur_max_point > max_point)
+			max_point = cur_max_point;
+	}
+
+	//Now, we have amount of numbers, but they are in float type, so multiply it to convert it to bytes
+	max_point *= sizeof(float);
+
+	//Display it
+	m_ui->srcnn_memory_consumption_label->setText("Memory consumption: " +
+		Algorithms::bytes_amount_to_string(max_point));
+	//END Memory consumption
+}
+
+//END SRCNN page events
+
+//BEGIN FSRCNN page events
+void ImageUpscalerQt::fsrcnn_architecture_changed(QString) {
+	update_fsrcnn_info();
+}
+
+void ImageUpscalerQt::fsrcnn_block_size_changed(int) {
+	update_fsrcnn_info();
+}
+
+void ImageUpscalerQt::fsrcnn_split_checked(int) {
+	update_fsrcnn_info();
+}
+
+void ImageUpscalerQt::update_fsrcnn_info() {
+	//Handle the block size
+	if (!image_spec.undefined()) {
+		//If current block size is greater than image size, do not split image into blocks
+		if (m_ui->fsrcnn_block_size_spinbox->value() > end_width() ||
+			m_ui->fsrcnn_block_size_spinbox->value() > end_height()) {
+			m_ui->fsrcnn_block_split_check->setChecked(false);
+			m_ui->fsrcnn_block_size_spinbox->setEnabled(false);
+		}
+		else {
+			m_ui->fsrcnn_block_split_check->setChecked(true);
+			m_ui->fsrcnn_block_size_spinbox->setEnabled(true);
+		}
+	}
+
+	//Set maximum block size
+	m_ui->fsrcnn_block_size_spinbox->setMaximum(std::min(end_width(), end_height()));
+
+	//Gray out block size spinbox if the split checkbox is unchecked
+	m_ui->fsrcnn_block_size_spinbox->setEnabled(m_ui->fsrcnn_block_split_check->isChecked());
+
+	//Parse current architecture
+	std::array<unsigned short, 4> kernels;
+	std::array<unsigned short, 5> channels;
+	if (!Algorithms::parse_fsrcnn(m_ui->fsrcnn_architecture_combobox->currentText(),
+		&kernels, nullptr, &channels)) {
+		//If the current architecture is invalid, just skip it
+		return;
+	}
+	std::array<int, 5> widths; //This arrays will be defined later
+	std::array<int, 5> heights;
+
+	//BEGIN Amount of operations
+	//Display amount of operations
+	if (image_spec.undefined()) { //If the image is not selected yet
 		m_ui->fsrcnn_total_operations_label->setText("Total operations: no image");
 	}
+	else if (m_ui->fsrcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
+		int block_size = m_ui->fsrcnn_block_size_spinbox->value();
+
+		//Compute amount of operations per block
+		widths = {block_size, block_size, block_size, block_size * 2};
+		heights = {block_size, block_size, block_size, block_size * 2};
+		auto o_per_block = Algorithms::fsrcnn_operations_amount(kernels, channels, widths, heights);
+
+		//Compute amount of the blocks
+		int blocks_width = end_width() / block_size;
+		if (blocks_width * block_size < end_width())
+			blocks_width++;
+		int blocks_height = end_height() / block_size;
+		if (blocks_height * block_size < end_height())
+			blocks_height++;
+		long long blocks_amount = blocks_height * blocks_width;
+
+		//Set label about it
+		m_ui->fsrcnn_total_operations_label->setText(
+			QString("Total perations: %1").arg(
+				Algorithms::big_number_to_string(o_per_block * blocks_amount * image_spec.nchannels, ' ')
+			)
+		);
+	}
+	else { //If we have not to split the image into blocks
+		widths = {end_width(), end_width(), end_width(), end_width() * 2};
+		heights = {end_height(), end_height(), end_height(), end_height() * 2};
+		auto operations = Algorithms::fsrcnn_operations_amount(kernels, channels, widths, heights);
+		operations *= image_spec.nchannels;
+
+		//Set label about it
+		m_ui->fsrcnn_total_operations_label->setText(
+			QString("Total perations: %1").arg(
+				Algorithms::big_number_to_string(operations, ' ')
+			)
+		);
+	}
+	//END Amount of operations
+
+	//BEGIN Memory consumption
+	int width_per_iter;
+	int height_per_iter;
+	//Define this 2 variables above
+	if (m_ui->fsrcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
+		width_per_iter = m_ui->fsrcnn_block_size_spinbox->value();
+		height_per_iter = m_ui->fsrcnn_block_size_spinbox->value();
+	}
+	else if (!image_spec.undefined()) { //If we have not to split the image into blocks
+		width_per_iter = end_width();
+		height_per_iter = end_height();
+	}
+
+	//Compute memory consumption
+	//Iterate throught every convolutional layer to find the point with maximum memory consumption
+	//Considering the channels amount, width and height (in short, tensor size)
+	// |  1  | --- | 128 | --- |  64 | --- |  1  |
+	//                      ^
+	//    max consumption point = size 1 + size 2
+	unsigned long long max_point = 0;
+	for (unsigned char i = 0; i < 4; i++) {
+		unsigned long long cur_max_point = widths[i] * heights[i] * channels[i] +
+									   widths[i + 1] * heights[i + 1] * channels[i + 1];
+
+		if (cur_max_point > max_point)
+			max_point = cur_max_point;
+	}
+
+	//Now, we have amount of numbers, but they are in float type, so multiply it to convert it to bytes
+	max_point *= sizeof(float);
+
+	//Display it
+	m_ui->fsrcnn_memory_consumption_label->setText("Memory consumption: " +
+		Algorithms::bytes_amount_to_string(max_point));
+	//END Memory consumption
 }
+//END FSRCNN page events
 
 void ImageUpscalerQt::start_tasks_clicked() {
 	//Special cases
@@ -423,32 +612,56 @@ void ImageUpscalerQt::update_list() {
 		m_ui->status_label->setText("Image is not selected");
 		return;
 	}
+
+	//1920x1080 -> 3840x2160
+	QString status = QString("%1x%2 -> %3x%4").arg(QString::number(image_spec.width),
+												   QString::number(image_spec.height),
+												   QString::number(end_width()),
+												   QString::number(end_height()));
+
+	m_ui->status_label->setText(status);
+}
+
+int ImageUpscalerQt::end_width() {
 	//Calculate "before" and "after" resolution
-	int before_width = image_spec.width;
-	int before_height = image_spec.height;
+	const int before_width = image_spec.width;
 	int after_width = before_width;
-	int after_height = before_height;
 	for (unsigned short i = 0; i < task_queue.size(); i++) {
 		switch (task_queue[i]->task_kind) {
 			case TaskKind::fsrcnn: {
 				after_width *= 2; //FSRCNN increases resolution in 2 times
-				after_height *= 2;
 				break;
 			}
 			case TaskKind::resize: {
 				after_width = ((TaskResize*)task_queue[i])->x_size;
-				after_height = ((TaskResize*)task_queue[i])->y_size;
 				break;
 			}
 			default:
 				break;
 		}
 	}
-	//1920x1080 -> 3840x2160
-	QString status = QString("%1x%2 -> %3x%4").arg(QString::number(before_width),
-												   QString::number(before_height),
-												   QString::number(after_width),
-												   QString::number(after_height));
 
-	m_ui->status_label->setText(status);
+	return after_width;
+}
+
+int ImageUpscalerQt::end_height() {
+	//Calculate "before" and "after" resolution
+	const int before_height = image_spec.height;
+	int after_height = before_height;
+	for (unsigned short i = 0; i < task_queue.size(); i++) {
+		switch (task_queue[i]->task_kind) {
+			case TaskKind::fsrcnn: {
+				after_height *= 2; //FSRCNN increases resolution in 2 times
+				break;
+			}
+			case TaskKind::resize: {
+				after_height = ((TaskResize*)task_queue[i])->x_size;
+				break;
+			}
+			default:
+				break;
+		}
+	}
+
+	return after_height;
 }

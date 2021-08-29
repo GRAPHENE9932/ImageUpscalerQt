@@ -31,12 +31,13 @@ TaskSRCNN::TaskSRCNN() {
 }
 
 TaskSRCNN::TaskSRCNN(std::array<unsigned short, 3> kernels, std::array<unsigned short, 3> paddings,
-					 std::array<unsigned short, 2> ch_n) {
+					 std::array<unsigned short, 4> ch_n, unsigned int block_size) {
 	this->task_kind = TaskKind::srcnn;
 
 	this->kernels = kernels;
 	this->paddings = paddings;
 	this->channels = ch_n;
+	this->block_size = block_size;
 }
 
 QString TaskSRCNN::to_string(unsigned short index) const {
@@ -62,7 +63,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	SRCNN model(kernels, paddings, channels);
 
 	//Load archive with parameters from resources
-	QFile file(":/" + Algorithms::srcnn_to_string(kernels, channels) + ".pt");
+	QFile file(":/SRCNN/" + Algorithms::srcnn_to_string(kernels, channels) + ".pt");
 	file.open(QFile::ReadOnly);
 	QByteArray archive_array = file.read(536870912); //Maximum size is 512 MB
 
@@ -74,11 +75,54 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 
 	//Get spec
 	auto spec = input.spec();
+	const int block_width = block_size == 0 ? spec.width : block_size; //Whole image size if we have not to
+	const int block_height = block_size == 0 ? spec.height : block_size; //split image into blocks
 
 	//Create output buffer
 	OIIO::ImageBuf output(spec);
 
-	//Get blocks amount
+	//Compute blocks amount
+	int blocks_width = spec.width / block_width;
+	if (blocks_width * block_width < spec.width)
+		blocks_width++;
+	int blocks_height = spec.height / block_height;
+	if (blocks_height * block_height < spec.height)
+		blocks_height++;
+	blocks_amount = blocks_height * blocks_width * spec.nchannels;
+	blocks_processed = 0;
+
+	//Use SRCNN block by block
+	for (int y = 0; y < spec.height; y += block_height) {
+		for (int x = 0; x < spec.width; x += block_width) {
+			for (int c = 0; c < spec.nchannels; c++) {
+				//Create block roi
+				OIIO::ROI block_extract_roi(x, x + block_width, y, y + block_height, 0, 1, c, c + 1);
+				//Get block pixels. Will be planar, because single-channel
+				auto block_pixels = std::make_unique<float[]>(block_width * block_height * 1);
+				input.get_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, block_pixels.get());
+
+				//Create input tensor
+				torch::TensorOptions options = torch::TensorOptions(torch::ScalarType::Float);
+				torch::Tensor input_tensor = torch::from_blob(block_pixels.get(),
+															  {1, 1, block_height, block_width}, options);
+
+				//Get output from neural network
+				torch::Tensor output_tensor = model(input_tensor);
+
+				//Set pixels to buf
+				output.set_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, output_tensor.data_ptr<float>());
+
+				blocks_processed++;
+
+				//Cancel if requested
+				if (cancel_requested)
+					throw "canc";
+			}
+		}
+	}
+
+	return output;
+	/*//Get blocks amount
 	int blocks_width = spec.width / 192;
 	if (blocks_width * 192 < spec.width)
 		blocks_width++;
@@ -115,7 +159,22 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 					throw "canc";
 			}
 		}
-	}
+	}*/
 
-	return output;
+	/*//Out tensors have the float type
+	torch::TensorOptions options = torch::TensorOptions(torch::ScalarType::Float);
+
+	OIIO::ROI single_channel_roi = spec.roi();
+	single_channel_roi.chbegin = 0;
+	single_channel_roi.chend = 1;
+	auto block_pixels = std::make_unique<float[]>(single_channel_roi.npixels());
+	input.get_pixels(single_channel_roi, OIIO::TypeDesc::FLOAT, block_pixels.get());
+	torch::Tensor input_tensor = torch::from_blob(block_pixels.get(),
+												  {1, 1, single_channel_roi.width(),
+												  single_channel_roi.height()}, options);
+
+	torch::Tensor output_tensor = model(input_tensor);
+	output.set_pixels(single_channel_roi, OIIO::TypeDesc::FLOAT, output_tensor.data_ptr());
+
+	return output;*/
 }
