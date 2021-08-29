@@ -37,6 +37,13 @@
 
 #define VERSION "1.3"
 
+///Point to make the memory consumption label yellow
+constexpr unsigned long long WARNING_MEMORY = 512 * 1024 * 1024; //512.0 MiB
+///Point to make the memory consumption label orange
+constexpr unsigned long long EXTREME_MEMORY = 1024 * 1024 * 1024; //1.0 GiB
+///Point to make the memory consumption label red
+constexpr unsigned long long CRITICAL_MEMORY = 1536 * 1024 * 1024; //1.5 GiB
+
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
     m_ui(new Ui::ImageUpscalerQt) {
     m_ui->setupUi(this);
@@ -441,8 +448,22 @@ void ImageUpscalerQt::update_srcnn_info() {
 	max_point *= sizeof(float);
 
 	//Display it
-	m_ui->srcnn_memory_consumption_label->setText("Memory consumption: " +
+	m_ui->srcnn_memory_consumption_label->setText("Memory consumption: >" +
 		Algorithms::bytes_amount_to_string(max_point));
+
+	//Set color of the label
+	if (max_point > CRITICAL_MEMORY) {
+		m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
+	}
+	else if (max_point > EXTREME_MEMORY) {
+		m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
+	}
+	else if (max_point > WARNING_MEMORY) {
+		m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
+	}
+	else {
+		m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet()); //Default
+	}
 	//END Memory consumption
 }
 
@@ -569,8 +590,22 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	max_point *= sizeof(float);
 
 	//Display it
-	m_ui->fsrcnn_memory_consumption_label->setText("Memory consumption: " +
+	m_ui->fsrcnn_memory_consumption_label->setText("Memory consumption: >" +
 		Algorithms::bytes_amount_to_string(max_point));
+
+	//Set color of the label
+	if (max_point > CRITICAL_MEMORY) {
+		m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
+	}
+	else if (max_point > EXTREME_MEMORY) {
+		m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
+	}
+	else if (max_point > WARNING_MEMORY) {
+		m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
+	}
+	else {
+		m_ui->fsrcnn_memory_consumption_label->setStyleSheet(styleSheet()); //Default
+	}
 	//END Memory consumption
 }
 //END FSRCNN page events
