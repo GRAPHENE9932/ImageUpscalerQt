@@ -54,6 +54,13 @@ namespace Algorithms {
 												std::array<int, 5> widths,
 												std::array<int, 5> heights);
 
+	///Compute the minimum memory consumption of tensors that going throught the CNN
+	///@returns Amount of bytes that will be consumed
+	template <int S>
+	unsigned long long cnn_memory_consumption(std::array<unsigned short, S> channels,
+											  std::array<int, S> widths,
+											  std::array<int, S> heights);
+
 	///Convert "987654321" to "987 654 321" if separator is ' '
 	QString big_number_to_string(long long num, QChar separator);
 

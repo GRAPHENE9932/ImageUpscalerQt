@@ -38,11 +38,11 @@
 #define VERSION "1.3"
 
 ///Point to make the memory consumption label yellow
-constexpr unsigned long long WARNING_MEMORY = 512 * 1024 * 1024; //512.0 MiB
+constexpr unsigned long long WARNING_MEMORY = 512ull * 1024ull * 1024ull; //512.0 MiB
 ///Point to make the memory consumption label orange
-constexpr unsigned long long EXTREME_MEMORY = 1024 * 1024 * 1024; //1.0 GiB
+constexpr unsigned long long EXTREME_MEMORY = 1ull * 1024ull * 1024ull * 1024ull; //1.0 GiB
 ///Point to make the memory consumption label red
-constexpr unsigned long long CRITICAL_MEMORY = 1536 * 1024 * 1024; //1.5 GiB
+constexpr unsigned long long CRITICAL_MEMORY = 2ull * 1024ull * 1024ull * 1024ull; //2.0 GiB
 
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
     m_ui(new Ui::ImageUpscalerQt) {
@@ -413,48 +413,21 @@ void ImageUpscalerQt::update_srcnn_info() {
 	//END Amount of operations
 
 	//BEGIN Memory consumption
-	unsigned int width_per_iter;
-	unsigned int height_per_iter;
-	//Define this 2 variables above
-	if (m_ui->srcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
-		width_per_iter = m_ui->srcnn_block_size_spinbox->value();
-		height_per_iter = m_ui->srcnn_block_size_spinbox->value();
-	}
-	else if (!image_spec.undefined()) { //If we have not to split the image into blocks
-		width_per_iter = end_width();
-		height_per_iter = end_height();
-	}
-
 	//Compute memory consumption
-	//Iterate throught every convolutional layer to find the point with maximum memory consumption
-	//Considering the channels amount, width and height (in short, tensor size)
-	// |  1  | --- | 128 | --- |  64 | --- |  1  |
-	//                      ^
-	//    max consumption point = size 1 + size 2
-	unsigned long long max_point = 0;
-	for (unsigned char i = 0; i < 3; i++) {
-		unsigned long long cur_max_point = widths[i] * heights[i] * channels[i] +
-										   widths[i + 1] * heights[i + 1] * channels[i + 1];
-
-		if (cur_max_point > max_point)
-			max_point = cur_max_point;
-	}
-
-	//Now, we have amount of numbers, but they are in float type, so multiply it to convert it to bytes
-	max_point *= sizeof(float);
+	auto mem_consumption = Algorithms::cnn_memory_consumption<4>(channels, widths, heights);
 
 	//Display it
 	m_ui->srcnn_memory_consumption_label->setText("Memory consumption: >" +
-		Algorithms::bytes_amount_to_string(max_point));
+		Algorithms::bytes_amount_to_string(mem_consumption));
 
 	//Set color of the label
-	if (max_point > CRITICAL_MEMORY) {
+	if (mem_consumption > CRITICAL_MEMORY) {
 		m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
 	}
-	else if (max_point > EXTREME_MEMORY) {
+	else if (mem_consumption > EXTREME_MEMORY) {
 		m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
 	}
-	else if (max_point > WARNING_MEMORY) {
+	else if (mem_consumption > WARNING_MEMORY) {
 		m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
 	}
 	else {
@@ -551,48 +524,21 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	//END Amount of operations
 
 	//BEGIN Memory consumption
-	int width_per_iter;
-	int height_per_iter;
-	//Define this 2 variables above
-	if (m_ui->fsrcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
-		width_per_iter = m_ui->fsrcnn_block_size_spinbox->value();
-		height_per_iter = m_ui->fsrcnn_block_size_spinbox->value();
-	}
-	else if (!image_spec.undefined()) { //If we have not to split the image into blocks
-		width_per_iter = end_width();
-		height_per_iter = end_height();
-	}
-
 	//Compute memory consumption
-	//Iterate throught every convolutional layer to find the point with maximum memory consumption
-	//Considering the channels amount, width and height (in short, tensor size)
-	// |  1  | --- | 128 | --- |  64 | --- |  1  |
-	//                      ^
-	//    max consumption point = size 1 + size 2
-	unsigned long long max_point = 0;
-	for (unsigned char i = 0; i < 4; i++) {
-		unsigned long long cur_max_point = widths[i] * heights[i] * channels[i] +
-									   widths[i + 1] * heights[i + 1] * channels[i + 1];
-
-		if (cur_max_point > max_point)
-			max_point = cur_max_point;
-	}
-
-	//Now, we have amount of numbers, but they are in float type, so multiply it to convert it to bytes
-	max_point *= sizeof(float);
+	auto mem_consumption = Algorithms::cnn_memory_consumption<5>(channels, widths, heights);
 
 	//Display it
 	m_ui->fsrcnn_memory_consumption_label->setText("Memory consumption: >" +
-		Algorithms::bytes_amount_to_string(max_point));
+		Algorithms::bytes_amount_to_string(mem_consumption));
 
 	//Set color of the label
-	if (max_point > CRITICAL_MEMORY) {
+	if (mem_consumption > CRITICAL_MEMORY) {
 		m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
 	}
-	else if (max_point > EXTREME_MEMORY) {
+	else if (mem_consumption > EXTREME_MEMORY) {
 		m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
 	}
-	else if (max_point > WARNING_MEMORY) {
+	else if (mem_consumption > WARNING_MEMORY) {
 		m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
 	}
 	else {

@@ -17,6 +17,7 @@
  */
 
 #include <sstream>
+#include <cassert>
 
 #include "Algorithms.h"
 
@@ -202,6 +203,41 @@ unsigned long long Algorithms::fsrcnn_operations_amount(std::array<unsigned shor
 
 	return result;
 }
+
+template <int S>
+unsigned long long Algorithms::cnn_memory_consumption(std::array<unsigned short, S> channels,
+													  std::array<int, S> widths,
+													  std::array<int, S> heights) {
+	assert(widths.size() == heights.size() && widths.size() == channels.size());
+
+	//Iterate throught every convolutional layer to find the point with maximum memory consumption
+	//Considering the channels amount, width and height (in short, tensor size)
+	// |  1  | --- | 128 | --- |  64 | --- |  1  |
+	//                      ^
+	//    max consumption point = size 1 + size 2
+
+	unsigned long long max_point = 0;
+
+	for (unsigned char i = 0; i < widths.size() - 1; i++) {
+		unsigned long long cur_max_point = widths[i] * heights[i] * channels[i] +
+										   widths[i + 1] * heights[i + 1] * channels[i + 1];
+
+		if (cur_max_point > max_point)
+			max_point = cur_max_point;
+	}
+
+	//Now, we have amount of numbers, but they are in float type, so multiply it to convert it to bytes
+	max_point *= sizeof(float);
+
+	return max_point;
+}
+
+template unsigned long long Algorithms::cnn_memory_consumption<4>(std::array<unsigned short,4>,
+																  std::array<int,4>,
+																  std::array<int,4>);
+template unsigned long long Algorithms::cnn_memory_consumption<5>(std::array<unsigned short,5>,
+																  std::array<int,5>,
+																  std::array<int,5>);
 
 QString Algorithms::big_number_to_string(long long num, QChar separator) {
 	//Get separate digits
