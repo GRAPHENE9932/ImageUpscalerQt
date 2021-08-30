@@ -352,7 +352,7 @@ void ImageUpscalerQt::update_srcnn_info() {
 	}
 
 	//Set maximum block size
-	m_ui->srcnn_block_size_spinbox->setMaximum(std::min(end_width(), end_height()));
+	m_ui->srcnn_block_size_spinbox->setMaximum(std::clamp(std::min(end_width(), end_height()), 32, INT_MAX));
 
 	//Gray out block size spinbox if the split checkbox is unchecked
 	m_ui->srcnn_block_size_spinbox->setEnabled(m_ui->srcnn_block_split_check->isChecked());
@@ -365,8 +365,19 @@ void ImageUpscalerQt::update_srcnn_info() {
 		//If the current architecture is invalid, just skip it
 		return;
 	}
-	std::array<int, 4> widths; //This arrays will be defined later
+
+	std::array<int, 4> widths; //Define this arrays
 	std::array<int, 4> heights;
+	if (m_ui->srcnn_block_split_check->isChecked()) { //If split by blocks
+		int block_size = m_ui->srcnn_block_size_spinbox->value();
+
+		widths = {block_size, block_size, block_size, block_size};
+		heights = {block_size, block_size, block_size, block_size};
+	}
+	else if (!image_spec.undefined()) { //If not
+		widths = {end_width(), end_width(), end_width(), end_width()};
+		heights = {end_height(), end_height(), end_height(), end_height()};
+	}
 
 	//BEGIN Amount of operations
 	//Display amount of operations
@@ -374,19 +385,15 @@ void ImageUpscalerQt::update_srcnn_info() {
 		m_ui->srcnn_total_operations_label->setText("Total operations: no image");
 	}
 	else if (m_ui->srcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
-		int block_size = m_ui->srcnn_block_size_spinbox->value();
-
 		//Compute amount of operations per block
-		widths = {block_size, block_size, block_size, block_size};
-		heights = {block_size, block_size, block_size, block_size};
 		auto o_per_block = Algorithms::srcnn_operations_amount(kernels, channels, widths, heights);
 
 		//Compute amount of the blocks
-		int blocks_width = end_width() / block_size;
-		if (blocks_width * block_size < end_width())
+		int blocks_width = end_width() / widths[0];
+		if (blocks_width * widths[0] < end_width())
 			blocks_width++;
-		int blocks_height = end_height() / block_size;
-		if (blocks_height * block_size < end_height())
+		int blocks_height = end_height() / heights[0];
+		if (blocks_height * heights[0] < end_height())
 			blocks_height++;
 		long long blocks_amount = blocks_height * blocks_width;
 
@@ -398,8 +405,6 @@ void ImageUpscalerQt::update_srcnn_info() {
 		);
 	}
 	else { //If we have not to split the image into blocks
-		widths = {end_width(), end_width(), end_width(), end_width()};
-		heights = {end_height(), end_height(), end_height(), end_height()};
 		auto operations = Algorithms::srcnn_operations_amount(kernels, channels, widths, heights);
 		operations *= image_spec.nchannels;
 
@@ -413,25 +418,31 @@ void ImageUpscalerQt::update_srcnn_info() {
 	//END Amount of operations
 
 	//BEGIN Memory consumption
-	//Compute memory consumption
-	auto mem_consumption = Algorithms::cnn_memory_consumption<4>(channels, widths, heights);
+	if (!image_spec.undefined() || m_ui->srcnn_block_split_check->isChecked()) {
+		//Compute memory consumption
+		auto mem_consumption = Algorithms::cnn_memory_consumption<4>(channels, widths, heights);
 
-	//Display it
-	m_ui->srcnn_memory_consumption_label->setText("Memory consumption: >" +
-		Algorithms::bytes_amount_to_string(mem_consumption));
+		//Display it
+		m_ui->srcnn_memory_consumption_label->setText("Memory consumption: >" +
+			Algorithms::bytes_amount_to_string(mem_consumption));
 
-	//Set color of the label
-	if (mem_consumption > CRITICAL_MEMORY) {
-		m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
-	}
-	else if (mem_consumption > EXTREME_MEMORY) {
-		m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
-	}
-	else if (mem_consumption > WARNING_MEMORY) {
-		m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
+		//Set color of the label
+		if (mem_consumption > CRITICAL_MEMORY) {
+			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
+		}
+		else if (mem_consumption > EXTREME_MEMORY) {
+			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
+		}
+		else if (mem_consumption > WARNING_MEMORY) {
+			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
+		}
+		else {
+			m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet()); //Default
+		}
 	}
 	else {
-		m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet()); //Default
+		m_ui->srcnn_memory_consumption_label->setText("Memory consumption: no image");
+		m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet());
 	}
 	//END Memory consumption
 }
@@ -463,7 +474,7 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	}
 
 	//Set maximum block size
-	m_ui->fsrcnn_block_size_spinbox->setMaximum(std::min(end_width(), end_height()));
+	m_ui->fsrcnn_block_size_spinbox->setMaximum(std::clamp(std::min(end_width(), end_height()), 32, INT_MAX));
 
 	//Gray out block size spinbox if the split checkbox is unchecked
 	m_ui->fsrcnn_block_size_spinbox->setEnabled(m_ui->fsrcnn_block_split_check->isChecked());
@@ -476,8 +487,19 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 		//If the current architecture is invalid, just skip it
 		return;
 	}
-	std::array<int, 5> widths; //This arrays will be defined later
+
+	std::array<int, 5> widths; //Define this arrays
 	std::array<int, 5> heights;
+	if (m_ui->fsrcnn_block_split_check->isChecked()) { //If split by blocks
+		int block_size = m_ui->fsrcnn_block_size_spinbox->value();
+
+		widths = {block_size, block_size, block_size, block_size, block_size * 2};
+		heights = {block_size, block_size, block_size, block_size, block_size * 2};
+	}
+	else if (!image_spec.undefined()) { //If not
+		widths = {end_width(), end_width(), end_width(), end_width(), end_width() * 2};
+		heights = {end_height(), end_height(), end_height(), end_height(), end_height() * 2};
+	}
 
 	//BEGIN Amount of operations
 	//Display amount of operations
@@ -485,19 +507,14 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 		m_ui->fsrcnn_total_operations_label->setText("Total operations: no image");
 	}
 	else if (m_ui->fsrcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
-		int block_size = m_ui->fsrcnn_block_size_spinbox->value();
-
-		//Compute amount of operations per block
-		widths = {block_size, block_size, block_size, block_size * 2};
-		heights = {block_size, block_size, block_size, block_size * 2};
 		auto o_per_block = Algorithms::fsrcnn_operations_amount(kernels, channels, widths, heights);
 
 		//Compute amount of the blocks
-		int blocks_width = end_width() / block_size;
-		if (blocks_width * block_size < end_width())
+		int blocks_width = end_width() / widths[0];
+		if (blocks_width * widths[0] < end_width())
 			blocks_width++;
-		int blocks_height = end_height() / block_size;
-		if (blocks_height * block_size < end_height())
+		int blocks_height = end_height() / heights[0];
+		if (blocks_height * heights[0] < end_height())
 			blocks_height++;
 		long long blocks_amount = blocks_height * blocks_width;
 
@@ -509,8 +526,6 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 		);
 	}
 	else { //If we have not to split the image into blocks
-		widths = {end_width(), end_width(), end_width(), end_width() * 2};
-		heights = {end_height(), end_height(), end_height(), end_height() * 2};
 		auto operations = Algorithms::fsrcnn_operations_amount(kernels, channels, widths, heights);
 		operations *= image_spec.nchannels;
 
@@ -524,25 +539,31 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	//END Amount of operations
 
 	//BEGIN Memory consumption
-	//Compute memory consumption
-	auto mem_consumption = Algorithms::cnn_memory_consumption<5>(channels, widths, heights);
+	if (!image_spec.undefined() || m_ui->fsrcnn_block_split_check->isChecked()) {
+		//Compute memory consumption
+		auto mem_consumption = Algorithms::cnn_memory_consumption<5>(channels, widths, heights);
 
-	//Display it
-	m_ui->fsrcnn_memory_consumption_label->setText("Memory consumption: >" +
-		Algorithms::bytes_amount_to_string(mem_consumption));
+		//Display it
+		m_ui->fsrcnn_memory_consumption_label->setText("Memory consumption: >" +
+			Algorithms::bytes_amount_to_string(mem_consumption));
 
-	//Set color of the label
-	if (mem_consumption > CRITICAL_MEMORY) {
-		m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
-	}
-	else if (mem_consumption > EXTREME_MEMORY) {
-		m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
-	}
-	else if (mem_consumption > WARNING_MEMORY) {
-		m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
+		//Set color of the label
+		if (mem_consumption > CRITICAL_MEMORY) {
+			m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
+		}
+		else if (mem_consumption > EXTREME_MEMORY) {
+			m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
+		}
+		else if (mem_consumption > WARNING_MEMORY) {
+			m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
+		}
+		else {
+			m_ui->fsrcnn_memory_consumption_label->setStyleSheet(styleSheet()); //Default
+		}
 	}
 	else {
-		m_ui->fsrcnn_memory_consumption_label->setStyleSheet(styleSheet()); //Default
+		m_ui->fsrcnn_memory_consumption_label->setText("Memory consumption: no image");
+		m_ui->fsrcnn_memory_consumption_label->setStyleSheet(styleSheet());
 	}
 	//END Memory consumption
 }
