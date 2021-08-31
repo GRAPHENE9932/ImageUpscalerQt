@@ -33,7 +33,7 @@ Main functions:
 ## For Arch Linux based distributions <a name="arch-build"/>
 ### Install dependencies
 ```
-$ sudo pacman -S openimageio qt5-base cmake gcc python-pip wgen unzip python-pytorch
+$ sudo pacman -S openimageio qt5-base cmake gcc python-pip wget unzip python-pytorch
 ```
 ### Configure and compile
 ```
