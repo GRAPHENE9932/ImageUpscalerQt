@@ -54,10 +54,10 @@ namespace Algorithms {
 												std::array<int, 5> widths,
 												std::array<int, 5> heights);
 
-	///Compute the minimum memory consumption of tensors that going throught the CNN
+	///MEASURE the APPROXIMATE minimum memory consumption of tensors that going throught the CNN
 	///@returns Amount of bytes that will be consumed
 	template <int S>
-	unsigned long long cnn_memory_consumption(std::array<unsigned short, S> channels,
+	unsigned long long measure_cnn_memory_consumption(std::array<unsigned short, S> channels,
 											  std::array<int, S> widths,
 											  std::array<int, S> heights);
 

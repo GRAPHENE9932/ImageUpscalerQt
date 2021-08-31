@@ -320,7 +320,7 @@
             <item>
              <widget class="QLabel" name="srcnn_memory_consumption_label">
               <property name="text">
-               <string>Memory consumption: no image</string>
+               <string>Approx. memory consumption: no image</string>
               </property>
              </widget>
             </item>
@@ -411,7 +411,7 @@
             <item>
              <widget class="QLabel" name="fsrcnn_memory_consumption_label">
               <property name="text">
-               <string>Memory consumption: no image</string>
+               <string>Approx. memory consumption: no image</string>
               </property>
              </widget>
             </item>

@@ -420,10 +420,10 @@ void ImageUpscalerQt::update_srcnn_info() {
 	//BEGIN Memory consumption
 	if (!image_spec.undefined() || m_ui->srcnn_block_split_check->isChecked()) {
 		//Compute memory consumption
-		auto mem_consumption = Algorithms::cnn_memory_consumption<4>(channels, widths, heights);
+		auto mem_consumption = Algorithms::measure_cnn_memory_consumption<4>(channels, widths, heights);
 
 		//Display it
-		m_ui->srcnn_memory_consumption_label->setText("Memory consumption: >" +
+		m_ui->srcnn_memory_consumption_label->setText("Approx. memory consumption: " +
 			Algorithms::bytes_amount_to_string(mem_consumption));
 
 		//Set color of the label
@@ -441,7 +441,7 @@ void ImageUpscalerQt::update_srcnn_info() {
 		}
 	}
 	else {
-		m_ui->srcnn_memory_consumption_label->setText("Memory consumption: no image");
+		m_ui->srcnn_memory_consumption_label->setText("Approx. memory consumption: no image");
 		m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet());
 	}
 	//END Memory consumption
@@ -541,10 +541,10 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	//BEGIN Memory consumption
 	if (!image_spec.undefined() || m_ui->fsrcnn_block_split_check->isChecked()) {
 		//Compute memory consumption
-		auto mem_consumption = Algorithms::cnn_memory_consumption<5>(channels, widths, heights);
+		auto mem_consumption = Algorithms::measure_cnn_memory_consumption<5>(channels, widths, heights);
 
 		//Display it
-		m_ui->fsrcnn_memory_consumption_label->setText("Memory consumption: >" +
+		m_ui->fsrcnn_memory_consumption_label->setText("Approx. memory consumption: " +
 			Algorithms::bytes_amount_to_string(mem_consumption));
 
 		//Set color of the label
@@ -562,7 +562,7 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 		}
 	}
 	else {
-		m_ui->fsrcnn_memory_consumption_label->setText("Memory consumption: no image");
+		m_ui->fsrcnn_memory_consumption_label->setText("Approx. memory consumption: no image");
 		m_ui->fsrcnn_memory_consumption_label->setStyleSheet(styleSheet());
 	}
 	//END Memory consumption
