@@ -65,7 +65,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	FSRCNN model(kernels, paddings, channels);
 
 	//Load archive with parameters from resources
-	QFile file(":/" + Algorithms::fsrcnn_to_string(kernels, channels) + ".pt");
+	QFile file(":/FSRCNN/" + Algorithms::fsrcnn_to_string(kernels, channels) + ".pt");
 	file.open(QFile::ReadOnly);
 	QByteArray archive_array = file.read(536870912); //Maximum size is 512 MB
 
