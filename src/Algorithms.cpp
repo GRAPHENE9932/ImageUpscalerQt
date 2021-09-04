@@ -174,11 +174,20 @@ unsigned long long Algorithms::srcnn_operations_amount(std::array<unsigned short
 	unsigned long long result = 0;
 
 	for (unsigned char i = 0; i < 3; i++) {
-		result += (unsigned long long)widths[i + 1] * (unsigned long long)heights[i + 1] *
+		result +=
+            (unsigned long long)widths[i + 1] *
+            (unsigned long long)heights[i + 1] *
 			(unsigned long long)channels[i + 1] *
-			(2 * (unsigned long long)channels[i] * (unsigned long long)kernels[i] * (unsigned long long)kernels[i] - 1) +
-			(unsigned long long)widths[i + 1] * (unsigned long long)heights[i + 1] *
-			1;
+			(
+                2ull *
+                (unsigned long long)channels[i] *
+                (unsigned long long)kernels[i] *
+                (unsigned long long)kernels[i] -
+                1ull
+            ) +
+			(unsigned long long)widths[i + 1] *
+			(unsigned long long)heights[i + 1] *
+			1ull;
 	}
 
 	return result;
@@ -193,12 +202,21 @@ unsigned long long Algorithms::fsrcnn_operations_amount(std::array<unsigned shor
 
 	unsigned long long result = 0;
 
-	for (unsigned char i = 0; i < 5; i++) {
-		result += (unsigned long long)widths[i + 1] * (unsigned long long)heights[i + 1] *
+	for (unsigned char i = 0; i < 4; i++) {
+		result +=
+            (unsigned long long)widths[i + 1] *
+            (unsigned long long)heights[i + 1] *
 			(unsigned long long)channels[i + 1] *
-			(2 * (unsigned long long)channels[i] * (unsigned long long)kernels[i] * (unsigned long long)kernels[i] - 1) +
-			(unsigned long long)widths[i + 1] * (unsigned long long)heights[i + 1] *
-			1;
+			(
+                2ull *
+                (unsigned long long)channels[i] *
+                (unsigned long long)kernels[i] *
+                (unsigned long long)kernels[i] -
+                1ull
+            ) +
+			(unsigned long long)widths[i + 1] *
+			(unsigned long long)heights[i + 1] *
+			1ull;
 	}
 
 	return result;
@@ -217,8 +235,10 @@ unsigned long long Algorithms::measure_cnn_memory_consumption(std::array<unsigne
 	unsigned long long max_point = 0;
 
 	for (unsigned char i = 0; i < S - 1; i++) {
-		unsigned long long cur_max_point = widths[i] * heights[i] * channels[i] +
-										   widths[i + 1] * heights[i + 1] * channels[i + 1];
+		unsigned long long cur_max_point = (unsigned long long)widths[i] * (unsigned long long)heights[i] *
+                                           (unsigned long long)channels[i] +
+										   (unsigned long long)widths[i + 1] * (unsigned long long)heights[i + 1] *
+										   (unsigned long long)channels[i + 1];
 
 		if (cur_max_point > max_point)
 			max_point = cur_max_point;
@@ -228,7 +248,7 @@ unsigned long long Algorithms::measure_cnn_memory_consumption(std::array<unsigne
 	max_point *= sizeof(float);
 
 	//Weirdness of the PyTorch. The real consumption is 4 times greater than calculated just now. So...
-	max_point *= 4;
+	max_point *= 4ull;
 
 	return max_point;
 }
