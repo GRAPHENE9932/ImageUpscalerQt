@@ -175,16 +175,16 @@ unsigned long long Algorithms::srcnn_operations_amount(std::array<unsigned short
 
 	for (unsigned char i = 0; i < 3; i++) {
 		result +=
-            (unsigned long long)widths[i + 1] *
-            (unsigned long long)heights[i + 1] *
+			(unsigned long long)widths[i + 1] *
+			(unsigned long long)heights[i + 1] *
 			(unsigned long long)channels[i + 1] *
 			(
-                2ull *
-                (unsigned long long)channels[i] *
-                (unsigned long long)kernels[i] *
-                (unsigned long long)kernels[i] -
-                1ull
-            ) +
+				2ull *
+				(unsigned long long)channels[i] *
+				(unsigned long long)kernels[i] *
+				(unsigned long long)kernels[i] -
+				1ull
+			) +
 			(unsigned long long)widths[i + 1] *
 			(unsigned long long)heights[i + 1] *
 			1ull;
@@ -204,16 +204,16 @@ unsigned long long Algorithms::fsrcnn_operations_amount(std::array<unsigned shor
 
 	for (unsigned char i = 0; i < 4; i++) {
 		result +=
-            (unsigned long long)widths[i + 1] *
-            (unsigned long long)heights[i + 1] *
+			(unsigned long long)widths[i + 1] *
+			(unsigned long long)heights[i + 1] *
 			(unsigned long long)channels[i + 1] *
 			(
-                2ull *
-                (unsigned long long)channels[i] *
-                (unsigned long long)kernels[i] *
-                (unsigned long long)kernels[i] -
-                1ull
-            ) +
+				2ull *
+				(unsigned long long)channels[i] *
+				(unsigned long long)kernels[i] *
+				(unsigned long long)kernels[i] -
+				1ull
+			) +
 			(unsigned long long)widths[i + 1] *
 			(unsigned long long)heights[i + 1] *
 			1ull;
