@@ -1,4 +1,5 @@
 # ImageUpscalerQt
+# <p align="center">**The project is under development!**</p>
 
 Contents:
 * [How to use](#how-to-use)
