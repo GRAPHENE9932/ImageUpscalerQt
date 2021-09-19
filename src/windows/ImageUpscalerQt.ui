@@ -190,63 +190,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="resize_interpolation_combobox">
-                <item>
-                 <property name="text">
-                  <string>None</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Bilinear</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Cubic</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Gaussian</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Sinc</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Box</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Triangle</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Lanczos3</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Catmull-Rom</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>B-spline</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Mitchell</string>
-                 </property>
-                </item>
-               </widget>
+               <widget class="QComboBox" name="resize_interpolation_combobox"/>
               </item>
              </layout>
             </item>

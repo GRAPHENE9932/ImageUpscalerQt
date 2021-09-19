@@ -51,6 +51,10 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 	//Set window icon
 	setWindowIcon(QIcon(":Icon.png"));
 
+	//Add entries to the resize_interpolation_combobox
+	for (QString cur_str : INTERPOLATION_NAMES)
+		m_ui->resize_interpolation_combobox->addItem(cur_str);
+
 	//BEGIN Connect signals
 	connect(m_ui->add_task_button, SIGNAL(clicked()), this, SLOT(add_task_clicked()));
 	connect(m_ui->task_kind_combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(task_kind_changed(int)));

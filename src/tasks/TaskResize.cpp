@@ -56,10 +56,6 @@ OIIO::ImageBuf TaskResize::do_task(OIIO::ImageBuf input) {
 	//Resize it
 	OIIO::ImageBuf output;
 	switch (interpolation) {
-		case Interpolation::none: {
-			output = OIIO::ImageBufAlgo::resample(input, false, output_roi);
-			break;
-		}
 		case Interpolation::bilinear: {
 			output = OIIO::ImageBufAlgo::resample(input, true, output_roi);
 			break;

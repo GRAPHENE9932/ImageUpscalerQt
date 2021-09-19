@@ -21,27 +21,30 @@
 #include "Task.h"
 
 enum class Interpolation : unsigned char {
-	none, bilinear, cubic, gaussian, sinc, box, triangle, lanczos3,
-	catmull_rom, b_spline, mitchell
+	b_spline, bilinear, blackman_harris, box, catmull_rom, cubic,
+	gaussian, lanczos3, mitchell, radial_lanczos3,
+	rifman, sharp_gaussian, simon, sinc
 };
 
 ///Interpolation names for the user
-const QString INTERPOLATION_NAMES[11] = {
-	"None", "Bilinear", "Cubic", "Gaussian", "Sinc", "Box", "Triangle", "Lanczos3",
-	"Catmull-Rom", "B-spline", "Mitchell"
+const QString INTERPOLATION_NAMES[18] = {
+	"B-spline", "Bilinear", "Blackman-Harris", "Box", "Catmull-Rom", "Cubic",
+	"Gaussian", "Lanczos3", "Mitchell", "Radial-lanczos3",
+	"Rifman", "Sharp-Gaussian", "Simon", "Sinc"
 };
 
 ///Interpolation names for the OpenImageIO library.
 ///"none" and "bilinear" are not used.
-const QString INTERPOLATION_OIIO_NAMES[11] = {
-	"none", "bilinear", "cubic", "gaussian", "sinc", "box", "triangle", "lanczos3",
-	"catmull-rom", "bspline", "mitchell"
+const QString INTERPOLATION_OIIO_NAMES[18] = {
+	"bspline", "bilinear", "blackman-harris", "box", "catmull-rom", "cubic",
+	"gaussian", "lanczos3", "mitchell", "radial-lanczos3",
+	"rifman", "sharp-gaussian", "simon", "sinc"
 };
 
 class TaskResize : public Task {
 public:
 	unsigned int x_size = 0, y_size = 0;
-	Interpolation interpolation = Interpolation::none;
+	Interpolation interpolation = Interpolation::bilinear;
 
 	TaskResize();
 	TaskResize(unsigned int x_size, unsigned int y_size, Interpolation interpolation);
