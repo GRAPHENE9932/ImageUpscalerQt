@@ -2,46 +2,51 @@
 	<qresource>
 		<file>Icon.png</file>
 
-		<file>SRCNN/3-1-9 48-24.pt</file>
-		<file>SRCNN/3-1-9 64-32.pt</file>
-		<file>SRCNN/5-1-7 48-24.pt</file>
-		<file>SRCNN/5-1-7 64-32.pt</file>
-		<file>SRCNN/5-1-9 48-24.pt</file>
-		<file>SRCNN/5-1-9 64-32.pt</file>
-        <file>SRCNN/9-3-5 48-32.pt</file>
-        <file>SRCNN/9-3-5 48-48.pt</file>
-        <file>SRCNN/9-3-5 48-80.pt</file>
-        <file>SRCNN/9-3-5 64-32.pt</file>
-        <file>SRCNN/9-3-5 64-48.pt</file>
-        <file>SRCNN/9-3-5 64-64.pt</file>
-        <file>SRCNN/9-3-5 64-80.pt</file>
-        <file>SRCNN/9-3-5 64-96.pt</file>
-        <file>SRCNN/9-3-5 80-48.pt</file>
-        <file>SRCNN/9-3-5 80-64.pt</file>
-        <file>SRCNN/9-3-5 80-80.pt</file>
-        <file>SRCNN/9-3-5 80-96.pt</file>
-        <file>SRCNN/9-3-5 96-32.pt</file>
-        <file>SRCNN/9-3-5 96-48.pt</file>
-        <file>SRCNN/9-3-5 96-64.pt</file>
-        <file>SRCNN/9-3-5 96-80.pt</file>
-        <file>SRCNN/9-3-5 96-96.pt</file>
-        <file>SRCNN/9-3-5 112-32.pt</file>
-        <file>SRCNN/9-3-5 112-48.pt</file>
-        <file>SRCNN/9-3-5 112-64.pt</file>
-        <file>SRCNN/9-3-5 112-80.pt</file>
-        <file>SRCNN/9-3-5 112-96.pt</file>
-        <file>SRCNN/9-3-5 128-32.pt</file>
-        <file>SRCNN/9-3-5 128-48.pt</file>
-        <file>SRCNN/9-3-5 128-64.pt</file>
-        <file>SRCNN/9-3-5 128-80.pt</file>
-        <file>SRCNN/9-3-5 128-96.pt</file>
+		<file>SRCNN/9-3-5 48-32.pt</file>
+		<file>SRCNN/9-3-5 48-48.pt</file>
+		<file>SRCNN/9-3-5 48-64.pt</file>
+		<file>SRCNN/9-3-5 48-80.pt</file>
+		<file>SRCNN/9-3-5 48-96.pt</file>
+
+		<file>SRCNN/9-3-5 64-32.pt</file>
+		<file>SRCNN/9-3-5 64-48.pt</file>
+		<file>SRCNN/9-3-5 64-64.pt</file>
+		<file>SRCNN/9-3-5 64-80.pt</file>
+		<file>SRCNN/9-3-5 64-96.pt</file>
+
+		<file>SRCNN/9-3-5 80-32.pt</file>
+		<file>SRCNN/9-3-5 80-48.pt</file>
+		<file>SRCNN/9-3-5 80-64.pt</file>
+		<file>SRCNN/9-3-5 80-80.pt</file>
+		<file>SRCNN/9-3-5 80-96.pt</file>
+
+		<file>SRCNN/9-3-5 96-32.pt</file>
+		<file>SRCNN/9-3-5 96-48.pt</file>
+		<file>SRCNN/9-3-5 96-64.pt</file>
+		<file>SRCNN/9-3-5 96-80.pt</file>
+		<file>SRCNN/9-3-5 96-96.pt</file>
+
+		<file>SRCNN/9-3-5 112-32.pt</file>
+		<file>SRCNN/9-3-5 112-48.pt</file>
+		<file>SRCNN/9-3-5 112-64.pt</file>
+		<file>SRCNN/9-3-5 112-80.pt</file>
+		<file>SRCNN/9-3-5 112-96.pt</file>
+
+		<file>SRCNN/9-3-5 128-32.pt</file>
+		<file>SRCNN/9-3-5 128-48.pt</file>
+		<file>SRCNN/9-3-5 128-64.pt</file>
+		<file>SRCNN/9-3-5 128-80.pt</file>
+		<file>SRCNN/9-3-5 128-96.pt</file>
+
 
 		<file>FSRCNN/3-1-3-2 128-16-32.pt</file>
 		<file>FSRCNN/3-1-3-2 256-32-64.pt</file>
 		<file>FSRCNN/3-1-3-2 512-32-64.pt</file>
+
 		<file>FSRCNN/3-1-3-4 128-16-32.pt</file>
 		<file>FSRCNN/3-1-3-4 256-32-64.pt</file>
 		<file>FSRCNN/3-1-3-4 512-32-64.pt</file>
+
 		<file>FSRCNN/3-1-3-6 128-16-32.pt</file>
 		<file>FSRCNN/3-1-3-6 256-32-64.pt</file>
 		<file>FSRCNN/3-1-3-6 512-32-64.pt</file>
