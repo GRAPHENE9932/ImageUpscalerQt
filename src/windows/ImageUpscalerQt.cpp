@@ -118,9 +118,9 @@ void ImageUpscalerQt::add_task_clicked() {
 			//Get FSRCNN name
 			QString name = m_ui->fsrcnn_architecture_combobox->currentText();
 			//Parse FSRCNN
-			std::array<unsigned short, 4> kernels;
-			std::array<unsigned short, 4> paddings;
-			std::array<unsigned short, 5> channels;
+			std::vector<unsigned short> kernels;
+			std::vector<unsigned short> paddings;
+			std::vector<unsigned short> channels;
 			Algorithms::parse_fsrcnn(name, &kernels, &paddings, &channels);
 
 			//Create task
@@ -424,7 +424,7 @@ void ImageUpscalerQt::update_srcnn_info() {
 	//BEGIN Memory consumption
 	if (!image_spec.undefined() || m_ui->srcnn_block_split_check->isChecked()) {
 		//Compute memory consumption
-		auto mem_consumption = Algorithms::measure_cnn_memory_consumption<4>(channels, widths, heights);
+		auto mem_consumption = Algorithms::measure_cnn_memory_consumption(channels, widths, heights);
 
 		//Display it
 		m_ui->srcnn_memory_consumption_label->setText("Approx. memory consumption: " +
@@ -484,25 +484,29 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	m_ui->fsrcnn_block_size_spinbox->setEnabled(m_ui->fsrcnn_block_split_check->isChecked());
 
 	//Parse current architecture
-	std::array<unsigned short, 4> kernels;
-	std::array<unsigned short, 5> channels;
+	std::vector<unsigned short> kernels;
+	std::vector<unsigned short> channels;
 	if (!Algorithms::parse_fsrcnn(m_ui->fsrcnn_architecture_combobox->currentText(),
 		&kernels, nullptr, &channels)) {
 		//If the current architecture is invalid, just skip it
 		return;
 	}
 
-	std::array<int, 5> widths; //Define this arrays
-	std::array<int, 5> heights;
+	std::vector<int> widths; //Define this arrays
+	std::vector<int> heights;
 	if (m_ui->fsrcnn_block_split_check->isChecked()) { //If split by blocks
 		int block_size = m_ui->fsrcnn_block_size_spinbox->value();
 
-		widths = {block_size, block_size, block_size, block_size, block_size * 2};
-		heights = {block_size, block_size, block_size, block_size, block_size * 2};
+		widths = std::vector<int>(kernels.size() + 1, block_size);
+		widths[widths.size() - 1] *= 3; //Last element have to be with size of the result image
+		heights = std::vector<int>(kernels.size() + 1, block_size);
+		heights[heights.size() - 1] *= 3; //Last element have to be with size of the result image
 	}
 	else if (!image_spec.undefined()) { //If not
-		widths = {end_width(), end_width(), end_width(), end_width(), end_width() * 2};
-		heights = {end_height(), end_height(), end_height(), end_height(), end_height() * 2};
+		widths = std::vector<int>(kernels.size() + 1, end_width());
+		widths[widths.size() - 1] *= 3; //Last element have to be with size of the result image
+		heights = std::vector<int>(kernels.size() + 1, end_width());
+		heights[heights.size() - 1] *= 3; //Last element have to be with size of the result image
 	}
 
 	//BEGIN Amount of operations
@@ -545,7 +549,7 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	//BEGIN Memory consumption
 	if (!image_spec.undefined() || m_ui->fsrcnn_block_split_check->isChecked()) {
 		//Compute memory consumption
-		auto mem_consumption = Algorithms::measure_cnn_memory_consumption<5>(channels, widths, heights);
+		auto mem_consumption = Algorithms::measure_cnn_memory_consumption(channels, widths, heights);
 
 		//Display it
 		m_ui->fsrcnn_memory_consumption_label->setText("Approx. memory consumption: " +

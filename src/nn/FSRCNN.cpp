@@ -20,30 +20,46 @@
 
 namespace func = torch::nn::functional;
 
-FSRCNNImpl::FSRCNNImpl(std::array<unsigned short, 4> kernels, std::array<unsigned short, 4> paddings,
-	std::array<unsigned short, 5> channels) :
-	conv_0(torch::nn::Conv2dOptions(channels[0], channels[1], kernels[0]).padding(paddings[0])),
-	conv_1(torch::nn::Conv2dOptions(channels[1], channels[2], kernels[1]).padding(paddings[1])),
-	conv_2(torch::nn::Conv2dOptions(channels[2], channels[3], kernels[2]).padding(paddings[2])),
-	conv_trans_3(torch::nn::ConvTranspose2dOptions(channels[3], channels[4], kernels[3]).stride(2)
-	.padding(paddings[3])) {
+FSRCNNImpl::FSRCNNImpl(std::vector<unsigned short> ker,
+					   std::vector<unsigned short> pad,
+					   std::vector<unsigned short> channels) :
+
+	conv_0(torch::nn::Conv2dOptions(1, channels[0], ker[0]).padding(pad[0])),
+
+	conv_1(torch::nn::Conv2dOptions(channels[0], channels[1], ker[1]).padding(pad[1])),
+
+	conv_3(torch::nn::Conv2dOptions(channels[ker.size() - 3],
+									channels[ker.size() - 2],
+									ker[ker.size() - 2]).padding(pad[ker.size() - 2])),
+
+	conv_trans_4(torch::nn::ConvTranspose2dOptions(channels[ker.size() - 2],
+												   1, ker[ker.size() - 1]).stride(3)
+												   .padding(pad[ker.size() - 1])),
+	conv_2(ker.size() - 4, nullptr) {
 
 	register_module("conv_0", conv_0);
 	register_module("conv_1", conv_1);
-	register_module("conv_2", conv_2);
-	register_module("conv_trans_3", conv_trans_3);
+	for (size_t i = 0; i < conv_2.size(); i++) {
+		conv_2[i] = Conv2d(torch::nn::Conv2dOptions(
+			channels[i + 1], channels[i + 2], ker[i + 2]
+		).padding(pad[i + 2]));
+		register_module("conv_2_" + std::to_string(i), conv_2[i]);
+	}
+	register_module("conv_3", conv_3);
+	register_module("conv_trans_4", conv_trans_4);
 }
 
 torch::Tensor FSRCNNImpl::forward(torch::Tensor x) {
-	assert(x.size(2) == 64 && x.size(3) == 64);
 
 	func::LeakyReLUFuncOptions act_opt;
-	act_opt.negative_slope(0.15);
+	act_opt.negative_slope(0.01);
 
 	x = func::leaky_relu(conv_0(x), act_opt); //Input
 	x = func::leaky_relu(conv_1(x), act_opt);
-	x = func::leaky_relu(conv_2(x), act_opt);
-	x = conv_trans_3(x); //Output
+	for (size_t i = 0; i < conv_2.size(); i++)
+		x = func::leaky_relu(conv_2[i](x), act_opt);
+	x = func::leaky_relu(conv_3(x), act_opt);
+	x = func::leaky_relu(conv_trans_4(x), act_opt); //Output
 
 	return x;
 }

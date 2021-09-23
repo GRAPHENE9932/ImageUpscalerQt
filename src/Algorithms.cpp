@@ -82,37 +82,32 @@ bool Algorithms::parse_srcnn(QString str, std::array<unsigned short, 3>* kernels
 	}
 }
 
-bool Algorithms::parse_fsrcnn(QString str, std::array<unsigned short, 4>* kernels_out,
-							  std::array<unsigned short, 4>* paddings_out,
-							  std::array<unsigned short, 5>* channels_out) {
+bool Algorithms::parse_fsrcnn(QString str, std::vector<unsigned short>* kernels_out,
+							  std::vector<unsigned short>* paddings_out,
+							  std::vector<unsigned short>* channels_out) {
 	try {
 		QStringList parts = split(str, ' ');
 
 		if (parts.size() != 2)
 			return false;
 
-		std::array<unsigned short, 4> kernels = {0, 0, 0, 0};
-		std::array<unsigned short, 4> paddings = {0, 0, 0, 0};
-		std::array<unsigned short, 5> channels = {1, 0, 0, 0, 1};
-
 		//BEGIN Parse first part (kernels)
 		QStringList splitted_ker = split(parts[0], '-');
 
-		if (splitted_ker.size() != 4)
-			return false;
+		//Initialize kernels and paddigns vectors
+		std::vector<unsigned short> kernels(splitted_ker.size(), 0);
+		std::vector<unsigned short> paddings(splitted_ker.size(), 0);
 
 		bool bad_params = false;
 
-		for (uint8_t i = 0; i < 4; i++) {
-			//Parse name
+		for (uint8_t i = 0; i < splitted_ker.size(); i++) {
 			kernels[i] = splitted_ker[i].toUShort();
-			if (i == splitted_ker.size() - 1) { //If last (last layer - deconvolutional)
-				paddings[i] = (kernels[i] - 2) / 2;
-				bad_params |= kernels[i] % 2 != 0;
+			if (i == splitted_ker.size() - 1) { //Last element (conv transpos)
+				paddings[i] = (kernels[i] - 3) / 2;
 			}
 			else {
 				paddings[i] = (kernels[i] - 1) / 2; //Formulas simplified from (w - k + 2p) / s + 1
-				bad_params |= kernels[i] % 2 != 1;
+				bad_params |= (kernels[i] % 2) != 1;
 			}
 		}
 
@@ -123,11 +118,12 @@ bool Algorithms::parse_fsrcnn(QString str, std::array<unsigned short, 4>* kernel
 
 		//BEGIN Parse second part (channels)
 		QStringList splitted_ch = split(parts[1], '-');
+		//Inititalize channels vector
+		std::vector<unsigned short> channels(splitted_ker.size() + 1, 0);
+		channels[0] = 1;
+		channels[channels.size() - 1] = 1;
 
-		if (splitted_ch.size() != 3)
-			return false;
-
-		for (uint8_t i = 0; i < 3; i++)
+		for (uint8_t i = 0; i < splitted_ch.size(); i++)
 			channels[i + 1] = splitted_ch[i].toUShort();
 		//END
 
@@ -152,16 +148,25 @@ QString Algorithms::srcnn_to_string(const std::array<unsigned short, 3> kernels,
 										 QString::number(channels[2]));
 }
 
-QString Algorithms::fsrcnn_to_string(const std::array<unsigned short, 4> kernels,
-									 const std::array<unsigned short, 5> channels) {
-	//3-1-3-4 512-32-64
-	return QString("%1-%2-%3-%4 %5-%6-%7").arg(QString::number(kernels[0]),
-										       QString::number(kernels[1]),
-										       QString::number(kernels[2]),
-										       QString::number(kernels[3]),
-										       QString::number(channels[1]),
-										       QString::number(channels[2]),
-										       QString::number(channels[3]));
+QString Algorithms::fsrcnn_to_string(const std::vector<unsigned short> kernels,
+									 const std::vector<unsigned short> channels) {
+	QString output;
+
+	for (size_t i = 0; i < kernels.size(); i++) {
+		output += QString::number(kernels[i]);
+		if (i != kernels.size() - 1)
+			output += QChar('-');
+	}
+
+	output += QChar(' ');
+
+	for (size_t i = 1; i < channels.size() - 1; i++) {
+		output += QString::number(channels[i]);
+		if (i != channels.size() - 2)
+			output += QChar('-');
+	}
+
+	return output;
 }
 
 unsigned long long Algorithms::srcnn_operations_amount(std::array<unsigned short, 3> kernels,
@@ -193,16 +198,20 @@ unsigned long long Algorithms::srcnn_operations_amount(std::array<unsigned short
 	return result;
 }
 
-unsigned long long Algorithms::fsrcnn_operations_amount(std::array<unsigned short, 4> kernels,
-														std::array<unsigned short, 5> channels,
-														std::array<int, 5> widths,
-														std::array<int, 5> heights) {
+unsigned long long Algorithms::fsrcnn_operations_amount(std::vector<unsigned short> kernels,
+														std::vector<unsigned short> channels,
+														std::vector<int> widths,
+														std::vector<int> heights) {
+	assert(kernels.size() + 1 == channels.size() && channels.size() == widths.size() &&
+		   widths.size() == heights.size());
+
 	//Use formula for it
-	//O=sum from{i=1} to{5} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + {W_{ i+1 }^2 times O_a}
+	//O=sum from{i=1} to{n} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + {W_{ i+1 }^2 times O_a}
+	//(LibreOffice Math)
 
 	unsigned long long result = 0;
 
-	for (unsigned char i = 0; i < 4; i++) {
+	for (unsigned char i = 0; i < kernels.size() - 1; i++) {
 		result +=
 			(unsigned long long)widths[i + 1] *
 			(unsigned long long)heights[i + 1] *
@@ -222,10 +231,23 @@ unsigned long long Algorithms::fsrcnn_operations_amount(std::array<unsigned shor
 	return result;
 }
 
-template <int S>
-unsigned long long Algorithms::measure_cnn_memory_consumption(std::array<unsigned short, S> channels,
-													  std::array<int, S> widths,
-													  std::array<int, S> heights) {
+unsigned long long Algorithms::measure_cnn_memory_consumption(std::array<unsigned short, 4> channels,
+															  std::array<int, 4> widths,
+															  std::array<int, 4> heights) {
+	std::vector<unsigned short> channels_vec(channels.begin(), channels.end());
+	std::vector<int> widths_vec(widths.begin(), widths.end());
+	std::vector<int> heights_vec(heights.begin(), heights.end());
+
+	return measure_cnn_memory_consumption(channels_vec, widths_vec, heights_vec);
+}
+
+///APPROXIMATE minimum memory consumption of tensors that going throught the CNN
+///@returns Amount of bytes that will be consumed
+unsigned long long Algorithms::measure_cnn_memory_consumption(std::vector<unsigned short> channels,
+															  std::vector<int> widths,
+															  std::vector<int> heights) {
+	assert(channels.size() == widths.size() && widths.size() == heights.size());
+
 	//Iterate throught every convolutional layer to find the point with maximum memory consumption
 	//Considering the channels amount, width and height (in short, tensor size)
 	// |  1  | --- | 128 | --- |  64 | --- |  1  |
@@ -234,10 +256,11 @@ unsigned long long Algorithms::measure_cnn_memory_consumption(std::array<unsigne
 
 	unsigned long long max_point = 0;
 
-	for (unsigned char i = 0; i < S - 1; i++) {
+	for (unsigned char i = 0; i < channels.size() - 1; i++) {
 		unsigned long long cur_max_point = (unsigned long long)widths[i] * (unsigned long long)heights[i] *
-                                           (unsigned long long)channels[i] +
-										   (unsigned long long)widths[i + 1] * (unsigned long long)heights[i + 1] *
+										   (unsigned long long)channels[i] +
+										   (unsigned long long)widths[i + 1] *
+										   (unsigned long long)heights[i + 1] *
 										   (unsigned long long)channels[i + 1];
 
 		if (cur_max_point > max_point)
@@ -252,13 +275,6 @@ unsigned long long Algorithms::measure_cnn_memory_consumption(std::array<unsigne
 
 	return max_point;
 }
-
-template unsigned long long Algorithms::measure_cnn_memory_consumption<4>(std::array<unsigned short,4>,
-																  std::array<int,4>,
-																  std::array<int,4>);
-template unsigned long long Algorithms::measure_cnn_memory_consumption<5>(std::array<unsigned short,5>,
-																  std::array<int,5>,
-																  std::array<int,5>);
 
 QString Algorithms::big_number_to_string(long long num, QChar separator) {
 	//Get separate digits

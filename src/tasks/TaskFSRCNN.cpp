@@ -30,8 +30,8 @@ TaskFSRCNN::TaskFSRCNN() {
 	this->task_kind = TaskKind::fsrcnn;
 }
 
-TaskFSRCNN::TaskFSRCNN(std::array<unsigned short, 4> kernels, std::array<unsigned short, 4> paddings,
-					   std::array<unsigned short, 5> channels) {
+TaskFSRCNN::TaskFSRCNN(std::vector<unsigned short> kernels, std::vector<unsigned short> paddings,
+					   std::vector<unsigned short> channels) {
 	this->task_kind = TaskKind::fsrcnn;
 
 	//Assign arrays
@@ -77,41 +77,48 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 
 	//Get spec
 	auto spec = input.spec();
+	const int block_width = block_size == 0 ? spec.width : block_size; //Whole image size if we have not to
+	const int block_height = block_size == 0 ? spec.height : block_size; //split image into blocks
 
 	//Create output buffer
-	OIIO::ROI output_roi(0, spec.width * 2, 0, spec.height * 2, 0, 1, 0, spec.nchannels);
+	OIIO::ROI output_roi(0, spec.width * 3, 0, spec.height * 3, 0, 1, 0, spec.nchannels);
 	OIIO::ImageSpec output_spec(output_roi, OIIO::TypeDesc::UINT8);
 	OIIO::ImageBuf output(output_spec);
 
 	//Get blocks amount
-	int blocks_width = spec.width / 64;
-	if (blocks_width * 64 < spec.width)
+	int blocks_width = spec.width / block_width;
+	if (blocks_width * block_width < spec.width)
 		blocks_width++;
-	int blocks_height = spec.height / 64;
-	if (blocks_height * 64 < spec.height)
+	int blocks_height = spec.height / block_height;
+	if (blocks_height * block_height < spec.height)
 		blocks_height++;
 	blocks_amount = blocks_height * blocks_width * spec.nchannels;
 	blocks_processed = 0;
 
 	//Use FSRCNN block by block
-	for (int y = 0; y < spec.height; y += 64) {
-		for (int x = 0; x < spec.width; x += 64) {
+	for (int y = 0; y < spec.height; y += block_height) {
+		for (int x = 0; x < spec.width; x += block_width) {
 			for (int c = 0; c < spec.nchannels; c++) {
 				//Create block roi
-				OIIO::ROI block_extract_roi(x, x + 64, y, y + 64, 0, 1, c, c + 1);
+				OIIO::ROI block_extract_roi(x, x + block_width, y, y + block_height, 0, 1, c, c + 1);
 				//Get block pixels. Will be planar, because single-channel
-				auto block_pixels = std::make_unique<float[]>(64 * 64 * 1);
+				auto block_pixels = std::make_unique<float[]>(block_width * block_height * 1);
 				input.get_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, block_pixels.get());
 
 				//Create input tensor
 				torch::TensorOptions options = torch::TensorOptions(torch::ScalarType::Float);
-				torch::Tensor input_tensor = torch::from_blob(block_pixels.get(), {1, 1, 64, 64}, options);
+				//WARNING: potential error because of block_height and block_width order
+				torch::Tensor input_tensor = torch::from_blob(block_pixels.get(),
+															  {1, 1, block_height, block_width}, options);
 
 				//Get output from neural network
 				torch::Tensor output_tensor = model(input_tensor);
 
 				//Set pixels to buf
-				OIIO::ROI block_set_roi(x * 2, (x + 64) * 2, y * 2, (y + 64) * 2, 0, 1, c, c + 1);
+				OIIO::ROI block_set_roi(x * 3, (x + block_width) * 3,
+										y * 3, (y + block_height) * 3,
+										0, 1,
+										c, c + 1);
 				output.set_pixels(block_set_roi, OIIO::TypeDesc::FLOAT, output_tensor.data_ptr<float>());
 
 				blocks_processed++;
@@ -122,8 +129,6 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 			}
 		}
 	}
-
-
 
 	return output;
 }
