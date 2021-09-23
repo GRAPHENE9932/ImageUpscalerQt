@@ -43,10 +43,29 @@ private:
 	QString image_filename;
 	OIIO::ImageSpec image_spec;
 
-	void update_list();
-
+	///Prepare GUI for entering parameters (default parameters)
+	void prepare_task_resize();
+	///Prepare GUI for entering parameters (default parameters)
+	void prepare_task_srcnn();
+	///Update info for SRCNN that in labels
 	void update_srcnn_info();
+	///Prepare GUI for entering parameters (default parameters)
+	void prepare_task_fsrcnn();
+	///Update info for FSRCNN that in labels
 	void update_fsrcnn_info();
+	///Prepare GUI for entering parameters (default parameters)
+	void prepare_task_convert_color_space();
+
+	///Collect task parameters from GUI
+	Task* init_task_resize();
+	///Collect task parameters from GUI
+	Task* init_task_srcnn();
+	///Collect task parameters from GUI
+	Task* init_task_fsrcnn();
+	///Collect task parameters from GUI
+	Task* init_task_convert_color_space();
+
+	void update_list();
 
 	int end_width();
 	int end_height();

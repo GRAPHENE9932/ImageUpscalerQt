@@ -79,136 +79,267 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 
 ImageUpscalerQt::~ImageUpscalerQt() = default;
 
-//BEGIN Slots
-void ImageUpscalerQt::add_task_clicked() {
-	//Add task
-	switch ((TaskKind)m_ui->task_kind_combobox->currentIndex()) {
-		case TaskKind::resize: {
-			TaskResize* cur_task = new TaskResize(
-				m_ui->resize_x->value(),
-				m_ui->resize_y->value(),
-				(Interpolation)m_ui->resize_interpolation_combobox->currentIndex()
-			);
-
-			task_queue.push_back(cur_task);
-			break;
-		}
-		case TaskKind::srcnn: {
-			//Get SRCNN name
-			QString name = m_ui->srcnn_architecture_combobox->currentText();
-			//Parse SRCNN
-			std::array<unsigned short, 3> kernels;
-			std::array<unsigned short, 3> paddings;
-			std::array<unsigned short, 4> channels;
-			Algorithms::parse_srcnn(name, &kernels, &paddings, &channels);
-
-			//Get block size
-			unsigned int block_size;
-			if (m_ui->srcnn_block_split_check->isChecked())
-				block_size = m_ui->srcnn_block_size_spinbox->value();
-			else
-				block_size = 0; //0 means do not split image
-
-			//Create task
-			TaskSRCNN* cur_task = new TaskSRCNN(kernels, paddings, channels, block_size);
-			task_queue.push_back(cur_task);
-			break;
-		}
-		case TaskKind::fsrcnn: {
-			//Get FSRCNN name
-			QString name = m_ui->fsrcnn_architecture_combobox->currentText();
-			//Parse FSRCNN
-			std::vector<unsigned short> kernels;
-			std::vector<unsigned short> paddings;
-			std::vector<unsigned short> channels;
-			Algorithms::parse_fsrcnn(name, &kernels, &paddings, &channels);
-
-			//Create task
-			TaskFSRCNN* cur_task = new TaskFSRCNN(kernels, paddings, channels);
-			task_queue.push_back(cur_task);
-
-			//Update task info because the new FSRCNN will change the end size of the image
-			update_fsrcnn_info();
-			break;
-		}
-		case TaskKind::convert_color_space: {
-			TaskConvertColorSpace* cur_task = new TaskConvertColorSpace(
-				(ColorSpaceConversion)m_ui->color_space_combobox->currentIndex()
-			);
-
-			task_queue.push_back(cur_task);
-		}
+void ImageUpscalerQt::prepare_task_resize() {
+	//Is image selected and valid?
+	if (!image_spec.undefined()) {
+		//Set image width and height the same
+		m_ui->resize_x->setValue(image_spec.width);
+		m_ui->resize_y->setValue(image_spec.height);
+		//Enable keep ratio radio button
+		m_ui->keep_image_ratio_radio->setEnabled(true);
+		m_ui->keep_image_ratio_radio->setChecked(true);
 	}
+	else {
+		//Disable keep ratio radio button
+		m_ui->keep_image_ratio_radio->setEnabled(false);
+		m_ui->keep_image_ratio_radio->setChecked(false);
+	}
+}
 
-	update_list();
+void ImageUpscalerQt::prepare_task_srcnn() {
+	m_ui->srcnn_architecture_combobox->clear();
+
+	//Iterate through all resources to find SRCNN's
+	QDirIterator iter(":/SRCNN");
+	while (iter.hasNext()) {
+		QString cur_filename = iter.next(); //Get current path of resource
+		//Leave only filename with extension
+		cur_filename = cur_filename.section('/', -1, -1);
+		//Leave only filename without th .pt extension
+		cur_filename = cur_filename.left(cur_filename.size() - 3);
+
+		//Check if it is SRCNN
+		if (Algorithms::parse_srcnn(cur_filename, nullptr, nullptr, nullptr))
+			m_ui->srcnn_architecture_combobox->addItem(cur_filename);
+	}
+}
+
+void ImageUpscalerQt::prepare_task_fsrcnn() {
+	m_ui->fsrcnn_architecture_combobox->clear();
+
+	//Iterate through all resources to find FSRCNN's
+	QDirIterator iter(":/FSRCNN", QDirIterator::IteratorFlag::Subdirectories);
+	while (iter.hasNext()) {
+		QString cur_filename = iter.next(); //Get current path of resource
+		//Leave only filename with extension
+		cur_filename = cur_filename.section('/', -1, -1);
+		//Leave only filename without th .pt extension
+		cur_filename = cur_filename.left(cur_filename.size() - 3);
+
+		//Check if it is FSRCNN
+		if (Algorithms::parse_fsrcnn(cur_filename, nullptr, nullptr, nullptr))
+			m_ui->fsrcnn_architecture_combobox->addItem(cur_filename);
+	}
+}
+
+void ImageUpscalerQt::prepare_task_convert_color_space() {
+	//Just do nothing . _.
 }
 
 void ImageUpscalerQt::task_kind_changed(int index) {
 	//Set up the right part of the window
 	switch ((TaskKind)index) {
 		case TaskKind::resize: {
-			//Is image selected and valid?
-			if (!image_spec.undefined()) {
-				//Set image width and height the same
-				m_ui->resize_x->setValue(image_spec.width);
-				m_ui->resize_y->setValue(image_spec.height);
-				//Enable keep ratio radio button
-				m_ui->keep_image_ratio_radio->setEnabled(true);
-				m_ui->keep_image_ratio_radio->setChecked(true);
-			}
-			else {
-				//Disable keep ratio radio button
-				m_ui->keep_image_ratio_radio->setEnabled(false);
-				m_ui->keep_image_ratio_radio->setChecked(false);
-			}
+			prepare_task_resize();
 			break;
 		}
-
 		case TaskKind::srcnn: {
-			m_ui->srcnn_architecture_combobox->clear();
-
-			//Iterate through all resources to find SRCNN's
-			QDirIterator iter(":/SRCNN");
-			while (iter.hasNext()) {
-				QString cur_filename = iter.next(); //Get current path of resource
-				//Leave only filename with extension
-				cur_filename = cur_filename.section('/', -1, -1);
-				//Leave only filename without th .pt extension
-				cur_filename = cur_filename.left(cur_filename.size() - 3);
-
-				//Check if it is SRCNN
-				if (Algorithms::parse_srcnn(cur_filename, nullptr, nullptr, nullptr))
-					m_ui->srcnn_architecture_combobox->addItem(cur_filename);
-			}
+			prepare_task_srcnn();
 			break;
 		}
-
 		case TaskKind::fsrcnn: {
-			m_ui->fsrcnn_architecture_combobox->clear();
-
-			//Iterate through all resources to find FSRCNN's
-			QDirIterator iter(":/FSRCNN", QDirIterator::IteratorFlag::Subdirectories);
-			while (iter.hasNext()) {
-				QString cur_filename = iter.next(); //Get current path of resource
-				//Leave only filename with extension
-				cur_filename = cur_filename.section('/', -1, -1);
-				//Leave only filename without th .pt extension
-				cur_filename = cur_filename.left(cur_filename.size() - 3);
-
-				//Check if it is FSRCNN
-				if (Algorithms::parse_fsrcnn(cur_filename, nullptr, nullptr, nullptr))
-					m_ui->fsrcnn_architecture_combobox->addItem(cur_filename);
-			}
+			prepare_task_fsrcnn();
 			break;
 		}
-
 		case TaskKind::convert_color_space: {
-			//Just do nothing . _.
+			prepare_task_convert_color_space();
+			break;
 		}
 	}
 
 	//Toggle stacked widget
 	m_ui->task_settings_widget->setCurrentIndex(index);
+}
+
+Task* ImageUpscalerQt::init_task_resize() {
+	return new TaskResize(
+		m_ui->resize_x->value(),
+		m_ui->resize_y->value(),
+		(Interpolation)m_ui->resize_interpolation_combobox->currentIndex()
+	);
+}
+
+Task* ImageUpscalerQt::init_task_srcnn() {
+	//Get SRCNN name
+	QString name = m_ui->srcnn_architecture_combobox->currentText();
+	//Parse SRCNN
+	std::array<unsigned short, 3> kernels;
+	std::array<unsigned short, 3> paddings;
+	std::array<unsigned short, 4> channels;
+	Algorithms::parse_srcnn(name, &kernels, &paddings, &channels);
+
+	//Get block size
+	unsigned int block_size;
+	if (m_ui->srcnn_block_split_check->isChecked())
+		block_size = m_ui->srcnn_block_size_spinbox->value();
+	else
+		block_size = 0; //0 means do not split image
+
+	//Create task
+	return new TaskSRCNN(kernels, paddings, channels, block_size);
+}
+
+void ImageUpscalerQt::update_srcnn_info() {
+	//Handle the block size
+	if (!image_spec.undefined()) {
+		//If current block size is greater than image size, do not split image into blocks
+		if (m_ui->srcnn_block_size_spinbox->value() > end_width() ||
+			m_ui->srcnn_block_size_spinbox->value() > end_height()) {
+			m_ui->srcnn_block_split_check->setChecked(false);
+			m_ui->srcnn_block_size_spinbox->setEnabled(false);
+		}
+	}
+
+	//Set maximum block size
+	m_ui->srcnn_block_size_spinbox->setMaximum(std::clamp(std::min(end_width(), end_height()), 32, INT_MAX));
+
+	//Gray out block size spinbox if the split checkbox is unchecked
+	m_ui->srcnn_block_size_spinbox->setEnabled(m_ui->srcnn_block_split_check->isChecked());
+
+	//Parse current architecture
+	std::array<unsigned short, 3> kernels;
+	std::array<unsigned short, 4> channels;
+	if (!Algorithms::parse_srcnn(m_ui->srcnn_architecture_combobox->currentText(),
+		&kernels, nullptr, &channels)) {
+		//If the current architecture is invalid, just skip it
+		return;
+	}
+
+	std::array<int, 4> widths; //Define this arrays
+	std::array<int, 4> heights;
+	if (m_ui->srcnn_block_split_check->isChecked()) { //If split by blocks
+		int block_size = m_ui->srcnn_block_size_spinbox->value();
+
+		widths = {block_size, block_size, block_size, block_size};
+		heights = {block_size, block_size, block_size, block_size};
+	}
+	else if (!image_spec.undefined()) { //If not
+		widths = {end_width(), end_width(), end_width(), end_width()};
+		heights = {end_height(), end_height(), end_height(), end_height()};
+	}
+
+	//BEGIN Amount of operations
+	//Display amount of operations
+	if (image_spec.undefined()) { //If the image is not selected yet
+		m_ui->srcnn_total_operations_label->setText("Total operations: no image");
+	}
+	else if (m_ui->srcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
+		//Compute amount of operations per block
+		auto o_per_block = Algorithms::srcnn_operations_amount(kernels, channels, widths, heights);
+
+		//Compute amount of the blocks
+		int blocks_width = end_width() / widths[0];
+		if (blocks_width * widths[0] < end_width())
+			blocks_width++;
+		int blocks_height = end_height() / heights[0];
+		if (blocks_height * heights[0] < end_height())
+			blocks_height++;
+		long long blocks_amount = blocks_height * blocks_width;
+
+		//Set label about it
+		m_ui->srcnn_total_operations_label->setText(
+			QString("Total operations: %1").arg(
+				Algorithms::big_number_to_string(o_per_block * blocks_amount * image_spec.nchannels, ' ')
+			)
+		);
+	}
+	else { //If we have not to split the image into blocks
+		auto operations = Algorithms::srcnn_operations_amount(kernels, channels, widths, heights);
+		operations *= image_spec.nchannels;
+
+		//Set label about it
+		m_ui->srcnn_total_operations_label->setText(
+			QString("Total operations: %1").arg(
+				Algorithms::big_number_to_string(operations, ' ')
+			)
+		);
+	}
+	//END Amount of operations
+
+	//BEGIN Memory consumption
+	if (!image_spec.undefined() || m_ui->srcnn_block_split_check->isChecked()) {
+		//Compute memory consumption
+		auto mem_consumption = Algorithms::measure_cnn_memory_consumption(channels, widths, heights);
+
+		//Display it
+		m_ui->srcnn_memory_consumption_label->setText("Approx. memory consumption: " +
+			Algorithms::bytes_amount_to_string(mem_consumption));
+
+		//Set color of the label
+		if (mem_consumption > CRITICAL_MEMORY) {
+			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
+		}
+		else if (mem_consumption > EXTREME_MEMORY) {
+			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
+		}
+		else if (mem_consumption > WARNING_MEMORY) {
+			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
+		}
+		else {
+			m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet()); //Default
+		}
+	}
+	else {
+		m_ui->srcnn_memory_consumption_label->setText("Approx. memory consumption: no image");
+		m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet());
+	}
+	//END Memory consumption
+}
+
+Task* ImageUpscalerQt::init_task_fsrcnn() {
+	//Get FSRCNN name
+	QString name = m_ui->fsrcnn_architecture_combobox->currentText();
+	//Parse FSRCNN
+	std::vector<unsigned short> kernels;
+	std::vector<unsigned short> paddings;
+	std::vector<unsigned short> channels;
+	Algorithms::parse_fsrcnn(name, &kernels, &paddings, &channels);
+
+	//Create task
+	return new TaskFSRCNN(kernels, paddings, channels);
+}
+
+Task* ImageUpscalerQt::init_task_convert_color_space() {
+	return new TaskConvertColorSpace(
+		(ColorSpaceConversion)m_ui->color_space_combobox->currentIndex()
+	);
+}
+
+//BEGIN Slots
+void ImageUpscalerQt::add_task_clicked() {
+	//Add task
+	switch ((TaskKind)m_ui->task_kind_combobox->currentIndex()) {
+		case TaskKind::resize: {
+			task_queue.push_back(init_task_resize());
+			break;
+		}
+		case TaskKind::srcnn: {
+			task_queue.push_back(init_task_srcnn());
+			break;
+		}
+		case TaskKind::fsrcnn: {
+			task_queue.push_back(init_task_fsrcnn());
+
+			//Update task info because the new FSRCNN will change the end size of the image
+			update_fsrcnn_info();
+			break;
+		}
+		case TaskKind::convert_color_space: {
+			task_queue.push_back(init_task_convert_color_space());
+		}
+	}
+
+	update_list();
 }
 
 void ImageUpscalerQt::select_image_clicked() {
@@ -342,113 +473,6 @@ void ImageUpscalerQt::srcnn_block_size_changed(int) {
 
 void ImageUpscalerQt::srcnn_split_checked(int) {
 	update_srcnn_info();
-}
-
-void ImageUpscalerQt::update_srcnn_info() {
-	//Handle the block size
-	if (!image_spec.undefined()) {
-		//If current block size is greater than image size, do not split image into blocks
-		if (m_ui->srcnn_block_size_spinbox->value() > end_width() ||
-			m_ui->srcnn_block_size_spinbox->value() > end_height()) {
-			m_ui->srcnn_block_split_check->setChecked(false);
-			m_ui->srcnn_block_size_spinbox->setEnabled(false);
-		}
-	}
-
-	//Set maximum block size
-	m_ui->srcnn_block_size_spinbox->setMaximum(std::clamp(std::min(end_width(), end_height()), 32, INT_MAX));
-
-	//Gray out block size spinbox if the split checkbox is unchecked
-	m_ui->srcnn_block_size_spinbox->setEnabled(m_ui->srcnn_block_split_check->isChecked());
-
-	//Parse current architecture
-	std::array<unsigned short, 3> kernels;
-	std::array<unsigned short, 4> channels;
-	if (!Algorithms::parse_srcnn(m_ui->srcnn_architecture_combobox->currentText(),
-		&kernels, nullptr, &channels)) {
-		//If the current architecture is invalid, just skip it
-		return;
-	}
-
-	std::array<int, 4> widths; //Define this arrays
-	std::array<int, 4> heights;
-	if (m_ui->srcnn_block_split_check->isChecked()) { //If split by blocks
-		int block_size = m_ui->srcnn_block_size_spinbox->value();
-
-		widths = {block_size, block_size, block_size, block_size};
-		heights = {block_size, block_size, block_size, block_size};
-	}
-	else if (!image_spec.undefined()) { //If not
-		widths = {end_width(), end_width(), end_width(), end_width()};
-		heights = {end_height(), end_height(), end_height(), end_height()};
-	}
-
-	//BEGIN Amount of operations
-	//Display amount of operations
-	if (image_spec.undefined()) { //If the image is not selected yet
-		m_ui->srcnn_total_operations_label->setText("Total operations: no image");
-	}
-	else if (m_ui->srcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
-		//Compute amount of operations per block
-		auto o_per_block = Algorithms::srcnn_operations_amount(kernels, channels, widths, heights);
-
-		//Compute amount of the blocks
-		int blocks_width = end_width() / widths[0];
-		if (blocks_width * widths[0] < end_width())
-			blocks_width++;
-		int blocks_height = end_height() / heights[0];
-		if (blocks_height * heights[0] < end_height())
-			blocks_height++;
-		long long blocks_amount = blocks_height * blocks_width;
-
-		//Set label about it
-		m_ui->srcnn_total_operations_label->setText(
-			QString("Total operations: %1").arg(
-				Algorithms::big_number_to_string(o_per_block * blocks_amount * image_spec.nchannels, ' ')
-			)
-		);
-	}
-	else { //If we have not to split the image into blocks
-		auto operations = Algorithms::srcnn_operations_amount(kernels, channels, widths, heights);
-		operations *= image_spec.nchannels;
-
-		//Set label about it
-		m_ui->srcnn_total_operations_label->setText(
-			QString("Total operations: %1").arg(
-				Algorithms::big_number_to_string(operations, ' ')
-			)
-		);
-	}
-	//END Amount of operations
-
-	//BEGIN Memory consumption
-	if (!image_spec.undefined() || m_ui->srcnn_block_split_check->isChecked()) {
-		//Compute memory consumption
-		auto mem_consumption = Algorithms::measure_cnn_memory_consumption(channels, widths, heights);
-
-		//Display it
-		m_ui->srcnn_memory_consumption_label->setText("Approx. memory consumption: " +
-			Algorithms::bytes_amount_to_string(mem_consumption));
-
-		//Set color of the label
-		if (mem_consumption > CRITICAL_MEMORY) {
-			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
-		}
-		else if (mem_consumption > EXTREME_MEMORY) {
-			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
-		}
-		else if (mem_consumption > WARNING_MEMORY) {
-			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
-		}
-		else {
-			m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet()); //Default
-		}
-	}
-	else {
-		m_ui->srcnn_memory_consumption_label->setText("Approx. memory consumption: no image");
-		m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet());
-	}
-	//END Memory consumption
 }
 
 //END SRCNN page events
