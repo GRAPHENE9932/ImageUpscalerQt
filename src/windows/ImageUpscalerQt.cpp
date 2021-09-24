@@ -639,7 +639,7 @@ void ImageUpscalerQt::update_list() {
 		return;
 	}
 
-	//1920x1080 -> 3840x2160
+	//1920x1080 -> 5760x3240
 	QString status = QString("%1x%2 -> %3x%4").arg(QString::number(image_spec.width),
 												   QString::number(image_spec.height),
 												   QString::number(end_width()),
@@ -655,7 +655,7 @@ int ImageUpscalerQt::end_width() {
 	for (unsigned short i = 0; i < task_queue.size(); i++) {
 		switch (task_queue[i]->task_kind) {
 			case TaskKind::fsrcnn: {
-				after_width *= 2; //FSRCNN increases resolution in 2 times
+				after_width *= 3; //FSRCNN increases resolution in 3 times
 				break;
 			}
 			case TaskKind::resize: {
@@ -677,7 +677,7 @@ int ImageUpscalerQt::end_height() {
 	for (unsigned short i = 0; i < task_queue.size(); i++) {
 		switch (task_queue[i]->task_kind) {
 			case TaskKind::fsrcnn: {
-				after_height *= 2; //FSRCNN increases resolution in 2 times
+				after_height *= 3; //FSRCNN increases resolution in 3 times
 				break;
 			}
 			case TaskKind::resize: {
