@@ -19,6 +19,8 @@
 #include <sstream>
 #include <cassert>
 
+#include <QCollator>
+
 #include "Algorithms.h"
 
 QStringList Algorithms::split(QString str, QChar c) {
@@ -274,6 +276,19 @@ unsigned long long Algorithms::measure_cnn_memory_consumption(std::vector<unsign
 	max_point *= 4ull;
 
 	return max_point;
+}
+
+void Algorithms::numerical_sort(QStringList& list) {
+	QCollator collator;
+	collator.setNumericMode(true);
+
+	std::sort(
+		list.begin(),
+		list.end(),
+		[&](const QString& str_1, const QString& str_2) {
+			return collator.compare(str_1, str_2) < 0;
+		}
+	);
 }
 
 QString Algorithms::big_number_to_string(long long num, QChar separator) {

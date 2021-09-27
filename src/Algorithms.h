@@ -66,6 +66,9 @@ namespace Algorithms {
 													  std::vector<int> widths,
 													  std::vector<int> heights);
 
+	///Sort list of the QStrings numerically, e. g. A2, A3, A10, B9, B16
+	void numerical_sort(QStringList& list);
+
 	///Convert "987654321" to "987 654 321" if separator is ' '
 	QString big_number_to_string(long long num, QChar separator);
 

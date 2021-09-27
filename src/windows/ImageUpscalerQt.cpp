@@ -101,11 +101,16 @@ void ImageUpscalerQt::prepare_task_srcnn() {
 
 	//Iterate through all resources to find SRCNN's
 	QDirIterator iter(":/SRCNN");
+	QStringList list;
 	while (iter.hasNext()) {
-		QString cur_filename = iter.next(); //Get current path of resource
-		//Leave only filename with extension
-		cur_filename = cur_filename.section('/', -1, -1);
-		//Leave only filename without th .pt extension
+		//Get current path of resource and leave only filename with extension
+		list.push_back(iter.next().section('/', -1, -1));
+	}
+
+	Algorithms::numerical_sort(list); //Sort strings numerically
+
+	for (QString cur_filename : list) {
+		//Leave only filename without the .pt extension
 		cur_filename = cur_filename.left(cur_filename.size() - 3);
 
 		//Check if it is SRCNN
@@ -117,13 +122,18 @@ void ImageUpscalerQt::prepare_task_srcnn() {
 void ImageUpscalerQt::prepare_task_fsrcnn() {
 	m_ui->fsrcnn_architecture_combobox->clear();
 
-	//Iterate through all resources to find FSRCNN's
-	QDirIterator iter(":/FSRCNN", QDirIterator::IteratorFlag::Subdirectories);
+	//Iterate through all resources to find SRCNN's
+	QDirIterator iter(":/FSRCNN");
+	QStringList list;
 	while (iter.hasNext()) {
-		QString cur_filename = iter.next(); //Get current path of resource
-		//Leave only filename with extension
-		cur_filename = cur_filename.section('/', -1, -1);
-		//Leave only filename without th .pt extension
+		//Get current path of resource and leave only filename with extension
+		list.push_back(iter.next().section('/', -1, -1));
+	}
+
+	Algorithms::numerical_sort(list); //Sort strings numerically
+
+	for (QString cur_filename : list) {
+		//Leave only filename without the .pt extension
 		cur_filename = cur_filename.left(cur_filename.size() - 3);
 
 		//Check if it is FSRCNN
