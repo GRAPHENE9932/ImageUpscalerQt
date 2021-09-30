@@ -33,7 +33,7 @@ public:
 
 	TaskFSRCNN();
 	TaskFSRCNN(std::vector<unsigned short> kernels, std::vector<unsigned short> paddings,
-			   std::vector<unsigned short> channels);
+			   std::vector<unsigned short> channels, unsigned int block_size);
 
 	///"1: use FSRCNN 3-1-3-4 64-32-32"
 	QString to_string(unsigned short index) const override;

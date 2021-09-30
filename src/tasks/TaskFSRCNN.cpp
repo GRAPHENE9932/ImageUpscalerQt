@@ -31,7 +31,7 @@ TaskFSRCNN::TaskFSRCNN() {
 }
 
 TaskFSRCNN::TaskFSRCNN(std::vector<unsigned short> kernels, std::vector<unsigned short> paddings,
-					   std::vector<unsigned short> channels) {
+					   std::vector<unsigned short> channels, unsigned int block_size) {
 	this->task_kind = TaskKind::fsrcnn;
 
 	//Assign arrays
@@ -40,6 +40,8 @@ TaskFSRCNN::TaskFSRCNN(std::vector<unsigned short> kernels, std::vector<unsigned
 	this->paddings = paddings;
 
 	this->channels = channels;
+
+	this->block_size = block_size;
 }
 
 QString TaskFSRCNN::to_string(unsigned short index) const {

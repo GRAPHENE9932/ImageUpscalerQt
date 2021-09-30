@@ -199,6 +199,32 @@ Task* ImageUpscalerQt::init_task_srcnn() {
 	return new TaskSRCNN(kernels, paddings, channels, block_size);
 }
 
+Task* ImageUpscalerQt::init_task_fsrcnn() {
+	//Get FSRCNN name
+	QString name = m_ui->fsrcnn_architecture_combobox->currentText();
+	//Parse FSRCNN
+	std::vector<unsigned short> kernels;
+	std::vector<unsigned short> paddings;
+	std::vector<unsigned short> channels;
+	Algorithms::parse_fsrcnn(name, &kernels, &paddings, &channels);
+
+	//Get block size
+	unsigned int block_size;
+	if (m_ui->fsrcnn_block_split_check->isChecked())
+		block_size = m_ui->fsrcnn_block_size_spinbox->value();
+	else
+		block_size = 0; //0 means do not split image
+
+	//Create task
+	return new TaskFSRCNN(kernels, paddings, channels, block_size);
+}
+
+Task* ImageUpscalerQt::init_task_convert_color_space() {
+	return new TaskConvertColorSpace(
+		(ColorSpaceConversion)m_ui->color_space_combobox->currentIndex()
+	);
+}
+
 void ImageUpscalerQt::update_srcnn_info() {
 	//Handle the block size
 	if (!image_spec.undefined()) {
@@ -304,25 +330,6 @@ void ImageUpscalerQt::update_srcnn_info() {
 		m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet());
 	}
 	//END Memory consumption
-}
-
-Task* ImageUpscalerQt::init_task_fsrcnn() {
-	//Get FSRCNN name
-	QString name = m_ui->fsrcnn_architecture_combobox->currentText();
-	//Parse FSRCNN
-	std::vector<unsigned short> kernels;
-	std::vector<unsigned short> paddings;
-	std::vector<unsigned short> channels;
-	Algorithms::parse_fsrcnn(name, &kernels, &paddings, &channels);
-
-	//Create task
-	return new TaskFSRCNN(kernels, paddings, channels);
-}
-
-Task* ImageUpscalerQt::init_task_convert_color_space() {
-	return new TaskConvertColorSpace(
-		(ColorSpaceConversion)m_ui->color_space_combobox->currentIndex()
-	);
 }
 
 //BEGIN Slots
