@@ -27,7 +27,7 @@ enum class Interpolation : unsigned char {
 };
 
 ///Interpolation names for the user
-const QString INTERPOLATION_NAMES[18] = {
+const QString INTERPOLATION_NAMES[14] = {
 	"B-spline", "Bilinear", "Blackman-Harris", "Box", "Catmull-Rom", "Cubic",
 	"Gaussian", "Lanczos3", "Mitchell", "Radial-lanczos3",
 	"Rifman", "Sharp-Gaussian", "Simon", "Sinc"
@@ -35,7 +35,7 @@ const QString INTERPOLATION_NAMES[18] = {
 
 ///Interpolation names for the OpenImageIO library.
 ///"none" and "bilinear" are not used.
-const QString INTERPOLATION_OIIO_NAMES[18] = {
+const QString INTERPOLATION_OIIO_NAMES[14] = {
 	"bspline", "bilinear", "blackman-harris", "box", "catmull-rom", "cubic",
 	"gaussian", "lanczos3", "mitchell", "radial-lanczos3",
 	"rifman", "sharp-gaussian", "simon", "sinc"
