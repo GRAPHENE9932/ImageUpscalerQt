@@ -49,8 +49,6 @@ $ make
 ### Install dependencies
 ```
 $ sudo apt install libopenimageio-dev qt5-default cmake gcc git python3-pip wget unzip
-$ git clone https://github.com/pytorch/pytorch.git
-$ cd pytorch
 $ wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.9.0%2Bcpu.zip
 $ unzip libtorch-cxx11-abi-shared-with-deps-1.9.0+cpu.zip
 ```
