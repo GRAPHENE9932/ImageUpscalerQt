@@ -132,8 +132,8 @@ void TasksWaitingDialog::cancel_clicked() {
 void TasksWaitingDialog::save_clicked() {
 	//Create the file dialog
 	QFileDialog dialog(this, "Save image", "/home",
-					   "PNG image (*.png);;JPEG image (*.jpg *.jpeg);;JPEG2000 image (*.jp2 *.jpg2);;\
-					   Bitmap image (*.bmp);;TIFF image (*.tiff *.tif);;Icon (*.ico)");
+					   "PNG image(*.png);;JPEG image(*.jpg *.jpeg);;JPEG2000 image(*.jp2 *.jpg2);;\
+					   Bitmap image(*.bmp);;TIFF image(*.tiff *.tif);;Icon(*.ico)");
 	dialog.setFileMode(QFileDialog::FileMode::AnyFile);
 	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
 
