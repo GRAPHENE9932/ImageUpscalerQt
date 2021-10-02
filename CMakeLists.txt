@@ -35,10 +35,8 @@ else()
 endif()
 
 #OpenImageIO
-#find_package(OpenImageIO CONFIG REQUIRED)
-#target_link_libraries(imageupscalerqt OpenImageIO::OpenImageIO OpenImageIO::OpenImageIO_Util)
-#find_library(OIIO "OpenImageIO")
-target_link_libraries(imageupscalerqt OpenImageIO)
+find_package(OpenImageIO CONFIG REQUIRED)
+target_link_libraries(imageupscalerqt OpenImageIO::OpenImageIO OpenImageIO::OpenImageIO_Util)
 
 #LibTorch
 find_package(Torch REQUIRED)
