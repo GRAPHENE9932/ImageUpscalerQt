@@ -136,6 +136,7 @@ void TasksWaitingDialog::save_clicked() {
 					   Bitmap image(*.bmp);;TIFF image(*.tiff *.tif);;Icon(*.ico)");
 	dialog.setFileMode(QFileDialog::FileMode::AnyFile);
 	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
+	dialog.setDefaultSuffix(".png");
 
 	//If accepted
 	if (dialog.exec() == QDialog::DialogCode::Accepted) {
@@ -158,7 +159,7 @@ void TasksWaitingDialog::save_clicked() {
 void TasksWaitingDialog::reject() {
 	if (!tasks_complete) {
 		if (QMessageBox::question(this, "Cancel?", "Tasks are not already finished. Do you want to cancel this tasks?",
-							  QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes) {
+			QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes) {
 			cancel_clicked();
 		}
 	}
