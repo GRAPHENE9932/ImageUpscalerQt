@@ -35,8 +35,12 @@ else()
 endif()
 
 #OpenImageIO
-find_package(OpenImageIO CONFIG REQUIRED)
-target_link_libraries(imageupscalerqt OpenImageIO::OpenImageIO OpenImageIO::OpenImageIO_Util)
+if (WIN32)
+    find_package(OpenImageIO CONFIG REQUIRED)
+    target_link_libraries(imageupscalerqt OpenImageIO::OpenImageIO)
+else()
+    target_link_libraries(imageupscalerqt OpenImageIO)
+endif()
 
 #LibTorch
 find_package(Torch REQUIRED)
