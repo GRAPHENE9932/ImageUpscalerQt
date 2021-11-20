@@ -42,6 +42,9 @@ constexpr unsigned long long WARNING_MEMORY = 1ull * 1024ull * 1024ull * 1024ull
 ///Point to make the memory consumption label red
 constexpr unsigned long long CRITICAL_MEMORY = 2ull * 1024ull * 1024ull * 1024ull; //2.0 GiB
 
+///Recommended CNNs
+const QStringList RECOMMENDED_CNN = { "5-1-3-3-1-9 128-16-48-48-128", "9-3-5 64-32" };
+
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
     m_ui(new Ui::ImageUpscalerQt) {
     m_ui->setupUi(this);
@@ -107,14 +110,23 @@ void ImageUpscalerQt::prepare_task_srcnn() {
 
 	Algorithms::numerical_sort(list); //Sort strings numerically
 
-	for (QString cur_filename : list) {
-		//Leave only filename without the .pt extension
-		cur_filename = cur_filename.left(cur_filename.size() - 3);
+	unsigned short recommended_idx;
+	for (unsigned short i = 0; i < list.size(); i++) {
+		//Leave only filename without the .pt extension.
+		list[i] = list[i].left(list[i].size() - 3);
 
-		//Check if it is SRCNN
-		if (Algorithms::parse_srcnn(cur_filename, nullptr, nullptr, nullptr))
-			m_ui->srcnn_architecture_combobox->addItem(cur_filename);
+		//Check if it is FSRCNN.
+		if (Algorithms::parse_srcnn(list[i], nullptr, nullptr, nullptr)) {
+			//Check if it is recommended
+			if (RECOMMENDED_CNN.contains(list[i])) {
+				list[i] += " (Recommended)";
+				recommended_idx = i;
+			}
+			m_ui->srcnn_architecture_combobox->addItem(list[i]);
+		}
 	}
+	//Switch default entry to the recommended one.
+	m_ui->srcnn_architecture_combobox->setCurrentIndex(recommended_idx);
 }
 
 void ImageUpscalerQt::prepare_task_fsrcnn() {
@@ -130,14 +142,23 @@ void ImageUpscalerQt::prepare_task_fsrcnn() {
 
 	Algorithms::numerical_sort(list); //Sort strings numerically
 
-	for (QString cur_filename : list) {
-		//Leave only filename without the .pt extension
-		cur_filename = cur_filename.left(cur_filename.size() - 3);
+	unsigned short recommended_idx;
+	for (unsigned short i = 0; i < list.size(); i++) {
+		//Leave only filename without the .pt extension.
+		list[i] = list[i].left(list[i].size() - 3);
 
-		//Check if it is FSRCNN
-		if (Algorithms::parse_fsrcnn(cur_filename, nullptr, nullptr, nullptr))
-			m_ui->fsrcnn_architecture_combobox->addItem(cur_filename);
+		//Check if it is FSRCNN.
+		if (Algorithms::parse_fsrcnn(list[i], nullptr, nullptr, nullptr)) {
+			//Check if it is recommended
+			if (RECOMMENDED_CNN.contains(list[i])) {
+				list[i] += " (Recommended)";
+				recommended_idx = i;
+			}
+			m_ui->fsrcnn_architecture_combobox->addItem(list[i]);
+		}
 	}
+	//Switch default entry to the recommended one.
+	m_ui->fsrcnn_architecture_combobox->setCurrentIndex(recommended_idx);
 }
 
 void ImageUpscalerQt::prepare_task_convert_color_space() {
