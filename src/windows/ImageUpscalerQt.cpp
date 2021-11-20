@@ -37,10 +37,8 @@
 
 #define VERSION "1.0"
 
-///Point to make the memory consumption label yellow
-constexpr unsigned long long WARNING_MEMORY = 512ull * 1024ull * 1024ull; //512.0 MiB
 ///Point to make the memory consumption label orange
-constexpr unsigned long long EXTREME_MEMORY = 1ull * 1024ull * 1024ull * 1024ull; //1.0 GiB
+constexpr unsigned long long WARNING_MEMORY = 1ull * 1024ull * 1024ull * 1024ull; //1.0 GiB
 ///Point to make the memory consumption label red
 constexpr unsigned long long CRITICAL_MEMORY = 2ull * 1024ull * 1024ull * 1024ull; //2.0 GiB
 
@@ -315,11 +313,8 @@ void ImageUpscalerQt::update_srcnn_info() {
 		if (mem_consumption > CRITICAL_MEMORY) {
 			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
 		}
-		else if (mem_consumption > EXTREME_MEMORY) {
-			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
-		}
 		else if (mem_consumption > WARNING_MEMORY) {
-			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
+			m_ui->srcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
 		}
 		else {
 			m_ui->srcnn_memory_consumption_label->setStyleSheet(styleSheet()); //Default
@@ -600,11 +595,8 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 		if (mem_consumption > CRITICAL_MEMORY) {
 			m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:red"); //Red
 		}
-		else if (mem_consumption > EXTREME_MEMORY) {
-			m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
-		}
 		else if (mem_consumption > WARNING_MEMORY) {
-			m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:yellow"); //Yellow
+			m_ui->fsrcnn_memory_consumption_label->setStyleSheet("font-weight:bold;color:orange"); //Orange
 		}
 		else {
 			m_ui->fsrcnn_memory_consumption_label->setStyleSheet(styleSheet()); //Default
