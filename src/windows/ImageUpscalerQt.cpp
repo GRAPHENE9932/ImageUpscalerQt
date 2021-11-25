@@ -200,7 +200,7 @@ Task* ImageUpscalerQt::init_task_resize() {
 
 Task* ImageUpscalerQt::init_task_srcnn() {
 	//Get SRCNN name
-	QString name = m_ui->srcnn_architecture_combobox->currentText();
+	QString name = m_ui->srcnn_architecture_combobox->currentText().replace(" (Recommended)", "");
 	//Parse SRCNN
 	std::array<unsigned short, 3> kernels;
 	std::array<unsigned short, 3> paddings;
@@ -220,7 +220,7 @@ Task* ImageUpscalerQt::init_task_srcnn() {
 
 Task* ImageUpscalerQt::init_task_fsrcnn() {
 	//Get FSRCNN name
-	QString name = m_ui->fsrcnn_architecture_combobox->currentText();
+	QString name = m_ui->fsrcnn_architecture_combobox->currentText().replace(" (Recommended)", "");
 	//Parse FSRCNN
 	std::vector<unsigned short> kernels;
 	std::vector<unsigned short> paddings;
