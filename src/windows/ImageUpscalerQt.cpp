@@ -116,7 +116,7 @@ void ImageUpscalerQt::prepare_task_srcnn() {
 		list[i] = list[i].left(list[i].size() - 3);
 
 		//Check if it is FSRCNN.
-		if (Algorithms::parse_srcnn(list[i], nullptr, nullptr, nullptr)) {
+		if (Algorithms::parse_srcnn(list[i].replace(" (Recommended)", ""), nullptr, nullptr, nullptr)) {
 			//Check if it is recommended
 			if (RECOMMENDED_CNN.contains(list[i])) {
 				list[i] += " (Recommended)";
@@ -148,7 +148,7 @@ void ImageUpscalerQt::prepare_task_fsrcnn() {
 		list[i] = list[i].left(list[i].size() - 3);
 
 		//Check if it is FSRCNN.
-		if (Algorithms::parse_fsrcnn(list[i], nullptr, nullptr, nullptr)) {
+		if (Algorithms::parse_fsrcnn(list[i].replace(" (Recommended)", ""), nullptr, nullptr, nullptr)) {
 			//Check if it is recommended
 			if (RECOMMENDED_CNN.contains(list[i])) {
 				list[i] += " (Recommended)";
@@ -205,7 +205,7 @@ Task* ImageUpscalerQt::init_task_srcnn() {
 	std::array<unsigned short, 3> kernels;
 	std::array<unsigned short, 3> paddings;
 	std::array<unsigned short, 4> channels;
-	Algorithms::parse_srcnn(name, &kernels, &paddings, &channels);
+	Algorithms::parse_srcnn(name.replace(" (Recommended)", ""), &kernels, &paddings, &channels);
 
 	//Get block size
 	unsigned int block_size;
@@ -225,7 +225,7 @@ Task* ImageUpscalerQt::init_task_fsrcnn() {
 	std::vector<unsigned short> kernels;
 	std::vector<unsigned short> paddings;
 	std::vector<unsigned short> channels;
-	Algorithms::parse_fsrcnn(name, &kernels, &paddings, &channels);
+	Algorithms::parse_fsrcnn(name.replace(" (Recommended)", ""), &kernels, &paddings, &channels);
 
 	//Get block size
 	unsigned int block_size;
@@ -264,7 +264,7 @@ void ImageUpscalerQt::update_srcnn_info() {
 	//Parse current architecture
 	std::array<unsigned short, 3> kernels;
 	std::array<unsigned short, 4> channels;
-	if (!Algorithms::parse_srcnn(m_ui->srcnn_architecture_combobox->currentText(),
+	if (!Algorithms::parse_srcnn(m_ui->srcnn_architecture_combobox->currentText().replace(" (Recommended)", ""),
 		&kernels, nullptr, &channels)) {
 		//If the current architecture is invalid, just skip it
 		return;
@@ -543,7 +543,7 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	//Parse current architecture
 	std::vector<unsigned short> kernels;
 	std::vector<unsigned short> channels;
-	if (!Algorithms::parse_fsrcnn(m_ui->fsrcnn_architecture_combobox->currentText(),
+	if (!Algorithms::parse_fsrcnn(m_ui->fsrcnn_architecture_combobox->currentText().replace(" (Recommended)", ""),
 		&kernels, nullptr, &channels)) {
 		//If the current architecture is invalid, just skip it
 		return;
