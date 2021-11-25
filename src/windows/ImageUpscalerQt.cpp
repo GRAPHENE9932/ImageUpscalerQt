@@ -35,7 +35,7 @@
 #include "../tasks/TaskConvertColorSpace.h"
 #include "TasksWaitingDialog.h"
 
-#define VERSION "1.0"
+#define VERSION "1.1"
 
 ///Point to make the memory consumption label orange
 constexpr unsigned long long WARNING_MEMORY = 1ull * 1024ull * 1024ull * 1024ull; //1.0 GiB
