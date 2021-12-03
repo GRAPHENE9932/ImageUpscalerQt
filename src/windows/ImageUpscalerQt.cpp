@@ -585,7 +585,7 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 
 		//Set label about it
 		m_ui->fsrcnn_total_operations_label->setText(
-			QString("Total perations: %1").arg(
+			QString("Total operations: %1").arg(
 				Algorithms::big_number_to_string(o_per_block * blocks_amount * image_spec.nchannels, ' ')
 			)
 		);
@@ -596,7 +596,7 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 
 		//Set label about it
 		m_ui->fsrcnn_total_operations_label->setText(
-			QString("Total perations: %1").arg(
+			QString("Total operations: %1").arg(
 				Algorithms::big_number_to_string(operations, ' ')
 			)
 		);
