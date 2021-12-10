@@ -47,6 +47,10 @@ find_package(Torch REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 target_link_libraries(imageupscalerqt "${TORCH_LIBRARIES}")
 
+#oneDNN (oneAPI, DNNL)
+find_package(dnnl REQUIRED)
+target_link_libraries(imageupscalerqt dnnl)
+
 #Qt
 target_link_libraries(imageupscalerqt Qt5::Widgets) #Use the Widgets module from Qt 5.
 
