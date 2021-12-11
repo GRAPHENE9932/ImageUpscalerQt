@@ -28,7 +28,7 @@
 
 #include "ImageUpscalerQt.h"
 #include "ui_ImageUpscalerQt.h"
-#include "../Algorithms.h"
+#include "../functions/func.h"
 #include "../tasks/TaskResize.h"
 #include "../tasks/TaskSRCNN.h"
 #include "../tasks/TaskFSRCNN.h"
@@ -108,7 +108,7 @@ void ImageUpscalerQt::prepare_task_srcnn() {
 		list.push_back(iter.next().section('/', -1, -1));
 	}
 
-	Algorithms::numerical_sort(list); //Sort strings numerically
+	func::numerical_sort(list); //Sort strings numerically
 
 	unsigned short recommended_idx;
 	for (unsigned short i = 0; i < list.size(); i++) {
@@ -116,7 +116,7 @@ void ImageUpscalerQt::prepare_task_srcnn() {
 		list[i] = list[i].left(list[i].size() - 3);
 
 		//Check if it is FSRCNN.
-		if (Algorithms::parse_srcnn(list[i].replace(" (Recommended)", ""), nullptr, nullptr, nullptr)) {
+		if (func::parse_srcnn(list[i].replace(" (Recommended)", ""), nullptr, nullptr, nullptr)) {
 			//Check if it is recommended
 			if (RECOMMENDED_CNN.contains(list[i])) {
 				list[i] += " (Recommended)";
@@ -140,7 +140,7 @@ void ImageUpscalerQt::prepare_task_fsrcnn() {
 		list.push_back(iter.next().section('/', -1, -1));
 	}
 
-	Algorithms::numerical_sort(list); //Sort strings numerically
+	func::numerical_sort(list); //Sort strings numerically
 
 	unsigned short recommended_idx;
 	for (unsigned short i = 0; i < list.size(); i++) {
@@ -148,7 +148,7 @@ void ImageUpscalerQt::prepare_task_fsrcnn() {
 		list[i] = list[i].left(list[i].size() - 3);
 
 		//Check if it is FSRCNN.
-		if (Algorithms::parse_fsrcnn(list[i].replace(" (Recommended)", ""), nullptr, nullptr, nullptr)) {
+		if (func::parse_fsrcnn(list[i].replace(" (Recommended)", ""), nullptr, nullptr, nullptr)) {
 			//Check if it is recommended
 			if (RECOMMENDED_CNN.contains(list[i])) {
 				list[i] += " (Recommended)";
@@ -205,7 +205,7 @@ Task* ImageUpscalerQt::init_task_srcnn() {
 	std::array<unsigned short, 3> kernels;
 	std::array<unsigned short, 3> paddings;
 	std::array<unsigned short, 4> channels;
-	Algorithms::parse_srcnn(name.replace(" (Recommended)", ""), &kernels, &paddings, &channels);
+	func::parse_srcnn(name.replace(" (Recommended)", ""), &kernels, &paddings, &channels);
 
 	//Get block size
 	unsigned int block_size;
@@ -225,7 +225,7 @@ Task* ImageUpscalerQt::init_task_fsrcnn() {
 	std::vector<unsigned short> kernels;
 	std::vector<unsigned short> paddings;
 	std::vector<unsigned short> channels;
-	Algorithms::parse_fsrcnn(name.replace(" (Recommended)", ""), &kernels, &paddings, &channels);
+	func::parse_fsrcnn(name.replace(" (Recommended)", ""), &kernels, &paddings, &channels);
 
 	//Get block size
 	unsigned int block_size;
@@ -264,7 +264,7 @@ void ImageUpscalerQt::update_srcnn_info() {
 	//Parse current architecture
 	std::array<unsigned short, 3> kernels;
 	std::array<unsigned short, 4> channels;
-	if (!Algorithms::parse_srcnn(m_ui->srcnn_architecture_combobox->currentText().replace(" (Recommended)", ""),
+	if (!func::parse_srcnn(m_ui->srcnn_architecture_combobox->currentText().replace(" (Recommended)", ""),
 		&kernels, nullptr, &channels)) {
 		//If the current architecture is invalid, just skip it
 		return;
@@ -290,7 +290,7 @@ void ImageUpscalerQt::update_srcnn_info() {
 	}
 	else if (m_ui->srcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
 		//Compute amount of operations per block
-		auto o_per_block = Algorithms::srcnn_operations_amount(kernels, channels, widths, heights);
+		auto o_per_block = func::srcnn_operations_amount(kernels, channels, widths, heights);
 
 		//Compute amount of the blocks
 		int blocks_width = end_width() / widths[0];
@@ -304,18 +304,18 @@ void ImageUpscalerQt::update_srcnn_info() {
 		//Set label about it
 		m_ui->srcnn_total_operations_label->setText(
 			QString("Total operations: %1").arg(
-				Algorithms::big_number_to_string(o_per_block * blocks_amount * image_spec.nchannels, ' ')
+				func::big_number_to_string(o_per_block * blocks_amount * image_spec.nchannels, ' ')
 			)
 		);
 	}
 	else { //If we have not to split the image into blocks
-		auto operations = Algorithms::srcnn_operations_amount(kernels, channels, widths, heights);
+		auto operations = func::srcnn_operations_amount(kernels, channels, widths, heights);
 		operations *= image_spec.nchannels;
 
 		//Set label about it
 		m_ui->srcnn_total_operations_label->setText(
 			QString("Total operations: %1").arg(
-				Algorithms::big_number_to_string(operations, ' ')
+				func::big_number_to_string(operations, ' ')
 			)
 		);
 	}
@@ -324,11 +324,11 @@ void ImageUpscalerQt::update_srcnn_info() {
 	//BEGIN Memory consumption
 	if (!image_spec.undefined() || m_ui->srcnn_block_split_check->isChecked()) {
 		//Compute memory consumption
-		auto mem_consumption = Algorithms::measure_cnn_memory_consumption(channels, widths, heights);
+		auto mem_consumption = func::measure_cnn_memory_consumption(channels, widths, heights);
 
 		//Display it
 		m_ui->srcnn_memory_consumption_label->setText("Approx. memory consumption: " +
-			Algorithms::bytes_amount_to_string(mem_consumption));
+			func::bytes_amount_to_string(mem_consumption));
 
 		//Set color of the label
 		if (mem_consumption > CRITICAL_MEMORY) {
@@ -543,7 +543,7 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	//Parse current architecture
 	std::vector<unsigned short> kernels;
 	std::vector<unsigned short> channels;
-	if (!Algorithms::parse_fsrcnn(m_ui->fsrcnn_architecture_combobox->currentText().replace(" (Recommended)", ""),
+	if (!func::parse_fsrcnn(m_ui->fsrcnn_architecture_combobox->currentText().replace(" (Recommended)", ""),
 		&kernels, nullptr, &channels)) {
 		//If the current architecture is invalid, just skip it
 		return;
@@ -572,7 +572,7 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 		m_ui->fsrcnn_total_operations_label->setText("Total operations: no image");
 	}
 	else if (m_ui->fsrcnn_block_split_check->isChecked()) { //If we have to split the image into blocks
-		auto o_per_block = Algorithms::fsrcnn_operations_amount(kernels, channels, widths, heights);
+		auto o_per_block = func::fsrcnn_operations_amount(kernels, channels, widths, heights);
 
 		//Compute amount of the blocks
 		int blocks_width = end_width() / widths[0];
@@ -586,18 +586,18 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 		//Set label about it
 		m_ui->fsrcnn_total_operations_label->setText(
 			QString("Total operations: %1").arg(
-				Algorithms::big_number_to_string(o_per_block * blocks_amount * image_spec.nchannels, ' ')
+				func::big_number_to_string(o_per_block * blocks_amount * image_spec.nchannels, ' ')
 			)
 		);
 	}
 	else { //If we have not to split the image into blocks
-		auto operations = Algorithms::fsrcnn_operations_amount(kernels, channels, widths, heights);
+		auto operations = func::fsrcnn_operations_amount(kernels, channels, widths, heights);
 		operations *= image_spec.nchannels;
 
 		//Set label about it
 		m_ui->fsrcnn_total_operations_label->setText(
 			QString("Total operations: %1").arg(
-				Algorithms::big_number_to_string(operations, ' ')
+				func::big_number_to_string(operations, ' ')
 			)
 		);
 	}
@@ -606,11 +606,11 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	//BEGIN Memory consumption
 	if (!image_spec.undefined() || m_ui->fsrcnn_block_split_check->isChecked()) {
 		//Compute memory consumption
-		auto mem_consumption = Algorithms::measure_cnn_memory_consumption(channels, widths, heights);
+		auto mem_consumption = func::measure_cnn_memory_consumption(channels, widths, heights);
 
 		//Display it
 		m_ui->fsrcnn_memory_consumption_label->setText("Approx. memory consumption: " +
-			Algorithms::bytes_amount_to_string(mem_consumption));
+			func::bytes_amount_to_string(mem_consumption));
 
 		//Set color of the label
 		if (mem_consumption > CRITICAL_MEMORY) {

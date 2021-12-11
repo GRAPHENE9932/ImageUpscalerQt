@@ -24,7 +24,7 @@
 
 #include "TaskFSRCNN.h"
 #include "../nn/FSRCNN.h"
-#include "../Algorithms.h"
+#include "../functions/func.h"
 
 TaskFSRCNN::TaskFSRCNN() {
 	this->task_kind = TaskKind::fsrcnn;
@@ -47,12 +47,12 @@ TaskFSRCNN::TaskFSRCNN(std::vector<unsigned short> kernels, std::vector<unsigned
 QString TaskFSRCNN::to_string(unsigned short index) const {
 	//1: use FSRCNN 3-1-3-4 512-32-64
 	return QString("%1: use FSRCNN %2").arg(QString::number(index + 1),
-										    Algorithms::fsrcnn_to_string(kernels, channels));
+										    func::fsrcnn_to_string(kernels, channels));
 }
 
 QString TaskFSRCNN::to_string() const {
 	//use FSRCNN 3-1-3-4 512-32-64
-	return QString("use FSRCNN %1").arg(Algorithms::fsrcnn_to_string(kernels, channels));
+	return QString("use FSRCNN %1").arg(func::fsrcnn_to_string(kernels, channels));
 }
 
 float TaskFSRCNN::progress() const {
@@ -67,7 +67,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	FSRCNN model(kernels, paddings, channels);
 
 	//Load archive with parameters from resources
-	QFile file(":/FSRCNN/" + Algorithms::fsrcnn_to_string(kernels, channels) + ".pt");
+	QFile file(":/FSRCNN/" + func::fsrcnn_to_string(kernels, channels) + ".pt");
 	file.open(QFile::ReadOnly);
 	QByteArray archive_array = file.read(536870912); //Maximum size is 512 MB
 

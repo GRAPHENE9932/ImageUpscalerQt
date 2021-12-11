@@ -24,7 +24,7 @@
 
 #include "TaskSRCNN.h"
 #include "../nn/SRCNN.h"
-#include "../Algorithms.h"
+#include "../functions/func.h"
 
 TaskSRCNN::TaskSRCNN() {
 	this->task_kind = TaskKind::srcnn;
@@ -43,12 +43,12 @@ TaskSRCNN::TaskSRCNN(std::array<unsigned short, 3> kernels, std::array<unsigned 
 QString TaskSRCNN::to_string(unsigned short index) const {
 	//1: use SRCNN 5-1-9 64-32
 	return QString("%1: use SRCNN %2").arg(QString::number(index + 1),
-										   Algorithms::srcnn_to_string(kernels, channels));
+										   func::srcnn_to_string(kernels, channels));
 }
 
 QString TaskSRCNN::to_string() const {
 	//use SRCNN 5-1-9 64-32
-	return QString("use SRCNN %1").arg(Algorithms::srcnn_to_string(kernels, channels));
+	return QString("use SRCNN %1").arg(func::srcnn_to_string(kernels, channels));
 }
 
 float TaskSRCNN::progress() const {
@@ -63,7 +63,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	SRCNN model(kernels, paddings, channels);
 
 	//Load archive with parameters from resources
-	QFile file(":/SRCNN/" + Algorithms::srcnn_to_string(kernels, channels) + ".pt");
+	QFile file(":/SRCNN/" + func::srcnn_to_string(kernels, channels) + ".pt");
 	file.open(QFile::ReadOnly);
 	QByteArray archive_array = file.read(536870912); //Maximum size is 512 MB
 
