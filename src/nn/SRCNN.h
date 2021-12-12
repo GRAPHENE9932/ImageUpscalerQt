@@ -19,20 +19,44 @@
 #pragma once
 
 #include <array>
-#include <sstream>
 
-#include <torch/torch.h>
+#include <dnnl.hpp>
 
-namespace func = torch::nn::functional;
+class SRCNN {
+private:
+	dnnl::engine eng;
+	dnnl::stream eng_str;
 
-struct SRCNNImpl : torch::nn::Module {
-	torch::nn::Conv2d conv_0, conv_1, conv_2;
+	std::array<dnnl::memory::desc, 3> src_descs; //Source memory description.
+	std::array<dnnl::memory::desc, 3> ker_descs; //Kernels (weights) memory description.
+	std::array<dnnl::memory::desc, 3> bias_descs; //Biases memory description.
+	std::array<dnnl::memory::desc, 3> dest_descs; //Destination memory description.
+
+	std::array<dnnl::memory::dims, 3> pads_l;
+	std::array<dnnl::memory::dims, 3> pads_r;
+
+	//Convolution layer primitives descriptions.
+	std::array<dnnl::convolution_forward, 3> convs;
+
 
 public:
-	SRCNNImpl(std::array<unsigned short, 3> kernels, std::array<unsigned short, 3> paddings,
-			  std::array<unsigned short, 4> channels);
+	static SRCNN create(unsigned short img_w, unsigned short img_h,
+						std::array<unsigned short, 3> ker, std::array<unsigned short, 4> chn);
 
-	torch::Tensor forward(torch::Tensor x);
+	static SRCNN create(std::array<dnnl::memory::dims, 3> src_dims, std::array<dnnl::memory::dims, 3> ker_dims,
+						std::array<dnnl::memory::dims, 3> bias_dims, std::array<dnnl::memory::dims, 3> dest_dims,
+						std::array<dnnl::memory::dims, 3> pads_l, std::array<dnnl::memory::dims, 3> pads_r);
+
+	SRCNN(dnnl::engine eng, std::array<dnnl::memory::desc, 3> src_descs,
+		  std::array<dnnl::memory::desc, 3> ker_descs, std::array<dnnl::memory::desc, 3> bias_descs,
+		  std::array<dnnl::memory::desc, 3> dest_descs, std::array<dnnl::memory::dims, 3> pads_l,
+		  std::array<dnnl::memory::dims, 3> pads_r,
+		  std::array<dnnl::convolution_forward, 3> convs) :
+
+		  eng(eng), eng_str(eng), src_descs(src_descs), ker_descs(ker_descs),
+		  bias_descs(bias_descs), dest_descs(dest_descs), pads_l(pads_l),
+		  pads_r(pads_r), convs(convs) {}
+
+	void execute(dnnl::memory src_mem, std::array<dnnl::memory, 3> ker_mem,
+				 std::array<dnnl::memory, 3> bias_mem, dnnl::memory dest_mem);
 };
-
-TORCH_MODULE(SRCNN);
