@@ -61,17 +61,17 @@ SRCNN SRCNN::create(std::array<dnnl::memory::dims, 3> src_dims,
 
 	for (char i = 0; i < 3; i++) {
 			src_descs_a[i] = dnnl::memory::desc(src_dims[i],
-											  dnnl::memory::data_type::f32,
-											  dnnl::memory::format_tag::nchw);
+												dnnl::memory::data_type::f32,
+												dnnl::memory::format_tag::nchw);
 			ker_descs_a[i] = dnnl::memory::desc(ker_dims[i],
-											  dnnl::memory::data_type::f32,
-											  dnnl::memory::format_tag::oihw);
+												dnnl::memory::data_type::f32,
+												dnnl::memory::format_tag::oihw);
 			bias_descs_a[i] = dnnl::memory::desc(bias_dims[i],
-											   dnnl::memory::data_type::f32,
-											   dnnl::memory::format_tag::nchw);
+												 dnnl::memory::data_type::f32,
+												 dnnl::memory::format_tag::nchw);
 			dest_descs_a[i] = dnnl::memory::desc(dest_dims[i],
-											   dnnl::memory::data_type::f32,
-											   dnnl::memory::format_tag::nchw);
+												 dnnl::memory::data_type::f32,
+												 dnnl::memory::format_tag::nchw);
 			pads_l_a = pads_l;
 			pads_r_a = pads_r;
 
@@ -82,9 +82,9 @@ SRCNN SRCNN::create(std::array<dnnl::memory::dims, 3> src_dims,
 			attr.set_post_ops(post_ops);
 
 			auto conv_desc = dnnl::convolution_forward::desc(dnnl::prop_kind::forward_inference,
-											dnnl::algorithm::convolution_auto,
-											src_descs_a[i], ker_descs_a[i], bias_descs_a[i],
-											dest_descs_a[i], {1, 1}, {0, 0}, {0, 0});
+							 dnnl::algorithm::convolution_auto,
+							 src_descs_a[i], ker_descs_a[i], bias_descs_a[i],
+							 dest_descs_a[i], {1, 1}, pads_l_a[i], pads_r_a[i]);
 			auto conv_prim_desc = dnnl::convolution_forward::primitive_desc(conv_desc, attr, eng_a);
 			convs_a[i] = dnnl::convolution_forward(conv_prim_desc);
 	}

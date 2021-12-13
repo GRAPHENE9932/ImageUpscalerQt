@@ -38,7 +38,6 @@ private:
 	//Convolution layer primitives descriptions.
 	std::array<dnnl::convolution_forward, 3> convs;
 
-
 public:
 	static SRCNN create(unsigned short img_w, unsigned short img_h,
 						std::array<unsigned short, 3> ker, std::array<unsigned short, 4> chn);
