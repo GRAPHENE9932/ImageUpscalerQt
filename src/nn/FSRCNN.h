@@ -18,23 +18,45 @@
 
 #pragma once
 
-#include <sstream>
 #include <vector>
 
-#include <torch/torch.h>
+#include <dnnl.hpp>
 
-using namespace torch::nn;
+class FSRCNN {
+private:
+	dnnl::engine eng;
+	dnnl::stream eng_str;
 
-struct FSRCNNImpl : torch::nn::Module {
-	Conv2d conv_0, conv_1, conv_3;
-	ConvTranspose2d conv_trans_4;
-	std::vector<Conv2d> conv_2;
+	std::vector<dnnl::memory::desc> src_descs; //Source memory description.
+	std::vector<dnnl::memory::desc> ker_descs; //Kernels (weights) memory description.
+	std::vector<dnnl::memory::desc> bias_descs; //Biases memory description.
+	std::vector<dnnl::memory::desc> dest_descs; //Destination memory description.
+
+	std::vector<dnnl::memory::dims> pads_l;
+	std::vector<dnnl::memory::dims> pads_r;
+
+	//Convolution layer primitives descriptions.
+	std::vector<dnnl::convolution_forward> convs;
+	dnnl::deconvolution_forward deconv;
 
 public:
-	FSRCNNImpl(std::vector<unsigned short> kernels, std::vector<unsigned short> paddings,
-			   std::vector<unsigned short> channels);
+	static FSRCNN create(unsigned short img_w, unsigned short img_h,
+						 std::vector<unsigned short> ker, std::vector<unsigned short> chn);
 
-	torch::Tensor forward(torch::Tensor x);
+	static FSRCNN create(std::vector<dnnl::memory::dims> src_dims, std::vector<dnnl::memory::dims> ker_dims,
+						 std::vector<dnnl::memory::dims> bias_dims, std::vector<dnnl::memory::dims> dest_dims,
+						 std::vector<dnnl::memory::dims> pads_l, std::vector<dnnl::memory::dims> pads_r);
+
+	FSRCNN(dnnl::engine eng, std::vector<dnnl::memory::desc> src_descs,
+		  std::vector<dnnl::memory::desc> ker_descs, std::vector<dnnl::memory::desc> bias_descs,
+		  std::vector<dnnl::memory::desc> dest_descs, std::vector<dnnl::memory::dims> pads_l,
+		  std::vector<dnnl::memory::dims> pads_r, std::vector<dnnl::convolution_forward> convs,
+		  dnnl::deconvolution_forward deconv) :
+
+		  eng(eng), eng_str(eng), src_descs(src_descs), ker_descs(ker_descs),
+		  bias_descs(bias_descs), dest_descs(dest_descs), pads_l(pads_l),
+		  pads_r(pads_r), convs(convs), deconv(deconv) {}
+
+	void execute(dnnl::memory src_mem, std::vector<dnnl::memory> ker_mem,
+				 std::vector<dnnl::memory> bias_mem, dnnl::memory dest_mem);
 };
-
-TORCH_MODULE(FSRCNN);
