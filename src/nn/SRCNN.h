@@ -42,9 +42,12 @@ public:
 	static SRCNN create(unsigned short img_w, unsigned short img_h,
 						std::array<unsigned short, 3> ker, std::array<unsigned short, 4> chn);
 
-	static SRCNN create(std::array<dnnl::memory::dims, 3> src_dims, std::array<dnnl::memory::dims, 3> ker_dims,
-						std::array<dnnl::memory::dims, 3> bias_dims, std::array<dnnl::memory::dims, 3> dest_dims,
-						std::array<dnnl::memory::dims, 3> pads_l, std::array<dnnl::memory::dims, 3> pads_r);
+	static SRCNN create(std::array<dnnl::memory::dims, 3> src_dims,
+						std::array<dnnl::memory::dims, 3> ker_dims,
+						std::array<dnnl::memory::dims, 3> bias_dims,
+						std::array<dnnl::memory::dims, 3> dest_dims,
+						std::array<dnnl::memory::dims, 3> pads_l,
+						std::array<dnnl::memory::dims, 3> pads_r);
 
 	SRCNN(dnnl::engine eng, std::array<dnnl::memory::desc, 3> src_descs,
 		  std::array<dnnl::memory::desc, 3> ker_descs, std::array<dnnl::memory::desc, 3> bias_descs,
@@ -55,6 +58,10 @@ public:
 		  eng(eng), eng_str(eng), src_descs(src_descs), ker_descs(ker_descs),
 		  bias_descs(bias_descs), dest_descs(dest_descs), pads_l(pads_l),
 		  pads_r(pads_r), convs(convs) {}
+
+	std::array<dnnl::memory::desc, 3> get_ker_descs() {
+		return ker_descs;
+	}
 
 	void execute(dnnl::memory src_mem, std::array<dnnl::memory, 3> ker_mem,
 				 std::array<dnnl::memory, 3> bias_mem, dnnl::memory dest_mem);
