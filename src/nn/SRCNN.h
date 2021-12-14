@@ -63,6 +63,22 @@ public:
 		return ker_descs;
 	}
 
+	std::array<dnnl::memory::desc, 3> get_bias_descs() {
+		return bias_descs;
+	}
+
+	dnnl::memory::desc get_input_desc() {
+		return src_descs[0];
+	}
+
+	dnnl::memory::desc get_output_desc() {
+		return dest_descs[2];
+	}
+
+	dnnl::engine get_engine() {
+		return eng;
+	}
+
 	void execute(dnnl::memory src_mem, std::array<dnnl::memory, 3> ker_mem,
 				 std::array<dnnl::memory, 3> bias_mem, dnnl::memory dest_mem);
 };

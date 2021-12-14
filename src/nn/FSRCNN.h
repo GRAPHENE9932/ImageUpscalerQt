@@ -57,8 +57,24 @@ public:
 		  bias_descs(bias_descs), dest_descs(dest_descs), pads_l(pads_l),
 		  pads_r(pads_r), convs(convs), deconv(deconv) {}
 
-	std::array<dnnl::memory::desc, 3> get_ker_descs() {
+	std::vector<dnnl::memory::desc> get_ker_descs() {
 		return ker_descs;
+	}
+
+	std::vector<dnnl::memory::desc> get_bias_descs() {
+		return bias_descs;
+	}
+
+	dnnl::memory::desc get_input_desc() {
+		return src_descs[0];
+	}
+
+	dnnl::memory::desc get_output_desc() {
+		return dest_descs[dest_descs.size() - 1];
+	}
+
+	dnnl::engine get_engine() {
+		return eng;
 	}
 
 	void execute(dnnl::memory src_mem, std::vector<dnnl::memory> ker_mem,
