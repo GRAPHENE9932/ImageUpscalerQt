@@ -1,15 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
 project(ImageUpscalerQt)
 
-#Enable C++17 for MSVC
+#Enable C++17
+set(CMAKE_CXX_STANDARD 17)
+
 if (MSVC)
-    set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_FLAGS "/permissive-") #Disable weird errors
-#And C++17 for GCC
-elseif(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_STANDARD 17)
-else()
-	message(SEND_ERROR "Unknown compiler")
 endif()
 
 #Find includes in corresponding build directories
