@@ -18,6 +18,7 @@
 
 #include <sstream>
 #include <memory>
+#include <cassert>
 
 #include <QDir>
 #include <QFile>
@@ -81,6 +82,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	const dnnl::memory::desc input_desc = nn.get_input_desc();
 	const dnnl::memory::desc output_desc = nn.get_output_desc();
 	const dnnl::engine eng = nn.get_engine();
+	assert(ker_descs.size() == bias_descs.size());
 
 	//Initialize full kernel and bias sizes in bytes
 	std::array<size_t, 3> full_ker_sizes;
