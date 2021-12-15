@@ -36,7 +36,8 @@ FSRCNN FSRCNN::create(unsigned short img_w, unsigned short img_h,
 		src_dims[i] = {1, chn[i], img_h, img_w};
 		ker_dims[i] = {chn[i + 1], chn[i], ker[i], ker[i]};
 		bias_dims[i] = {chn[i + 1]};
-		dest_dims[i] = {1, chn[i + 1], img_h, img_h};
+		dest_dims[i] = {1, chn[i + 1],
+			img_h * (i == nn_size - 1 ? 3 : 1), img_w * (i == nn_size - 1 ? 3 : 1)};
 
 		const auto cur_pad = i == nn_size ? (ker[i] - 3) / 2 : (ker[i] - 1) / 2;
 		pads_l[i] = {0, 0, cur_pad, cur_pad};
