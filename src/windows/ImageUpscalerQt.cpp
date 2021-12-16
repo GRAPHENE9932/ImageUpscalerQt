@@ -112,8 +112,8 @@ void ImageUpscalerQt::prepare_task_srcnn() {
 
 	unsigned short recommended_idx;
 	for (unsigned short i = 0; i < list.size(); i++) {
-		//Leave only filename without the .pt extension.
-		list[i] = list[i].left(list[i].size() - 3);
+		//Leave only filename without the .bin extension.
+		list[i] = list[i].left(list[i].size() - 4);
 
 		//Check if it is FSRCNN.
 		if (func::parse_srcnn(list[i].replace(" (Recommended)", ""), nullptr, nullptr, nullptr)) {
@@ -144,8 +144,8 @@ void ImageUpscalerQt::prepare_task_fsrcnn() {
 
 	unsigned short recommended_idx;
 	for (unsigned short i = 0; i < list.size(); i++) {
-		//Leave only filename without the .pt extension.
-		list[i] = list[i].left(list[i].size() - 3);
+		//Leave only filename without the .bin extension.
+		list[i] = list[i].left(list[i].size() - 4);
 
 		//Check if it is FSRCNN.
 		if (func::parse_fsrcnn(list[i].replace(" (Recommended)", ""), nullptr, nullptr, nullptr)) {
