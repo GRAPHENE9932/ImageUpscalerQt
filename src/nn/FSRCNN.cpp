@@ -84,7 +84,7 @@ FSRCNN FSRCNN::create(std::vector<dnnl::memory::dims> src_dims,
 												dnnl::memory::format_tag::oihw);
 			bias_descs_a[i] = dnnl::memory::desc(bias_dims[i],
 												 dnnl::memory::data_type::f32,
-												 dnnl::memory::format_tag::nchw);
+												 dnnl::memory::format_tag::a);
 			dest_descs_a[i] = dnnl::memory::desc(dest_dims[i],
 												 dnnl::memory::data_type::f32,
 												 dnnl::memory::format_tag::nchw);

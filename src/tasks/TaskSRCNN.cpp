@@ -87,29 +87,27 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	//Initialize full kernel and bias sizes in bytes
 	std::array<size_t, 3> full_ker_sizes;
 	std::array<size_t, 3> full_bias_sizes;
-	size_t total_ker_size = 0;
-	size_t total_bias_size = 0;
+	size_t total_params_size = 0;
 	for (char i = 0; i < 3; i++) {
 		full_ker_sizes[i] = ker_descs[i].get_size();
 		full_bias_sizes[i] = bias_descs[i].get_size();
-		total_ker_size += full_ker_sizes[i];
-		total_bias_size += full_bias_sizes[i];
+		total_params_size += full_ker_sizes[i] + full_bias_sizes[i];
 	}
 
 	//Load file with parameters from resources
 	QFile file(":/SRCNN/" + func::srcnn_to_string(kernels, channels) + ".bin");
 	file.open(QFile::ReadOnly);
 	QByteArray file_array = file.read(512 * 1024 * 1024); //Maximum size is 512 MiB
-	assert(file_array.size() == total_ker_size);
+	assert(file_array.size() == total_params_size);
 
 	//Load this array into dnnl::memory
 	std::array<dnnl::memory, 3> ker_mems;
 	std::array<dnnl::memory, 3> bias_mems;
 	size_t mem_offset = 0;
 	for (char i = 0; i < 3; i++) {
-		ker_mems[i] = dnnl::memory(ker_descs[i], eng, file_array.data_ptr() + mem_offset);
+		ker_mems[i] = dnnl::memory(ker_descs[i], eng, file_array.data() + mem_offset);
 		mem_offset += full_ker_sizes[i];
-		bias_mems[i] = dnnl::memory(bias_descs[i], eng, file_array.data_ptr() + mem_offset);
+		bias_mems[i] = dnnl::memory(bias_descs[i], eng, file_array.data() + mem_offset);
 		mem_offset += full_bias_sizes[i];
 	}
 
