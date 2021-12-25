@@ -324,7 +324,7 @@ void ImageUpscalerQt::update_srcnn_info() {
 	//BEGIN Memory consumption
 	if (!image_spec.undefined() || m_ui->srcnn_block_split_check->isChecked()) {
 		//Compute memory consumption
-		auto mem_consumption = func::measure_cnn_memory_consumption(channels, widths, heights);
+		auto mem_consumption = func::predict_cnn_memory_consumption(channels, widths, heights);
 
 		//Display it
 		m_ui->srcnn_memory_consumption_label->setText("Approx. memory consumption: " +
@@ -606,7 +606,7 @@ void ImageUpscalerQt::update_fsrcnn_info() {
 	//BEGIN Memory consumption
 	if (!image_spec.undefined() || m_ui->fsrcnn_block_split_check->isChecked()) {
 		//Compute memory consumption
-		auto mem_consumption = func::measure_cnn_memory_consumption(channels, widths, heights);
+		auto mem_consumption = func::predict_cnn_memory_consumption(channels, widths, heights);
 
 		//Display it
 		m_ui->fsrcnn_memory_consumption_label->setText("Approx. memory consumption: " +

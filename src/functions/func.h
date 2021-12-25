@@ -43,13 +43,13 @@ namespace func {
 												std::vector<int> widths,
 												std::vector<int> heights);
 
-	unsigned long long measure_cnn_memory_consumption(std::array<unsigned short, 4> channels,
+	unsigned long long predict_cnn_memory_consumption(std::array<unsigned short, 4> channels,
 													  std::array<int, 4> widths,
 													  std::array<int, 4> heights);
 
 	///APPROXIMATE minimum memory consumption of tensors that going throught the CNN
 	///@returns Amount of bytes that will be consumed
-	unsigned long long measure_cnn_memory_consumption(std::vector<unsigned short> channels,
+	unsigned long long predict_cnn_memory_consumption(std::vector<unsigned short> channels,
 													  std::vector<int> widths,
 													  std::vector<int> heights);
 	//END Calculation functions
