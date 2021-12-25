@@ -2,54 +2,54 @@
 	<qresource>
 		<file>Icon.png</file>
 
-		<file>SRCNN/9-3-5 48-32.pt</file>
-		<file>SRCNN/9-3-5 48-48.pt</file>
-		<file>SRCNN/9-3-5 48-64.pt</file>
-		<file>SRCNN/9-3-5 48-80.pt</file>
-		<file>SRCNN/9-3-5 48-96.pt</file>
+		<file>SRCNN/9-3-5 48-32.bin</file>
+		<file>SRCNN/9-3-5 48-48.bin</file>
+		<file>SRCNN/9-3-5 48-64.bin</file>
+		<file>SRCNN/9-3-5 48-80.bin</file>
+		<file>SRCNN/9-3-5 48-96.bin</file>
 
-		<file>SRCNN/9-3-5 64-32.pt</file>
-		<file>SRCNN/9-3-5 64-48.pt</file>
-		<file>SRCNN/9-3-5 64-64.pt</file>
-		<file>SRCNN/9-3-5 64-80.pt</file>
-		<file>SRCNN/9-3-5 64-96.pt</file>
+		<file>SRCNN/9-3-5 64-32.bin</file>
+		<file>SRCNN/9-3-5 64-48.bin</file>
+		<file>SRCNN/9-3-5 64-64.bin</file>
+		<file>SRCNN/9-3-5 64-80.bin</file>
+		<file>SRCNN/9-3-5 64-96.bin</file>
 
-		<file>SRCNN/9-3-5 80-32.pt</file>
-		<file>SRCNN/9-3-5 80-48.pt</file>
-		<file>SRCNN/9-3-5 80-64.pt</file>
-		<file>SRCNN/9-3-5 80-80.pt</file>
-		<file>SRCNN/9-3-5 80-96.pt</file>
+		<file>SRCNN/9-3-5 80-32.bin</file>
+		<file>SRCNN/9-3-5 80-48.bin</file>
+		<file>SRCNN/9-3-5 80-64.bin</file>
+		<file>SRCNN/9-3-5 80-80.bin</file>
+		<file>SRCNN/9-3-5 80-96.bin</file>
 
-		<file>SRCNN/9-3-5 96-32.pt</file>
-		<file>SRCNN/9-3-5 96-48.pt</file>
-		<file>SRCNN/9-3-5 96-64.pt</file>
-		<file>SRCNN/9-3-5 96-80.pt</file>
-		<file>SRCNN/9-3-5 96-96.pt</file>
+		<file>SRCNN/9-3-5 96-32.bin</file>
+		<file>SRCNN/9-3-5 96-48.bin</file>
+		<file>SRCNN/9-3-5 96-64.bin</file>
+		<file>SRCNN/9-3-5 96-80.bin</file>
+		<file>SRCNN/9-3-5 96-96.bin</file>
 
-		<file>SRCNN/9-3-5 112-32.pt</file>
-		<file>SRCNN/9-3-5 112-48.pt</file>
-		<file>SRCNN/9-3-5 112-64.pt</file>
-		<file>SRCNN/9-3-5 112-80.pt</file>
-		<file>SRCNN/9-3-5 112-96.pt</file>
+		<file>SRCNN/9-3-5 112-32.bin</file>
+		<file>SRCNN/9-3-5 112-48.bin</file>
+		<file>SRCNN/9-3-5 112-64.bin</file>
+		<file>SRCNN/9-3-5 112-80.bin</file>
+		<file>SRCNN/9-3-5 112-96.bin</file>
 
-		<file>SRCNN/9-3-5 128-32.pt</file>
-		<file>SRCNN/9-3-5 128-48.pt</file>
-		<file>SRCNN/9-3-5 128-64.pt</file>
-		<file>SRCNN/9-3-5 128-80.pt</file>
-		<file>SRCNN/9-3-5 128-96.pt</file>
+		<file>SRCNN/9-3-5 128-32.bin</file>
+		<file>SRCNN/9-3-5 128-48.bin</file>
+		<file>SRCNN/9-3-5 128-64.bin</file>
+		<file>SRCNN/9-3-5 128-80.bin</file>
+		<file>SRCNN/9-3-5 128-96.bin</file>
 
 
-		<file>FSRCNN/5-1-3-1-9 128-16-48-128.pt</file>
-		<file>FSRCNN/5-1-3-1-9 256-16-48-256.pt</file>
-		<file>FSRCNN/5-1-3-1-9 384-16-48-384.pt</file>
-		<file>FSRCNN/5-1-3-1-9 512-16-48-512.pt</file>
-		<file>FSRCNN/5-1-3-3-1-9 128-16-48-48-128.pt</file>
-		<file>FSRCNN/5-1-3-3-1-9 256-16-48-48-256.pt</file>
-		<file>FSRCNN/5-1-3-3-1-9 384-16-48-48-384.pt</file>
-		<file>FSRCNN/5-1-3-3-1-9 512-16-48-48-512.pt</file>
-		<file>FSRCNN/5-1-3-3-3-1-9 128-16-48-48-48-128.pt</file>
-		<file>FSRCNN/5-1-3-3-3-1-9 256-16-48-48-48-256.pt</file>
-		<file>FSRCNN/5-1-3-3-3-1-9 384-16-48-48-48-384.pt</file>
-		<file>FSRCNN/5-1-3-3-3-1-9 512-16-48-48-48-512.pt</file>
+		<file>FSRCNN/5-1-3-1-9 128-16-48-128.bin</file>
+		<file>FSRCNN/5-1-3-1-9 256-16-48-256.bin</file>
+		<file>FSRCNN/5-1-3-1-9 384-16-48-384.bin</file>
+		<file>FSRCNN/5-1-3-1-9 512-16-48-512.bin</file>
+		<file>FSRCNN/5-1-3-3-1-9 128-16-48-48-128.bin</file>
+		<file>FSRCNN/5-1-3-3-1-9 256-16-48-48-256.bin</file>
+		<file>FSRCNN/5-1-3-3-1-9 384-16-48-48-384.bin</file>
+		<file>FSRCNN/5-1-3-3-1-9 512-16-48-48-512.bin</file>
+		<file>FSRCNN/5-1-3-3-3-1-9 128-16-48-48-48-128.bin</file>
+		<file>FSRCNN/5-1-3-3-3-1-9 256-16-48-48-48-256.bin</file>
+		<file>FSRCNN/5-1-3-3-3-1-9 384-16-48-48-48-384.bin</file>
+		<file>FSRCNN/5-1-3-3-3-1-9 512-16-48-48-48-512.bin</file>
 	</qresource>
 </RCC>
