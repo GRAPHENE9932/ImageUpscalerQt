@@ -68,7 +68,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 
 	//Create output buffer
 	const OIIO::ImageSpec out_spec(spec.width * 3, spec.height * 3, spec.nchannels);
-	OIIO::ImageBuf output(spec);
+	OIIO::ImageBuf output(out_spec);
 
 	//Compute blocks amount
 	int blocks_width = spec.width / block_width;
@@ -110,9 +110,9 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	std::vector<dnnl::memory> bias_mems(bias_descs.size());
 	size_t mem_offset = 0;
 	for (char i = 0; i < ker_descs.size(); i++) {
-		ker_mems[i] = dnnl::memory(ker_descs[i], eng, file_array.data_ptr() + mem_offset);
+		ker_mems[i] = dnnl::memory(ker_descs[i], eng, file_array.data() + mem_offset);
 		mem_offset += full_ker_sizes[i];
-		bias_mems[i] = dnnl::memory(bias_descs[i], eng, file_array.data_ptr() + mem_offset);
+		bias_mems[i] = dnnl::memory(bias_descs[i], eng, file_array.data() + mem_offset);
 		mem_offset += full_bias_sizes[i];
 	}
 

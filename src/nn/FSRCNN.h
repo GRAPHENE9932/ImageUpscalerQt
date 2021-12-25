@@ -47,13 +47,13 @@ public:
 						 std::vector<dnnl::memory::dims> bias_dims, std::vector<dnnl::memory::dims> dest_dims,
 						 std::vector<dnnl::memory::dims> pads_l, std::vector<dnnl::memory::dims> pads_r);
 
-	FSRCNN(dnnl::engine eng, std::vector<dnnl::memory::desc> src_descs,
+	FSRCNN(dnnl::engine eng, dnnl::stream eng_str, std::vector<dnnl::memory::desc> src_descs,
 		  std::vector<dnnl::memory::desc> ker_descs, std::vector<dnnl::memory::desc> bias_descs,
 		  std::vector<dnnl::memory::desc> dest_descs, std::vector<dnnl::memory::dims> pads_l,
 		  std::vector<dnnl::memory::dims> pads_r, std::vector<dnnl::convolution_forward> convs,
 		  dnnl::deconvolution_forward deconv) :
 
-		  eng(eng), eng_str(eng), src_descs(src_descs), ker_descs(ker_descs),
+		  eng(eng), eng_str(eng_str), src_descs(src_descs), ker_descs(ker_descs),
 		  bias_descs(bias_descs), dest_descs(dest_descs), pads_l(pads_l),
 		  pads_r(pads_r), convs(convs), deconv(deconv) {}
 
