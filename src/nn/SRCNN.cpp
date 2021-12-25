@@ -57,7 +57,6 @@ SRCNN SRCNN::create(std::array<dnnl::memory::dims, 3> src_dims,
 	std::array<dnnl::memory::dims, 3> pads_l_a;
 	std::array<dnnl::memory::dims, 3> pads_r_a;
 	std::array<dnnl::convolution_forward, 3> convs_a;
-	std::array<dnnl::convolution_forward::primitive_desc, 3> convs1_a;
 
 	eng_a = dnnl::engine(dnnl::engine::kind::cpu, 0);
 	eng_str_a = dnnl::stream(eng_a);
@@ -100,7 +99,6 @@ SRCNN SRCNN::create(std::array<dnnl::memory::dims, 3> src_dims,
 
 void SRCNN::execute(dnnl::memory src_mem, std::array<dnnl::memory, 3> ker_mem,
 					std::array<dnnl::memory, 3> bias_mem, dnnl::memory dest_mem) {
-
 	dnnl::memory cur_dest;
 
 	for (char i = 0; i < 3; i++) {
