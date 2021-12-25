@@ -72,8 +72,8 @@ unsigned long long func::measure_cnn_memory_consumption(std::array<unsigned shor
 	return measure_cnn_memory_consumption(channels_vec, widths_vec, heights_vec);
 }
 
-///APPROXIMATE minimum memory consumption of tensors that going throught the CNN
-///@returns Amount of bytes that will be consumed
+///APPROXIMATE the minimum memory consumption of tensors that going throught the CNN
+///@returns Amount of bytes that will consumed
 unsigned long long func::measure_cnn_memory_consumption(std::vector<unsigned short> channels,
 														std::vector<int> widths,
 														std::vector<int> heights) {
@@ -101,8 +101,8 @@ unsigned long long func::measure_cnn_memory_consumption(std::vector<unsigned sho
 	//Now, we have amount of numbers, but they are in float type, so multiply it to convert it to bytes
 	max_point *= sizeof(float);
 
-	//Weirdness of the PyTorch. The real consumption is 4 times greater than calculated just now. So...
-	max_point *= 4ull;
+	//In practice, we have a little greater consumption.
+	max_point *= 2ull;
 
 	return max_point;
 }
