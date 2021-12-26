@@ -1,5 +1,0 @@
-- OpenImageIO
-- Qt5
-- blas
-- lapack
-- OpenMPI
