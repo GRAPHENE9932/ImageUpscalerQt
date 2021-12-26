@@ -26,15 +26,15 @@ enum class Interpolation : unsigned char {
 	rifman, sharp_gaussian, simon, sinc
 };
 
-///Interpolation names for the user
+/// Interpolation names for the user.
 const QString INTERPOLATION_NAMES[14] = {
 	"B-spline", "Bilinear", "Blackman-Harris", "Box", "Catmull-Rom", "Cubic",
 	"Gaussian", "Lanczos3", "Mitchell", "Radial-lanczos3",
 	"Rifman", "Sharp-Gaussian", "Simon", "Sinc"
 };
 
-///Interpolation names for the OpenImageIO library.
-///"none" and "bilinear" are not used.
+/// Interpolation names for the OpenImageIO library.
+/// "none" and "bilinear" are not used.
 const QString INTERPOLATION_OIIO_NAMES[14] = {
 	"bspline", "bilinear", "blackman-harris", "box", "catmull-rom", "cubic",
 	"gaussian", "lanczos3", "mitchell", "radial-lanczos3",
@@ -49,9 +49,9 @@ public:
 	TaskResize();
 	TaskResize(unsigned int x_size, unsigned int y_size, Interpolation interpolation);
 
-	///"1: resize to 1920x1080 | Bilinear"
+	/// "1: resize to 1920x1080 | Bilinear".
 	QString to_string(unsigned short index) const override;
-	///"resize to 1920x1080 | Bilinear"
+	/// "resize to 1920x1080 | Bilinear".
 	QString to_string() const override;
 
 	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;

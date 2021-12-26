@@ -22,19 +22,19 @@
 
 class Worker {
 public:
-	///Already finished image
+	/// Already finished image.
 	OIIO::ImageBuf finished_image;
 
 	Worker();
-	///Not only construct, but also init()
+	/// Not only construct, but also init().
 	Worker(std::vector<Task*> queue, QString input_filename);
 
-	///Needed if the worker was constructed with default constructor
+	/// Needed if the worker was constructed with default constructor.
 	void init(std::vector<Task*> queue, QString input_filename);
 	QString cur_status() const;
-	///Progress of current task
+	/// Progress of current task.
 	float cur_task_progress() const;
-	///Progress of all tasks
+	/// Progress of all tasks.
 	float overall_progress() const;
 
 	void do_tasks(std::function<void()> success, std::function<void()> canceled,
@@ -43,7 +43,7 @@ public:
 	void cancel();
 
 private:
-	///Current image (can be unfinished)
+	/// Current image (can be unfinished).
 	OIIO::ImageBuf cur_image;
 
 	QString input_filename;

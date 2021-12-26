@@ -27,15 +27,15 @@ private:
 	dnnl::engine eng;
 	dnnl::stream eng_str;
 
-	std::vector<dnnl::memory::desc> src_descs; //Source memory description.
-	std::vector<dnnl::memory::desc> ker_descs; //Kernels (weights) memory description.
-	std::vector<dnnl::memory::desc> bias_descs; //Biases memory description.
-	std::vector<dnnl::memory::desc> dest_descs; //Destination memory description.
+	std::vector<dnnl::memory::desc> src_descs; // Source memory description.
+	std::vector<dnnl::memory::desc> ker_descs; // Kernels (weights) memory description.
+	std::vector<dnnl::memory::desc> bias_descs; // Biases memory description.
+	std::vector<dnnl::memory::desc> dest_descs; // Destination memory description.
 
 	std::vector<dnnl::memory::dims> pads_l;
 	std::vector<dnnl::memory::dims> pads_r;
 
-	//Convolution layer primitives descriptions.
+	// Convolution layer primitives descriptions.
 	std::vector<dnnl::convolution_forward> convs;
 	dnnl::deconvolution_forward deconv;
 

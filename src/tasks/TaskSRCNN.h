@@ -27,17 +27,17 @@ public:
 	std::array<unsigned short, 3> kernels;
 	std::array<unsigned short, 3> paddings;
 	std::array<unsigned short, 4> channels;
-	///Block size of the input image that will be splitted into blocks before the CNN.
-	///0 if the input image have not to be splitted.
+	/// Block size of the input image that will be splitted into blocks before the CNN.
+	/// 0 if the input image have not to be splitted.
 	unsigned int block_size;
 
 	TaskSRCNN();
 	TaskSRCNN(std::array<unsigned short, 3> kernels, std::array<unsigned short, 3> paddings,
 			  std::array<unsigned short, 4> channels, unsigned int block_size);
 
-	///"1: use SRCNN 5-1-9 64-32"
+	/// "1: use SRCNN 5-1-9 64-32".
 	QString to_string(unsigned short index) const override;
-	///"use SRCNN 5-1-9 64-32"
+	/// "use SRCNN 5-1-9 64-32".
 	QString to_string() const override;
 
 	float progress() const override;

@@ -44,16 +44,16 @@ float Worker::overall_progress() const {
 }
 
 QString Worker::cur_status() const {
-	//Save cur_task for this function, because multithreading
+	// Save cur_task for this function, because multithreading.
 	auto cur_task_copy = cur_task;
 	if (cur_task_copy < tasks_queue.size()) {
-		//Prepare text for current task label
-		//Task 1/1: Unknown task (100%)
+		// Prepare text for current task label.
+		// Task 1/1: Unknown task (100%).
 		if (cur_task_progress() == 0)
 			return QString("Task %1/%2: %3").arg(QString::number(cur_task_copy + 1),
 												 QString::number(tasks_queue.size()),
 												 tasks_queue[cur_task_copy]->to_string());
-		//Add "(xxx%)" if not 0%
+		// Add "(xxx%)" if not 0%.
 		else
 			return QString("Task %1/%2: %3 (%4%)").arg(QString::number(cur_task_copy + 1),
 													   QString::number(tasks_queue.size()),
@@ -67,12 +67,12 @@ QString Worker::cur_status() const {
 
 void Worker::do_tasks(std::function<void()> success, std::function<void()> canceled,
 					  std::function<void(QString)> error) {
-	//Disable "cancel_requested" in all the tasks
+	// Disable "cancel_requested" in all tasks.
 	for (unsigned short i = 0; i < tasks_queue.size(); i++)
 		tasks_queue[i]->cancel_requested = false;
 
 	try {
-		//Read image
+		// Read image.
 		OIIO::ImageBuf input_buf = OIIO::ImageBuf(input_filename.toStdString());
 
 		for (cur_task = 0; cur_task < tasks_queue.size(); cur_task++) {
@@ -107,7 +107,7 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 		return;
 	}
 #endif
-	success(); //If not canceled and no errors occured
+	success(); // If not canceled and no errors occured.
 }
 
 void Worker::save_image(QString filename, std::function<void(QString)> error) {

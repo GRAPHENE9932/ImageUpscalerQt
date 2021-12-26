@@ -4,8 +4,9 @@ unsigned long long func::srcnn_operations_amount(std::array<unsigned short, 3> k
 												 std::array<unsigned short, 4> channels,
 												 std::array<int, 4> widths,
 												 std::array<int, 4> heights) {
-	//Use formula for it.
-	//O=sum from{i=1} to{3} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + {W_{ i+1 }^2 times O_a}
+	// Use formula for it.
+	// O=sum from{i=1} to{3} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + {W_{ i+1 }^2 times O_a}
+	// (LibreOffice Math).
 
 	unsigned long long result = 0;
 
@@ -36,9 +37,9 @@ unsigned long long func::fsrcnn_operations_amount(std::vector<unsigned short> ke
 	assert(kernels.size() + 1 == channels.size() && channels.size() == widths.size() &&
 		   widths.size() == heights.size());
 
-	//Use formula for it
-	//O=sum from{i=1} to{n} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + {W_{ i+1 }^2 times O_a}
-	//(LibreOffice Math)
+	// Use formula for it.
+	// O=sum from{i=1} to{n} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + {W_{ i+1 }^2 times O_a}
+	// (LibreOffice Math).
 
 	unsigned long long result = 0;
 
@@ -62,8 +63,8 @@ unsigned long long func::fsrcnn_operations_amount(std::vector<unsigned short> ke
 	return result;
 }
 
-///Predict the APPROXIMATE memory consumption of tensors that going throught the CNN
-///@returns Amount of bytes that will consumed
+/// Predict the APPROXIMATE memory consumption of tensors that going throught the CNN.
+/// @returns Amount of bytes that will consumed.
 unsigned long long func::predict_cnn_memory_consumption(std::array<unsigned short, 4> channels,
 														std::array<int, 4> widths,
 														std::array<int, 4> heights) {
@@ -74,15 +75,15 @@ unsigned long long func::predict_cnn_memory_consumption(std::array<unsigned shor
 	return predict_cnn_memory_consumption(channels_vec, widths_vec, heights_vec);
 }
 
-///Predict the APPROXIMATE memory consumption of tensors that going throught the CNN
-///@returns Amount of bytes that will consumed
+/// Predict the APPROXIMATE memory consumption of tensors that going throught the CNN.
+/// @returns Amount of bytes that will consumed.
 unsigned long long func::predict_cnn_memory_consumption(std::vector<unsigned short> channels,
 														std::vector<int> widths,
 														std::vector<int> heights) {
 	assert(channels.size() == widths.size() && widths.size() == heights.size());
 
-	//Iterate throught every convolutional layer to find the point with maximum memory consumption
-	//Considering the channels amount, width and height (in short, tensor size)
+	// Iterate throught every convolutional layer to find the point with maximum memory consumption
+	// considering the channels amount, width and height (in short, tensor size).
 	// |  1  | --- | 128 | --- |  64 | --- |  1  |
 	//                      ^
 	//    max consumption point = size 1 + size 2
@@ -100,10 +101,10 @@ unsigned long long func::predict_cnn_memory_consumption(std::vector<unsigned sho
 			max_point = cur_max_point;
 	}
 
-	//Now, we have amount of numbers, but they are in float type, so multiply it to convert it to bytes
+	// Now, we have amount of numbers, but they are in float type, so multiply it to convert it to bytes.
 	max_point *= sizeof(float);
 
-	//In practice, we have a little greater consumption.
+	// In practice, we have a little greater consumption.
 	max_point *= 2ull;
 
 	return max_point;

@@ -42,13 +42,13 @@ TaskSRCNN::TaskSRCNN(std::array<unsigned short, 3> kernels, std::array<unsigned 
 }
 
 QString TaskSRCNN::to_string(unsigned short index) const {
-	//1: use SRCNN 5-1-9 64-32
+	// 1: use SRCNN 5-1-9 64-32.
 	return QString("%1: use SRCNN %2").arg(QString::number(index + 1),
 										   func::srcnn_to_string(kernels, channels));
 }
 
 QString TaskSRCNN::to_string() const {
-	//use SRCNN 5-1-9 64-32
+	// use SRCNN 5-1-9 64-32.
 	return QString("use SRCNN %1").arg(func::srcnn_to_string(kernels, channels));
 }
 
@@ -57,15 +57,15 @@ float TaskSRCNN::progress() const {
 }
 
 OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
-	//Get spec
+	// Get spec.
 	auto spec = input.spec();
 	const int block_width = block_size == 0 ? spec.width : block_size; //Whole image size if we have not to
 	const int block_height = block_size == 0 ? spec.height : block_size; //split image into blocks
 
-	//Create output buffer
+	// Create an output buffer.
 	OIIO::ImageBuf output(spec);
 
-	//Compute blocks amount
+	// Compute the blocks amount.
 	int blocks_width = spec.width / block_width;
 	if (blocks_width * block_width < spec.width)
 		blocks_width++;
@@ -75,7 +75,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	blocks_amount = blocks_height * blocks_width * spec.nchannels;
 	blocks_processed = 0;
 
-	//Initialize the neural network
+	// Initialize the neural network.
 	SRCNN nn = SRCNN::create(block_width, block_height, kernels, channels);
 	const std::array<dnnl::memory::desc, 3> ker_descs = nn.get_ker_descs();
 	const std::array<dnnl::memory::desc, 3> bias_descs = nn.get_bias_descs();
@@ -84,7 +84,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	const dnnl::engine eng = nn.get_engine();
 	assert(ker_descs.size() == bias_descs.size());
 
-	//Initialize full kernel and bias sizes in bytes
+	// Initialize full kernel and bias sizes (in bytes).
 	std::array<size_t, 3> full_ker_sizes;
 	std::array<size_t, 3> full_bias_sizes;
 	size_t total_params_size = 0;
@@ -94,13 +94,13 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 		total_params_size += full_ker_sizes[i] + full_bias_sizes[i];
 	}
 
-	//Load file with parameters from resources
+	// Load file with parameters from resources.
 	QFile file(":/SRCNN/" + func::srcnn_to_string(kernels, channels) + ".bin");
 	file.open(QFile::ReadOnly);
-	QByteArray file_array = file.read(512 * 1024 * 1024); //Maximum size is 512 MiB
+	QByteArray file_array = file.read(512 * 1024 * 1024); // Maximum size is 512 MiB.
 	assert(file_array.size() == total_params_size);
 
-	//Load this array into dnnl::memory
+	// Load this array into dnnl::memory.
 	std::array<dnnl::memory, 3> ker_mems;
 	std::array<dnnl::memory, 3> bias_mems;
 	size_t mem_offset = 0;
@@ -111,31 +111,31 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 		mem_offset += full_bias_sizes[i];
 	}
 
-	//Use SRCNN block by block
+	// Use SRCNN block by block.
 	for (int y = 0; y < spec.height; y += block_height) {
 		for (int x = 0; x < spec.width; x += block_width) {
 			for (int c = 0; c < spec.nchannels; c++) {
-				//Create block roi
+				// Create block roi.
 				OIIO::ROI block_extract_roi(x, x + block_width, y, y + block_height, 0, 1, c, c + 1);
-				//Get block pixels. Planar, because we are working on single-channel image.
+				// Get block pixels. Planar, because we are working on single-channel image.
 				auto block_pixels = std::make_unique<float[]>(block_width * block_height * 1);
 				input.get_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, block_pixels.get());
 
-				//Create input memory
+				// Create input memory.
 				dnnl::memory input_mem = dnnl::memory(input_desc, eng, block_pixels.get());
 
-				//Create output memory
+				// Create output memory.
 				dnnl::memory output_mem = dnnl::memory(output_desc, eng);
 
-				//Get output from the neural network
+				// Get output from the neural network.
 				nn.execute(input_mem, ker_mems, bias_mems, output_mem);
 
-				//Set pixels to buf
+				// Set pixels to buf.
 				output.set_pixels(block_extract_roi, OIIO::TypeDesc::FLOAT, output_mem.get_data_handle());
 
 				blocks_processed++;
 
-				//Cancel if requested
+				// Cancel if requested.
 				if (cancel_requested)
 					throw "canc";
 			}

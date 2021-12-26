@@ -35,7 +35,7 @@ TaskResize::TaskResize(unsigned int x_size, unsigned int y_size, Interpolation i
 }
 
 QString TaskResize::to_string(unsigned short index) const {
-	//1: resize to 1920x1080 | Bilinear
+	// 1: resize to 1920x1080 | Bilinear.
 	return QString("%1: resize to %2x%3 | %4").arg(QString::number(index + 1),
 												   QString::number(x_size),
 												   QString::number(y_size),
@@ -43,17 +43,17 @@ QString TaskResize::to_string(unsigned short index) const {
 }
 
 QString TaskResize::to_string() const {
-	//resize to 1920x1080 | Bilinear
+	// resize to 1920x1080 | Bilinear.
 	return QString("resize to %1x%2 | %3").arg(QString::number(x_size),
 											   QString::number(y_size),
 											   INTERPOLATION_NAMES[(unsigned char)interpolation]);
 }
 
 OIIO::ImageBuf TaskResize::do_task(OIIO::ImageBuf input) {
-	//Create ROI
+	// Create ROI.
 	OIIO::ROI output_roi = OIIO::ROI(0, x_size, 0, y_size, 0, 1, 0, input.nchannels());
 
-	//Resize it
+	// Resize it.
 	OIIO::ImageBuf output;
 	switch (interpolation) {
 		case Interpolation::bilinear: {
@@ -67,6 +67,6 @@ OIIO::ImageBuf TaskResize::do_task(OIIO::ImageBuf input) {
 		}
 	}
 
-	//Return result
+	// Return result.
 	return output;
 }

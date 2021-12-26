@@ -47,7 +47,7 @@ SRCNN SRCNN::create(std::array<dnnl::memory::dims, 3> src_dims,
 					std::array<dnnl::memory::dims, 3> dest_dims,
 					std::array<dnnl::memory::dims, 3> pads_l,
 					std::array<dnnl::memory::dims, 3> pads_r) {
-	//Initialize needed variables
+	// Initialize needed variables.
 	dnnl::engine eng_a;
 	dnnl::stream eng_str_a;
 	std::array<dnnl::memory::desc, 3> src_descs_a;

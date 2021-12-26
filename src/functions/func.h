@@ -6,7 +6,7 @@
 #include <QString>
 
 namespace func {
-	//BEGIN String functions
+	// BEGIN String functions
 	QStringList split(QString str, QChar c);
 
 	int char_count(QString str, QChar c);
@@ -30,9 +30,9 @@ namespace func {
 	QString big_number_to_string(long long num, QChar separator);
 
 	QString bytes_amount_to_string(unsigned long long bytes);
-	//END String functions
+	// END String functions
 
-	//BEGIN Calculation functions
+	// BEGIN Calculation functions
 	unsigned long long srcnn_operations_amount(std::array<unsigned short, 3> kernels,
 											   std::array<unsigned short, 4> channels,
 											   std::array<int, 4> widths,
@@ -47,10 +47,10 @@ namespace func {
 													  std::array<int, 4> widths,
 													  std::array<int, 4> heights);
 
-	///APPROXIMATE minimum memory consumption of tensors that going throught the CNN
-	///@returns Amount of bytes that will be consumed
+	/// Predict the APPROXIMATE memory consumption of tensors that going throught the CNN.
+	/// @returns Amount of bytes that will consumed.
 	unsigned long long predict_cnn_memory_consumption(std::vector<unsigned short> channels,
 													  std::vector<int> widths,
 													  std::vector<int> heights);
-	//END Calculation functions
+	// END Calculation functions
 }

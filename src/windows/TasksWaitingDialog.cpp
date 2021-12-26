@@ -31,16 +31,16 @@
 TasksWaitingDialog::TasksWaitingDialog() : m_ui(new Ui::TasksWaitingDialog) {
 	m_ui->setupUi(this);
 
-	//Set window icon
+	// Set window icon.
 	setWindowIcon(QIcon(":Icon.png"));
 
 	timer = new QTimer(this);
 
-	//BEGIN Connect signals
+	// BEGIN Connect signals
 	connect(m_ui->save_button, SIGNAL(clicked()), this, SLOT(save_clicked()));
 	connect(m_ui->cancel_button, SIGNAL(clicked()), this, SLOT(cancel_clicked()));
 	connect(timer, SIGNAL(timeout()), this, SLOT(progress_check()));
-	//END Connect signals
+	// END Connect signals
 }
 
 TasksWaitingDialog::~TasksWaitingDialog() {
@@ -51,27 +51,27 @@ void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, QString image_f
 	worker = new Worker(task_queue, image_filename);
 	tasks_complete = false;
 
-	//Start tasks
-	elapsed_timer.start(); //Start time
+	// Start tasks.
+	elapsed_timer.start(); // Start time.
 	tasks_thread = new std::thread(
 		&Worker::do_tasks,
 		worker,
-		[this]() { //Success
+		[this]() { // Success.
 			tasks_complete = true;
 		},
-		[this]() { //Cancelled
+		[this]() { // Cancelled.
 			cancelled = true;
 		},
-		[this](QString error) { //Error
+		[this](QString error) { // Error.
 			error_message = error;
 			error_received = true;
 		}
 	);
-	//Start the progressbar update
+	// Start the progressbar update.
 	timer->start();
 }
 
-///Convert 43200000 ms to 12:00:00
+/// Convert 43200000 ms to 12:00:00, for example.
 QString format_ms(long long ms_num) {
 	std::chrono::milliseconds ms(ms_num);
 	auto s = std::chrono::duration_cast<std::chrono::seconds>(ms);
@@ -87,50 +87,50 @@ QString format_ms(long long ms_num) {
 }
 
 void TasksWaitingDialog::progress_check() {
-	//Progressbars
+	// Progressbars.
 	m_ui->current_task_progressbar->setValue(worker->cur_task_progress() * 100.0F);
 	m_ui->all_tasks_progressbar->setValue(worker->overall_progress() * 100.0F);
 
-	//Text for current task label
+	// Text for current task label.
 	m_ui->current_task_label->setText(worker->cur_status());
 
-	//Text for the time label
+	// Text for the time label.
 	m_ui->time_label->setText(format_ms(elapsed_timer.elapsed()));
 
 	if (tasks_complete) {
-		//When completed
+		// When completed.
 		m_ui->current_task_progressbar->setValue(100);
 		m_ui->all_tasks_progressbar->setValue(100);
 		m_ui->current_task_label->setText("All tasks completed!");
-		m_ui->save_button->setEnabled(true); //Enable "Save result" button
-		m_ui->cancel_button->setEnabled(false); //Disable "Cancel" button
+		m_ui->save_button->setEnabled(true); // Enable "Save result" button.
+		m_ui->cancel_button->setEnabled(false); // Disable "Cancel" button.
 
-		timer->stop(); //Stop timer
+		timer->stop(); // Stop timer.
 		return;
 	}
 
 	if (cancelled) {
-		this->done(2); //Just close this dialog
+		this->done(2); // Just close this dialog.
 
-		timer->stop(); //Stop timer
+		timer->stop(); // Stop timer.
 		return;
 	}
 
 	if (error_received) {
 		QMessageBox::critical(this, "Error", error_message);
 
-		timer->stop(); //Stop timer
+		timer->stop(); // Stop timer.
 		return;
 	}
 }
 
 void TasksWaitingDialog::cancel_clicked() {
 	worker->cancel();
-	m_ui->cancel_button->setEnabled(false); //Disable cancel button
+	m_ui->cancel_button->setEnabled(false); // Disable cancel button.
 }
 
 void TasksWaitingDialog::save_clicked() {
-	//Create the file dialog
+	// Create the file dialog.
 	QFileDialog dialog(this, "Save image", "/home",
 					   "PNG image(*.png);;JPEG image(*.jpg *.jpeg);;JPEG2000 image(*.jp2 *.jpg2);;\
 					   Bitmap image(*.bmp);;TIFF image(*.tiff *.tif);;Icon(*.ico)");
@@ -138,11 +138,11 @@ void TasksWaitingDialog::save_clicked() {
 	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
 	dialog.setDefaultSuffix(".png");
 
-	//If accepted
+	// If accepted.
 	if (dialog.exec() == QDialog::DialogCode::Accepted) {
-		//Extract filename
+		// Extract filename.
 		QString filename = dialog.selectedFiles()[0];
-		//Save the image
+		// Save the image.
 		worker->save_image(
 			filename,
 			[this](QString error) {
@@ -150,12 +150,12 @@ void TasksWaitingDialog::save_clicked() {
 					"Failed to write image:\n" + error);
 			}
 		);
-		//Close this dialog
+		// Close this dialog.
 		this->done(0);
 	}
 }
 
-//On close using X
+// On close using the X button.
 void TasksWaitingDialog::reject() {
 	if (!tasks_complete) {
 		if (QMessageBox::question(this, "Cancel?", "Tasks are not already finished. Do you want to cancel this tasks?",

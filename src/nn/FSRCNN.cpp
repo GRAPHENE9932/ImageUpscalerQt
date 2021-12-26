@@ -91,13 +91,13 @@ FSRCNN FSRCNN::create(std::vector<dnnl::memory::dims> src_dims,
 			pads_l_a = pads_l;
 			pads_r_a = pads_r;
 
-			//Initialize convolutions
+			// Initialize convolutions.
 			dnnl::post_ops post_ops;
 			post_ops.append_eltwise(1.0F, dnnl::algorithm::eltwise_relu, 0.01F, 0.0F);
 			dnnl::primitive_attr attr;
 			attr.set_post_ops(post_ops);
 
-			if (i == nn_size - 1) { //If it is the last layer (deconvolutional).
+			if (i == nn_size - 1) { // If it is the last layer (deconvolutional).
 				auto deconv_desc = dnnl::deconvolution_forward::desc(dnnl::prop_kind::forward_inference,
 								   dnnl::algorithm::deconvolution_direct,
 								   src_descs_a[i], ker_descs_a[i], bias_descs_a[i],
