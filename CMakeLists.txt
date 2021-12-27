@@ -40,7 +40,7 @@ endif()
 
 # oneDNN (oneAPI, DNNL).
 find_package(dnnl REQUIRED)
-target_link_libraries(imageupscalerqt dnnl)
+target_link_libraries(imageupscalerqt DNNL::dnnl)
 
 # pthread.
 target_link_libraries(imageupscalerqt pthread)
