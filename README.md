@@ -7,7 +7,7 @@ Contents:
 	* [Arch](#arch-build)
 	* [Ubuntu](#ubuntu-build)
 	* [Windows](#windows-build)
-	
+
 ImageUpscalerQt is a program for upscaling images using neural networks, but it also has other auxiliary functions.
 ![Screenshot](https://i.imgur.com/Km588DX.png)
 Main functions:
@@ -34,7 +34,7 @@ Main functions:
 ## For Arch Linux based distributions <a name="arch-build"/>
 ### Install dependencies
 ```
-$ sudo pacman -S openimageio qt5-base cmake gcc python-pip wget unzip python-pytorch
+$ sudo pacman -S openimageio qt5-base cmake gcc python-pip wget unzip onednn
 ```
 ### Configure and compile
 ```
@@ -45,12 +45,10 @@ $ cd build
 $ cmake ..
 $ make
 ```
-## For Ubuntu 20.04 or newer <a name="ubuntu-build"/>
+## For Ubuntu 21.04 or newer <a name="ubuntu-build"/>
 ### Install dependencies
 ```
-$ sudo apt install libopenimageio-dev qt5-default cmake gcc git python3-pip wget unzip
-$ wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.9.1%2Bcpu.zip
-$ unzip libtorch-cxx11-abi-shared-with-deps-1.9.1+cpu.zip
+$ sudo apt install libopenimageio-dev qt5-default libdnnl-dev cmake gcc git python3-pip wget unzip
 ```
 ### Configure and compile
 ```
@@ -58,10 +56,9 @@ $ git clone https://github.com/GRAPHENE9932/ImageUpscalerQt.git
 $ cd ImageUpscalerQt
 $ mkdir build
 $ cd build
-$ cmake .. -DCMAKE_PREFIX_PATH="<path to libtorch>"
+$ cmake ..
 $ make
 ```
-Remember to replace the `<path to libtorch>` with path to libtorch folder that appeared in the "Install dependencies" part.
 ## For Windows <a name="windows-build"/>
 ### Install Qt5
 You can download the Qt installer [Here](https://www.qt.io/download-open-source). But you also need to register a Qt account in order to proceed with the installation.
@@ -80,19 +77,23 @@ In directory where vcpkg installed, enter this command to install the OpenImageI
 ```
 ./vcpkg install openimageio:x64-windows
 ```
-### Install LibTorch
-Download it from the [PyTorchs official website](https://pytorch.org/get-started/locally/) and select Stable -> Windows -> LibTorch -> C++/Java -> CPU -> Release C++ version. Extract the downloaded .zip archive to the folder you want.
+### Install OneDNN (dnnl, OneAPI)
+In directory where vcpkg installed, enter this command to install the OpenImageIO library:
+```
+./vcpkg install onednn:x64-windows
+```
 ### Build the program
 * Download this repository from github by zip archive or git, and extract it to the folder you want.
 * Open the Qt Creator and open project you just extracted.
 * Open the "Projects" tab -> click on "Build" -> Edit "Initial CMake parameters"
 from
+
 ```
 -DCMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX}
 ```
 to
 ```
--DCMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX};<path to libtorch>;<path to openimageio>;<path to openexr>;<path to zlib>
+-DCMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX};<path to onednn>;<path to openimageio>;<path to openexr>;<path to zlib>
 ```
 ![Screenshot](https://i.imgur.com/OrARcD9.png)
 
@@ -100,7 +101,7 @@ to
 
 |Path|Real path|
 |----|---------|
-|\<path to libtorch\>|path to your libtorch|
+|\<path to onednn\>|\<Path to vcpkg\>/packages/onednn_x64-windows|
 |\<path to openimageio\>|\<Path to vcpkg\>/packages/openimageio_x64-windows|
 |\<path to openexr\>|\<Path to vcpkg\>/packages/openexr_x64-windows|
 |\<path to zlib\>|\<Path to vcpkg\>/packages/zlib_x64-windows|
@@ -113,7 +114,7 @@ to
 * Open folder with windeployqt.exe by cmd.exe (windeployqt usually exists in \<Qt folder\>/5.12.11/msvc2017_64/bin)
 * Enter command `./windeployqt "<Path to folder with built application>"`
 * Go to the folder with OpenImageIO .dll files (usually `<path to vcpkg>/packages/openimageio_x64-windows/bin`) and copy files `OpenImageIO.dll` and `OpenImageIO_Util.dll` to the folder with application.
-* Go to the folder with LibTorch .dll files (usually `<path to libtorch>/lib` and copy files `asmjit.dll`, `c10.dll`, `fbgemm.dll`, `libiomp5md.dll`, `torch_cpu.dll`)
+* Go to the folder with OneDNN .dll files (usually `<path to vcpkg>/packages/onednn_x64-windows/bin` and copy file `dnnl.dll`)
 * Go to the folder with openexr .dll files (usually `<path to vcpkg>/packages/openexr_x64-windows/bin`) and copy files `Half-2_5.dll`, `lex-2_5.dll`, `IlmImf-2_5.dll`, `IlmThread-2_5.dll`, `Imath-2_5.dll`.
 * Go to the folder with libjpeg-turbo .dll files (usually `<path to vcpkg>/packages/libjpeg-turbo_x64-windows/bin`) and copy file `jpeg62.dll`.
 * Go to folder (usually `<path to vcpkg>/packages/libpng_x64-windows/bin`) and copy file `libpng16.dll`.
