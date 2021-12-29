@@ -21,452 +21,159 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
     <item>
-     <layout class="QHBoxLayout" name="select_image_layout" stretch="0,1">
+     <layout class="QVBoxLayout" name="file_list_layout">
       <item>
-       <widget class="QPushButton" name="select_image_button">
+       <widget class="QLabel" name="file_list_label">
         <property name="text">
-         <string>Select image</string>
+         <string>List of files</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="image_path_label">
-        <property name="text">
-         <string>No image selected</string>
-        </property>
-        <property name="textInteractionFlags">
-         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-        </property>
-       </widget>
+       <widget class="QListWidget" name="file_list_widget"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="file_list_button_layout" stretch="1,0,0,0,0">
+        <item>
+         <widget class="QPushButton" name="add_file_button">
+          <property name="text">
+           <string>Add files and folders...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="file_up_button">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset theme="up"/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="file_down_button">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset theme="down"/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="file_remove_button">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset theme="remove"/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="file_clear_button">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset theme="delete"/>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="central_layout" stretch="1,1">
+     <layout class="QVBoxLayout" name="task_list_big_layout" stretch="1,1">
       <item>
-       <layout class="QVBoxLayout" name="queue_layout">
+       <layout class="QVBoxLayout" name="task_list_layout">
         <item>
-         <widget class="QLabel" name="queue_label">
+         <widget class="QLabel" name="task_list_label">
           <property name="text">
-           <string>Tasks queue</string>
+           <string>List of tasks</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="queue_list"/>
+         <widget class="QListWidget" name="task_list_widget"/>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="queue_management_layout">
-          <item>
-           <widget class="QPushButton" name="remove_task_button">
-            <property name="text">
-             <string>Remove</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="clear_tasks_button">
-            <property name="text">
-             <string>Clear</string>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>16</width>
-              <height>16</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="up_task_button">
-            <property name="text">
-             <string>Up</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="down_task_button">
-            <property name="text">
-             <string>Down</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="task_management_layout">
-        <item>
-         <widget class="QComboBox" name="task_kind_combobox">
-          <property name="toolTipDuration">
-           <number>-1</number>
-          </property>
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <property name="duplicatesEnabled">
-           <bool>false</bool>
-          </property>
-          <item>
-           <property name="text">
-            <string>Resize</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Use SRCNN</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Use FSRCNN</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Convert color space</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="QStackedWidget" name="task_settings_widget">
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="resize_page">
-           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0">
-            <item>
-             <layout class="QHBoxLayout" name="resize_size_layout">
-              <item>
-               <widget class="QLabel" name="resize_size_label">
-                <property name="text">
-                 <string>Output size</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="resize_x">
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="maximum">
-                 <number>2147483647</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="resize_y">
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="maximum">
-                 <number>2147483647</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="keep_image_ratio_radio">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Keep ratio</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="resize_interpolation_layout" stretch="0,1">
-              <item>
-               <widget class="QLabel" name="resize_interpolation_label">
-                <property name="text">
-                 <string>Interpolation</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="resize_interpolation_combobox"/>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer name="resize_page_spacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="srcnn_page">
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <widget class="QComboBox" name="srcnn_architecture_combobox"/>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="srcnn_block_split_check">
-              <property name="text">
-               <string>Split image into blocks</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="srcnn_block_size_layout" stretch="0,1">
-              <item>
-               <widget class="QLabel" name="srcnn_block_size_label">
-                <property name="text">
-                 <string>Block size:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="srcnn_block_size_spinbox">
-                <property name="minimum">
-                 <number>32</number>
-                </property>
-                <property name="maximum">
-                 <number>1080</number>
-                </property>
-                <property name="singleStep">
-                 <number>32</number>
-                </property>
-                <property name="value">
-                 <number>192</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QLabel" name="srcnn_total_operations_label">
-              <property name="text">
-               <string>Total operations: no image</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="srcnn_memory_consumption_label">
-              <property name="text">
-               <string>Approx. memory consumption: no image</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="srcnn_page_spacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QLabel" name="srcnn_page_label">
-              <property name="text">
-               <string>SRCNN keeps image size the same, but increases sharpness of image</string>
-              </property>
-              <property name="textFormat">
-               <enum>Qt::PlainText</enum>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="fsrcnn_page">
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <widget class="QComboBox" name="fsrcnn_architecture_combobox">
-              <property name="currentIndex">
-               <number>-1</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="fsrcnn_block_split_check">
-              <property name="text">
-               <string>Split image into blocks</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="fsrcnn_block_size_layout" stretch="0,1">
-              <item>
-               <widget class="QLabel" name="fsrcnn_block_size_label">
-                <property name="text">
-                 <string>Block size:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="fsrcnn_block_size_spinbox">
-                <property name="minimum">
-                 <number>32</number>
-                </property>
-                <property name="maximum">
-                 <number>1080</number>
-                </property>
-                <property name="singleStep">
-                 <number>32</number>
-                </property>
-                <property name="value">
-                 <number>192</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QLabel" name="fsrcnn_total_operations_label">
-              <property name="text">
-               <string>Total operations: no image</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="fsrcnn_memory_consumption_label">
-              <property name="text">
-               <string>Approx. memory consumption: no image</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="fsrcnn_page_spacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QLabel" name="fsrcnn_page_label">
-              <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FSRCNN enlarges the image size in 3 times&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="convert_color_space_page">
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <item>
-             <widget class="QComboBox" name="color_space_combobox">
-              <item>
-               <property name="text">
-                <string>RGB to YCbCr</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>YCbCr to RGB</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>RGB to YCoCg</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>YCoCg to RGB</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <spacer name="color_space_page_spacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="task_management_buttons_layout" stretch="1">
+         <layout class="QHBoxLayout" name="task_list_button_layout" stretch="1,0,0,0,0">
           <item>
            <widget class="QPushButton" name="add_task_button">
             <property name="text">
              <string>Add task</string>
             </property>
+            <property name="icon">
+             <iconset theme="add"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="task_up_button">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset theme="up"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="task_down_button">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset theme="down"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="task_remove_button">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset theme="remove"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="task_clear_button">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset theme="delete"/>
+            </property>
            </widget>
           </item>
          </layout>
         </item>
        </layout>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="low_layout" stretch="0,1,0">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetFixedSize</enum>
-      </property>
       <item>
-       <widget class="QPushButton" name="about_button">
-        <property name="text">
-         <string>About</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="status_label">
-        <property name="text">
-         <string>No tasks in queue</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="start_tasks_button">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Start tasks</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="info_layout">
+        <item>
+         <widget class="QPlainTextEdit" name="info_plain_text_edit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="start_task_button">
+          <property name="text">
+           <string>Start tasks</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
