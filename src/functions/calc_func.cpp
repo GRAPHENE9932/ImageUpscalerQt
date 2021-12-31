@@ -1,3 +1,9 @@
+/*
+ * ImageUpscalerQt - calculation functions
+ * SPDX-FileCopyrightText: 2021 Artem Kliminskyi, artemklim50@gmail.com
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
 #include "func.h"
 
 unsigned long long func::srcnn_operations_amount(std::array<unsigned short, 3> kernels,
