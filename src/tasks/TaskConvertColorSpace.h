@@ -7,22 +7,13 @@
 #pragma once
 
 #include "Task.h"
-
-enum class ColorSpaceConversion : unsigned char {
-	rgb_to_ycbcr, ycbcr_to_rgb, rgb_to_ycocg, ycocg_to_rgb
-};
-
-/// Color space names for the user.
-const QString COLOR_SPACE_CONVERSION_NAMES[4] = {
-	"RGB to YCbCr", "YCbCr to RGB", "RGB to YCoCg", "YCoCg to RGB"
-};
+#include "TaskDesc.h"
 
 class TaskConvertColorSpace : public Task {
 public:
-	ColorSpaceConversion color_space_conversion;
+	TaskConvertColorSpaceDesc desc;
 
-	TaskConvertColorSpace();
-	TaskConvertColorSpace(ColorSpaceConversion color_space_conversion);
+	TaskConvertColorSpace(TaskConvertColorSpaceDesc desc);
 
 	/// "1: convert from RGB to YCbCr".
 	QString to_string(unsigned short index) const override;

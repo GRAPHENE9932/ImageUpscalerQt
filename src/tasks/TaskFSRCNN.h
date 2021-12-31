@@ -9,19 +9,13 @@
 #include <array>
 
 #include "Task.h"
+#include "TaskDesc.h"
 
 struct TaskFSRCNN : public Task {
 public:
-	std::vector<unsigned short> kernels;
-	std::vector<unsigned short> paddings;
-	std::vector<unsigned short> channels;
-	/// Block size of the input image that will be splitted into blocks before the CNN.
-	/// 0 if the input image have not to be splitted.
-	unsigned int block_size;
+	TaskFSRCNNDesc desc;
 
-	TaskFSRCNN();
-	TaskFSRCNN(std::vector<unsigned short> kernels, std::vector<unsigned short> paddings,
-			   std::vector<unsigned short> channels, unsigned int block_size);
+	TaskFSRCNN(TaskFSRCNNDesc desc);
 
 	/// "1: use FSRCNN 3-1-3-4 64-32-32".
 	QString to_string(unsigned short index) const override;

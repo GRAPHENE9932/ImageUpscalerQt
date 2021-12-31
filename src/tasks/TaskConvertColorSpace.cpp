@@ -8,24 +8,17 @@
 
 #include "TaskConvertColorSpace.h"
 
-TaskConvertColorSpace::TaskConvertColorSpace() {
-	this->task_kind = TaskKind::convert_color_space;
-}
-
-TaskConvertColorSpace::TaskConvertColorSpace(ColorSpaceConversion color_space_conversion) {
-	this->task_kind = TaskKind::convert_color_space;
-	this->color_space_conversion = color_space_conversion;
-}
+TaskConvertColorSpace::TaskConvertColorSpace(TaskConvertColorSpaceDesc desc) : desc(desc) {}
 
 QString TaskConvertColorSpace::to_string(unsigned short index) const {
 	// 1: convert from RGB to YCbCr.
 	return QString("%1: convert from %2").arg(QString::number(index + 1),
-											  COLOR_SPACE_CONVERSION_NAMES[(unsigned char)color_space_conversion]);
+											  COLOR_SPACE_CONVERSION_NAMES[(unsigned char)desc.color_space_conversion]);
 }
 
 QString TaskConvertColorSpace::to_string() const {
 	// convert from RGB to YCbCr.
-	return QString("convert from %1").arg(COLOR_SPACE_CONVERSION_NAMES[(unsigned char)color_space_conversion]);
+	return QString("convert from %1").arg(COLOR_SPACE_CONVERSION_NAMES[(unsigned char)desc.color_space_conversion]);
 }
 
 float TaskConvertColorSpace::progress() const {
@@ -252,7 +245,7 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 	const float (*matrix_p)[3][3];
 	const float (*offset_after_p)[3] = nullptr;
 	const float (*offset_before_p)[3] = nullptr;
-	switch (color_space_conversion) {
+	switch (desc.color_space_conversion) {
 		case ColorSpaceConversion::rgb_to_ycbcr: {
 			matrix_p = &rgb_to_ycbcr_coef;
 			offset_after_p = &ycbcr_offset;
@@ -327,7 +320,7 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 		OIIO::ROI cur_roi(0, output.spec().width, 0, output.spec().height, 0, 1, i, i + 1);
 		output.set_pixels(cur_roi, OIIO::TypeDesc::FLOAT, outputs[i].get());
 	}
-	// Last channels - without changes.
+	// Other channels - without changes.
 	progress_val = 1.0F;
 
 	return output;

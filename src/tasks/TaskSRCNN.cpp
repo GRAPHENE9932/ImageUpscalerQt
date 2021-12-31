@@ -15,29 +15,17 @@
 #include "../nn/SRCNN.h"
 #include "../functions/func.h"
 
-TaskSRCNN::TaskSRCNN() {
-	this->task_kind = TaskKind::srcnn;
-}
-
-TaskSRCNN::TaskSRCNN(std::array<unsigned short, 3> kernels, std::array<unsigned short, 3> paddings,
-					 std::array<unsigned short, 4> ch_n, unsigned int block_size) {
-	this->task_kind = TaskKind::srcnn;
-
-	this->kernels = kernels;
-	this->paddings = paddings;
-	this->channels = ch_n;
-	this->block_size = block_size;
-}
+TaskSRCNN::TaskSRCNN(TaskSRCNNDesc desc) : desc(desc) {}
 
 QString TaskSRCNN::to_string(unsigned short index) const {
 	// 1: use SRCNN 5-1-9 64-32.
 	return QString("%1: use SRCNN %2").arg(QString::number(index + 1),
-										   func::srcnn_to_string(kernels, channels));
+										   func::srcnn_to_string(desc.kernels, desc.channels));
 }
 
 QString TaskSRCNN::to_string() const {
 	// use SRCNN 5-1-9 64-32.
-	return QString("use SRCNN %1").arg(func::srcnn_to_string(kernels, channels));
+	return QString("use SRCNN %1").arg(func::srcnn_to_string(desc.kernels, desc.channels));
 }
 
 float TaskSRCNN::progress() const {
@@ -47,8 +35,9 @@ float TaskSRCNN::progress() const {
 OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	// Get spec.
 	auto spec = input.spec();
-	const int block_width = block_size == 0 ? spec.width : block_size; //Whole image size if we have not to
-	const int block_height = block_size == 0 ? spec.height : block_size; //split image into blocks
+	// Whole image size if we have not to split image into blocks.
+	const int block_width = desc.block_size == 0 ? spec.width : desc.block_size;
+	const int block_height = desc.block_size == 0 ? spec.height : desc.block_size;
 
 	// Create an output buffer.
 	OIIO::ImageBuf output(spec);
@@ -64,7 +53,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	blocks_processed = 0;
 
 	// Initialize the neural network.
-	SRCNN nn = SRCNN::create(block_width, block_height, kernels, channels);
+	SRCNN nn = SRCNN::create(block_width, block_height, desc.kernels, desc.channels);
 	const std::array<dnnl::memory::desc, 3> ker_descs = nn.get_ker_descs();
 	const std::array<dnnl::memory::desc, 3> bias_descs = nn.get_bias_descs();
 	const dnnl::memory::desc input_desc = nn.get_input_desc();
@@ -83,7 +72,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	}
 
 	// Load file with parameters from resources.
-	QFile file(":/SRCNN/" + func::srcnn_to_string(kernels, channels) + ".bin");
+	QFile file(":/SRCNN/" + func::srcnn_to_string(desc.kernels, desc.channels) + ".bin");
 	file.open(QFile::ReadOnly);
 	QByteArray file_array = file.read(512 * 1024 * 1024); // Maximum size is 512 MiB.
 	assert(file_array.size() == total_params_size);
