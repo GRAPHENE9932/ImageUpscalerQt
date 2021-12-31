@@ -41,6 +41,9 @@
           <property name="text">
            <string>Add files and folders...</string>
           </property>
+          <property name="icon">
+           <iconset theme="list-add"/>
+          </property>
          </widget>
         </item>
         <item>
@@ -49,7 +52,8 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset theme="arrow-up"/>
+           <iconset theme="arrow-up">
+            <normaloff>.</normaloff>.</iconset>
           </property>
          </widget>
         </item>
@@ -59,7 +63,8 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset theme="arrow-down"/>
+           <iconset theme="arrow-down">
+            <normaloff>.</normaloff>.</iconset>
           </property>
          </widget>
         </item>
@@ -111,8 +116,7 @@
              <string>Add task</string>
             </property>
             <property name="icon">
-             <iconset theme="add">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="list-add"/>
             </property>
            </widget>
           </item>
@@ -122,7 +126,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="arrow-up"/>
+             <iconset theme="arrow-up">
+              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>
@@ -132,7 +137,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="arrow-down"/>
+             <iconset theme="arrow-down">
+              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>
@@ -175,6 +181,9 @@
          <widget class="QPushButton" name="start_task_button">
           <property name="text">
            <string>Start tasks</string>
+          </property>
+          <property name="icon">
+           <iconset theme="media-playback-start"/>
           </property>
          </widget>
         </item>
