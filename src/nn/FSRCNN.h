@@ -10,6 +10,8 @@
 
 #include <dnnl.hpp>
 
+#include "../tasks/TaskDesc.h"
+
 class FSRCNN {
 private:
 	dnnl::engine eng;
@@ -28,8 +30,7 @@ private:
 	dnnl::deconvolution_forward deconv;
 
 public:
-	static FSRCNN create(unsigned short img_w, unsigned short img_h,
-						 std::vector<unsigned short> ker, std::vector<unsigned short> chn);
+	static FSRCNN create(unsigned short img_w, unsigned short img_h, FSRCNNDesc desc);
 
 	static FSRCNN create(std::vector<dnnl::memory::dims> src_dims, std::vector<dnnl::memory::dims> ker_dims,
 						 std::vector<dnnl::memory::dims> bias_dims, std::vector<dnnl::memory::dims> dest_dims,

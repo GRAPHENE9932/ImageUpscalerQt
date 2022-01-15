@@ -8,26 +8,29 @@
 
 #include "SRCNN.h"
 
-SRCNN SRCNN::create(unsigned short img_w, unsigned short img_h,
-					std::array<unsigned short, 3> ker, std::array<unsigned short, 4> chn) {
-		std::array<dnnl::memory::dims, 3> src_dims;
-		std::array<dnnl::memory::dims, 3> ker_dims;
-		std::array<dnnl::memory::dims, 3> bias_dims;
-		std::array<dnnl::memory::dims, 3> dest_dims;
-		std::array<dnnl::memory::dims, 3> pads_l;
-		std::array<dnnl::memory::dims, 3> pads_r;
+SRCNN SRCNN::create(unsigned short img_w, unsigned short img_h, SRCNNDesc desc) {
+	// Shortcuts
+	auto ker = desc.kernels;
+	auto chn = desc.channels;
 
-		for (char i = 0; i < 3; i++) {
-			src_dims[i] = {1, chn[i], img_h, img_w};
-			ker_dims[i] = {chn[i + 1], chn[i], ker[i], ker[i]};
-			bias_dims[i] = {chn[i + 1]};
-			dest_dims[i] = {1, chn[i + 1], img_h, img_w};
-			pads_l[i] = {(ker[i] - 1) / 2, (ker[i] - 1) / 2, 0, 0};
-			pads_r[i] = {(ker[i] - 1) / 2, (ker[i] - 1) / 2, 0, 0};
-		}
+	std::array<dnnl::memory::dims, 3> src_dims;
+	std::array<dnnl::memory::dims, 3> ker_dims;
+	std::array<dnnl::memory::dims, 3> bias_dims;
+	std::array<dnnl::memory::dims, 3> dest_dims;
+	std::array<dnnl::memory::dims, 3> pads_l;
+	std::array<dnnl::memory::dims, 3> pads_r;
 
-		return create(src_dims, ker_dims, bias_dims, dest_dims, pads_l, pads_r);
+	for (char i = 0; i < 3; i++) {
+		src_dims[i] = {1, chn[i], img_h, img_w};
+		ker_dims[i] = {chn[i + 1], chn[i], ker[i], ker[i]};
+		bias_dims[i] = {chn[i + 1]};
+		dest_dims[i] = {1, chn[i + 1], img_h, img_w};
+		pads_l[i] = {(ker[i] - 1) / 2, (ker[i] - 1) / 2, 0, 0};
+		pads_r[i] = {(ker[i] - 1) / 2, (ker[i] - 1) / 2, 0, 0};
 	}
+
+	return create(src_dims, ker_dims, bias_dims, dest_dims, pads_l, pads_r);
+}
 
 SRCNN SRCNN::create(std::array<dnnl::memory::dims, 3> src_dims,
 					std::array<dnnl::memory::dims, 3> ker_dims,

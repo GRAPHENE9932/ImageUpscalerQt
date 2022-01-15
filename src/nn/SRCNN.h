@@ -10,6 +10,8 @@
 
 #include <dnnl.hpp>
 
+#include "../tasks/TaskDesc.h"
+
 class SRCNN {
 private:
 	dnnl::engine eng;
@@ -27,8 +29,7 @@ private:
 	std::array<dnnl::convolution_forward, 3> convs;
 
 public:
-	static SRCNN create(unsigned short img_w, unsigned short img_h,
-						std::array<unsigned short, 3> ker, std::array<unsigned short, 4> chn);
+	static SRCNN create(unsigned short img_w, unsigned short img_h, SRCNNDesc desc);
 
 	static SRCNN create(std::array<dnnl::memory::dims, 3> src_dims,
 						std::array<dnnl::memory::dims, 3> ker_dims,

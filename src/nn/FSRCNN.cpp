@@ -8,8 +8,11 @@
 
 #include "FSRCNN.h"
 
-FSRCNN FSRCNN::create(unsigned short img_w, unsigned short img_h,
-					  std::vector<unsigned short> ker, std::vector<unsigned short> chn) {
+FSRCNN FSRCNN::create(unsigned short img_w, unsigned short img_h, FSRCNNDesc desc) {
+	// Shortcuts
+	auto ker = desc.kernels;
+	auto chn = desc.channels;
+
 	assert(ker.size() + 1 == chn.size());
 
 	const auto nn_size = ker.size();
