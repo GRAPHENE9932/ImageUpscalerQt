@@ -13,6 +13,8 @@ int main(int argc, char *argv[])
 
 	// Disable the context help button globally.
 	QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
+	// HiDPI icons
+	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     ImageUpscalerQt w;
     w.show();
