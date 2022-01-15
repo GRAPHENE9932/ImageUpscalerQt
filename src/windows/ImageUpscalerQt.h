@@ -12,7 +12,7 @@
 #include <QScopedPointer>
 #include <OpenImageIO/imageio.h>
 
-#include "../tasks/Task.h"
+#include "../tasks/TaskDesc.h"
 
 namespace Ui {
 	class ImageUpscalerQt;
@@ -27,64 +27,32 @@ public:
 
 private:
     QScopedPointer<Ui::ImageUpscalerQt> m_ui;
-	std::vector<Task*> task_queue;
-	QString image_filename;
-	OIIO::ImageSpec image_spec;
+	std::vector<TaskDesc*> task_queue;
+	QStringList files;
 
-	/// Prepare GUI for entering parameters (default parameters).
-	void prepare_task_resize();
-	/// Prepare GUI for entering parameters (default parameters).
-	void prepare_task_srcnn();
-	/// Update info for SRCNN that in labels.
-	void update_srcnn_info();
-	/// Prepare GUI for entering parameters (default parameters).
-	void prepare_task_fsrcnn();
-	/// Update info for FSRCNN that in labels.
-	void update_fsrcnn_info();
-	/// Prepare GUI for entering parameters (default parameters).
-	void prepare_task_convert_color_space();
-
-	/// Collect task parameters from GUI.
-	Task* init_task_resize();
-	/// Collect task parameters from GUI.
-	Task* init_task_srcnn();
-	/// Collect task parameters from GUI.
-	Task* init_task_fsrcnn();
-	/// Collect task parameters from GUI.
-	Task* init_task_convert_color_space();
-
-	void update_list();
-
-	int end_width();
-	int end_height();
+	/// Completely synchronize ImageUpscalerQt::files with file_list_widget.
+	void update_file_list();
+	void update_previews();
+	/// Swap files in the list.
+	void swap_files(int index_1, int index_2);
+	/// Update every list manipulation button.
+	void update_file_buttons();
 
 private slots:
-	void add_task_clicked();
-	void task_kind_changed(int index);
-	void select_image_clicked();
+	void add_files_clicked();
+	void move_file_up_clicked();
+	void move_file_down_clicked();
+	void remove_file_clicked();
+	void clear_files_clicked();
+	void file_selection_changed(int index);
 
-	void remove_task_clicked();
-	void clear_tasks_clicked();
+	void add_task_clicked();
 	void move_task_up_clicked();
 	void move_task_down_clicked();
-
-	void resize_x_changed(int value);
-	void resize_y_changed(int value);
-	void keep_ratio_toggled(bool checked);
-
-	// BEGIN SRCNN page events
-	void srcnn_architecture_changed(QString);
-	void srcnn_block_size_changed(int);
-	void srcnn_split_checked(int);
-	// END SRCNN page events
-
-	// BEGIN FSRCNN page events
-	void fsrcnn_architecture_changed(QString);
-	void fsrcnn_block_size_changed(int);
-	void fsrcnn_split_checked(int);
-	// END SRCNN page events
+	void remove_task_clicked();
+	void clear_tasks_clicked();
+	void task_selection_changed(int index);
 
 	void start_tasks_clicked();
-
 	void about_clicked();
 };
