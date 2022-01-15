@@ -19,8 +19,8 @@
 TasksWaitingDialog::TasksWaitingDialog() : m_ui(new Ui::TasksWaitingDialog) {
 	m_ui->setupUi(this);
 
-	// Set window icon.
-	setWindowIcon(QIcon(":Icon.png"));
+	// Set dialog icon.
+	setWindowIcon(QIcon(":icon.png"));
 
 	timer = new QTimer(this);
 

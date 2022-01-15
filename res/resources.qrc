@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 	<qresource>
-		<file>Icon.png</file>
+		<file>icon.png</file>
+		<file>unknown.svg</file>
 
 		<file>SRCNN/9-3-5 48-32.bin</file>
 		<file>SRCNN/9-3-5 48-48.bin</file>
