@@ -41,7 +41,7 @@
    <item>
     <widget class="QStackedWidget" name="parameters_stacked_widget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="resize_page">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -66,6 +66,9 @@
         <widget class="QCheckBox" name="resize_keep_ratio_check_box">
          <property name="text">
           <string>Keep ratio</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -249,14 +252,30 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="srcnn_block_size_spin_box"/>
+          <widget class="QSpinBox" name="srcnn_block_size_spin_box">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="minimum">
+            <number>16</number>
+           </property>
+           <property name="maximum">
+            <number>16</number>
+           </property>
+           <property name="singleStep">
+            <number>16</number>
+           </property>
+           <property name="value">
+            <number>16</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
        <item>
         <widget class="QLabel" name="srcnn_info_label">
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Total operations: no image&lt;/p&gt;&lt;p&gt;Approximate memory consumtion: no image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Total operations: no image&lt;/p&gt;&lt;p&gt;Approximate memory consumption: no image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>false</bool>
@@ -316,14 +335,21 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="fsrcnn_block_size_spin_box"/>
+          <widget class="QSpinBox" name="fsrcnn_block_size_spin_box">
+           <property name="minimum">
+            <number>16</number>
+           </property>
+           <property name="maximum">
+            <number>16</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
        <item>
         <widget class="QLabel" name="fsrcnn_info_label">
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Total operations: no image&lt;/p&gt;&lt;p&gt;Approximate memory consumtion: no image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Total operations: no image&lt;/p&gt;&lt;p&gt;Approximate memory consumption: no image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>false</bool>
@@ -381,8 +407,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>26</x>
+     <y>323</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -397,8 +423,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>26</x>
+     <y>323</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -406,5 +432,211 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>task_combo_box</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>task_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>162</x>
+     <y>13</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>40</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resize_x</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>resize_x_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resize_y</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>resize_y_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>325</x>
+     <y>59</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>390</x>
+     <y>96</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resize_keep_ratio_check_box</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>resize_keep_ratio_changed(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>390</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resize_interpolation_combo_box</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>resize_interpolation_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>140</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>160</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>color_space_combo_box</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>ccs_combo_box_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>296</x>
+     <y>68</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>387</x>
+     <y>155</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>srcnn_architecture_combo_box</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>srcnn_architecture_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>155</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>390</x>
+     <y>188</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>srcnn_split_check_box</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>srcnn_split_changed(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>390</x>
+     <y>215</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>srcnn_block_size_spin_box</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>srcnn_block_size_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>183</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>389</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fsrcnn_architecture_combo_box</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>fsrcnn_architecture_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>92</x>
+     <y>69</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>390</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fsrcnn_split_check_box</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>fsrcnn_split_changed(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>389</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fsrcnn_block_size_spin_box</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>fsrcnn_block_size_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>144</x>
+     <y>135</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>388</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>task_changed(int)</slot>
+  <slot>resize_x_changed(int)</slot>
+  <slot>resize_y_changed(int)</slot>
+  <slot>resize_keep_ratio_changed(bool)</slot>
+  <slot>resize_interpolation_changed(int)</slot>
+  <slot>ccs_combo_box_changed(int)</slot>
+  <slot>srcnn_architecture_changed(int)</slot>
+  <slot>srcnn_split_changed(bool)</slot>
+  <slot>srcnn_block_size_changed(int)</slot>
+  <slot>fsrcnn_architecture_changed(int)</slot>
+  <slot>fsrcnn_split_changed(bool)</slot>
+  <slot>fsrcnn_block_size_changed(int)</slot>
+ </slots>
 </ui>
