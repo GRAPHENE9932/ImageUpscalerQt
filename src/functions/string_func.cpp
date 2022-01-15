@@ -4,157 +4,90 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
+#include <unordered_map>
+
 #include <QStringList>
 #include <QCollator>
 
 #include "func.h"
 
-QStringList func::split(QString str, QChar c) {
-	return str.split(c);
-}
+const QString ENG_ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-int func::char_count(QString str, QChar c) {
-	return str.count(c);
-}
+std::vector<int> func::duplicate_indexes(const QStringList& list) {
+	std::vector<int> indexes;
+	auto list_size = list.size();
 
-bool func::parse_srcnn(QString str, std::array<unsigned short, 3>* kernels_out,
-					   std::array<unsigned short, 3>* paddings_out,
-					   std::array<unsigned short, 4>* channels_out) {
-	try {
-		QStringList parts = split(str, ' ');
-
-		if (parts.size() != 2)
-			return false;
-
-		std::array<unsigned short, 3> kernels = {0, 0, 0};
-		std::array<unsigned short, 3> paddings = {0, 0, 0};
-		std::array<unsigned short, 4> channels = {1, 0, 0, 1};
-
-		// BEGIN Parse first part (kernels)
-		QStringList splitted_ker = split(parts[0], '-');
-
-		if (splitted_ker.size() != 3)
-			return false;
-
-		bool bad_params = false;
-
-		for (unsigned char i = 0; i < 3; i++) {
-			// Parse name.
-			kernels[i] = splitted_ker[i].toUShort();
-			paddings[i] = (kernels[i] - 1) / 2; // Formulas simplified from (w - k + 2p) / s + 1.
-			bad_params |= kernels[i] % 2 != 1;
+	// Use an unordered map to find duplicates.
+	// Insert if not already present, mark as duplicate if already present
+	std::unordered_map<QString, int> map;
+	for (int i = 0; i < list_size; i++) {
+		if (map.contains(list[i])) {
+			indexes.push_back(i);
+			indexes.push_back(map[list[i]]);
 		}
-
-		if (bad_params)
-			return false;
-		// END
-
-		// BEGIN Parse second part (channels)
-		QStringList splitted_ch = split(parts[1], '-');
-
-		if (splitted_ch.size() != 2)
-			return false;
-
-		for (unsigned char i = 0; i < 2; i++)
-			channels[i + 1] = splitted_ch[i].toUShort();
-		// END
-
-		// Return values.
-		if (kernels_out != nullptr) *kernels_out = kernels;
-		if (paddings_out != nullptr) *paddings_out = paddings;
-		if (channels_out != nullptr) *channels_out = channels;
-		return true;
-	}
-	catch (...) {
-		return false;
-	}
-}
-
-bool func::parse_fsrcnn(QString str, std::vector<unsigned short>* kernels_out,
-					    std::vector<unsigned short>* paddings_out,
-						std::vector<unsigned short>* channels_out) {
-	try {
-		QStringList parts = split(str, ' ');
-
-		if (parts.size() != 2)
-			return false;
-
-		// BEGIN Parse first part (kernels)
-		QStringList splitted_ker = split(parts[0], '-');
-
-		// Initialize kernels and paddigns vectors.
-		std::vector<unsigned short> kernels(splitted_ker.size(), 0);
-		std::vector<unsigned short> paddings(splitted_ker.size(), 0);
-
-		bool bad_params = false;
-
-		for (uint8_t i = 0; i < splitted_ker.size(); i++) {
-			kernels[i] = splitted_ker[i].toUShort();
-			if (i == splitted_ker.size() - 1) { // Last element (conv transpos).
-				paddings[i] = (kernels[i] - 3) / 2;
-			}
-			else {
-				paddings[i] = (kernels[i] - 1) / 2; // Formulas simplified from (w - k + 2p) / s + 1.
-				bad_params |= (kernels[i] % 2) != 1;
-			}
+		else {
+			map.insert(std::make_pair(list[i], i));
 		}
-
-		if (bad_params)
-			return false;
-
-		// END
-
-		// BEGIN Parse second part (channels)
-		QStringList splitted_ch = split(parts[1], '-');
-		// Inititalize channels vector.
-		std::vector<unsigned short> channels(splitted_ker.size() + 1, 0);
-		channels[0] = 1;
-		channels[channels.size() - 1] = 1;
-
-		for (uint8_t i = 0; i < splitted_ch.size(); i++)
-			channels[i + 1] = splitted_ch[i].toUShort();
-		// END
-
-		// Return values.
-		if (kernels_out != nullptr) *kernels_out = kernels;
-		if (paddings_out != nullptr) *paddings_out = paddings;
-		if (channels_out != nullptr) *channels_out = channels;
-		return true;
 	}
-	catch (...) {
-		return false;
-	}
+
+	return indexes;
 }
 
-QString func::srcnn_to_string(const std::array<unsigned short, 3> kernels,
-							  const std::array<unsigned short, 4> channels) {
-	// 5-1-9 64-32.
-	return QString("%1-%2-%3 %4-%5").arg(QString::number(kernels[0]),
-										 QString::number(kernels[1]),
-										 QString::number(kernels[2]),
-										 QString::number(channels[1]),
-										 QString::number(channels[2]));
+QStringList func::shorten_file_paths(const QStringList& list) {
+	auto list_size = list.size();
+	// Leave only file name.
+	// For the files that have the same names, we will show the folder name they contained in.
+	// So we have to find duplicate file names.
+	QStringList file_names;
+	for (int i = 0; i < list_size; i++)
+		file_names += list[i].section('/', -1); // Leave only file name.
+
+	std::vector<int> dups = func::duplicate_indexes(file_names);
+
+	// Use duplicates data now.
+	for (int i = 0; i < dups.size(); i++) {
+		file_names[dups[i]] = shorten_file_path(list[dups[i]]);
+	}
+
+	// Return result.
+	return file_names;
 }
 
-QString func::fsrcnn_to_string(const std::vector<unsigned short> kernels,
-							   const std::vector<unsigned short> channels) {
-	QString output;
+QString func::shorten_file_path(const QString path) {
+	// Some examples of the shortened duplicates:
+	// /home/user/image.png -> .../user/image.png
+	// /home/image.png -> /home/image.png
+	// /image.png -> /image.png
+	// C:/image.png -> C:/image.png
+	// C:/Users/image.png -> C:/Users/image.png
 
-	for (size_t i = 0; i < kernels.size(); i++) {
-		output += QString::number(kernels[i]);
-		if (i != kernels.size() - 1)
-			output += QChar('-');
+	int folder_depth = path.count('/');
+
+	if (folder_depth > 1) {
+		QString folder_lvl_2 = path.section('/', -3, -3);
+
+		// For Windows, check if the second folder is 'X:', where X - uppercase english letter.
+#ifdef Q_OS_WIN
+		if (folder_lvl_2.size() == 2 &&
+			ENG_ABC.contains(folder_lvl_2[0]) &&
+			folder_lvl_2[1] == ':')
+			return path.section('/', -3);
+#endif
+		// For UNIX, check if the second folder is root.
+#ifdef Q_OS_UNIX
+		if (folder_lvl_2 == "")
+			return path.section('/', -3);
+#endif
+		// If level 2 folder is not root (or drive letter), just do ".../foo/bar.file".
+		return ".../" + path.section('/', -2);
 	}
-
-	output += QChar(' ');
-
-	for (size_t i = 1; i < channels.size() - 1; i++) {
-		output += QString::number(channels[i]);
-		if (i != channels.size() - 2)
-			output += QChar('-');
+	else if (folder_depth == 1) {
+		return path.section('/', -2);
 	}
-
-	return output;
+	else {
+		// folder_depth == 0 is impossible, but return the whole name (just in case).
+		return path;
+	}
 }
 
 void func::numerical_sort(QStringList& list) {
@@ -186,8 +119,7 @@ QString func::big_number_to_string(long long num, QChar separator) {
 	return result;
 }
 
-QString func::bytes_amount_to_string(unsigned long long bytes)
-{
+QString func::bytes_amount_to_string(unsigned long long bytes) {
 	if (bytes < 1024) { // Bytes.
 		return QString::number(bytes) + " B";
 	}

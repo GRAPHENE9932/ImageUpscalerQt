@@ -6,10 +6,9 @@
 
 #include "func.h"
 
-unsigned long long func::srcnn_operations_amount(std::array<unsigned short, 3> kernels,
-												 std::array<unsigned short, 4> channels,
-												 std::array<int, 4> widths,
-												 std::array<int, 4> heights) {
+unsigned long long func::srcnn_operations_amount(SRCNNDesc desc,
+											     unsigned int x_size,
+											     unsigned int y_size) {
 	// Use formula for it.
 	// O=sum from{i=1} to{3} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + {W_{ i+1 }^2 times O_a}
 	// (LibreOffice Math).
@@ -18,52 +17,37 @@ unsigned long long func::srcnn_operations_amount(std::array<unsigned short, 3> k
 
 	for (unsigned char i = 0; i < 3; i++) {
 		result +=
-			(unsigned long long)widths[i + 1] *
-			(unsigned long long)heights[i + 1] *
-			(unsigned long long)channels[i + 1] *
-			(
-				2ull *
-				(unsigned long long)channels[i] *
-				(unsigned long long)kernels[i] *
-				(unsigned long long)kernels[i] -
-				1ull
-			) +
-			(unsigned long long)widths[i + 1] *
-			(unsigned long long)heights[i + 1] *
-			1ull;
+			(unsigned long long)x_size * y_size * desc.channels[i + 1] *
+			(2ull * desc.channels[i] * desc.kernels[i] * desc.kernels[i] - 1ull) +
+			(unsigned long long)x_size * y_size * 1ull;
 	}
 
 	return result;
 }
 
-unsigned long long func::fsrcnn_operations_amount(std::vector<unsigned short> kernels,
-												  std::vector<unsigned short> channels,
-												  std::vector<int> widths,
-												  std::vector<int> heights) {
-	assert(kernels.size() + 1 == channels.size() && channels.size() == widths.size() &&
-		   widths.size() == heights.size());
-
+unsigned long long func::fsrcnn_operations_amount(FSRCNNDesc desc,
+												  unsigned int x_size,
+												  unsigned int y_size) {
 	// Use formula for it.
 	// O=sum from{i=1} to{n} W_{i+1}^2 times C_{i+1}( 2C_i times K_i^2 - 1 ) + {W_{ i+1 }^2 times O_a}
 	// (LibreOffice Math).
 
 	unsigned long long result = 0;
 
-	for (unsigned char i = 0; i < kernels.size() - 1; i++) {
+	// Initialize widths and heights.
+	unsigned short nn_size = desc.kernels.size();
+	std::vector<unsigned long long> widths(nn_size + 1);
+	std::vector<unsigned long long> heights(nn_size + 1);
+	for (unsigned short i = 0; i < nn_size + 1; i++) {
+		widths[i] = i == nn_size ? x_size * 3 : x_size;
+		heights[i] = i == nn_size ? y_size * 3 : y_size;
+	}
+
+	for (unsigned char i = 0; i < nn_size - 1; i++) {
 		result +=
-			(unsigned long long)widths[i + 1] *
-			(unsigned long long)heights[i + 1] *
-			(unsigned long long)channels[i + 1] *
-			(
-				2ull *
-				(unsigned long long)channels[i] *
-				(unsigned long long)kernels[i] *
-				(unsigned long long)kernels[i] -
-				1ull
-			) +
-			(unsigned long long)widths[i + 1] *
-			(unsigned long long)heights[i + 1] *
-			1ull;
+			widths[i] * heights[i] * desc.channels[i + 1] *
+			(2ull * desc.channels[i] * desc.kernels[i] * desc.kernels[i] - 1ull) +
+			(unsigned long long)widths[i + 1] * heights[i + 1] * 1ull;
 	}
 
 	return result;
@@ -71,12 +55,26 @@ unsigned long long func::fsrcnn_operations_amount(std::vector<unsigned short> ke
 
 /// Predict the APPROXIMATE memory consumption of tensors that going throught the CNN.
 /// @returns Amount of bytes that will consumed.
-unsigned long long func::predict_cnn_memory_consumption(std::array<unsigned short, 4> channels,
-														std::array<int, 4> widths,
-														std::array<int, 4> heights) {
-	std::vector<unsigned short> channels_vec(channels.begin(), channels.end());
-	std::vector<int> widths_vec(widths.begin(), widths.end());
-	std::vector<int> heights_vec(heights.begin(), heights.end());
+unsigned long long func::predict_cnn_memory_consumption(SRCNNDesc desc,
+													    unsigned int x_size,
+													    unsigned int y_size) {
+	std::vector<unsigned short> channels_vec(desc.channels.begin(), desc.channels.end());
+	std::vector<int> widths_vec(4, x_size);
+	std::vector<int> heights_vec(4, y_size);
+
+	return predict_cnn_memory_consumption(channels_vec, widths_vec, heights_vec);
+}
+
+/// Predict the APPROXIMATE memory consumption of tensors that going throught the CNN.
+/// @returns Amount of bytes that will consumed.
+unsigned long long func::predict_cnn_memory_consumption(FSRCNNDesc desc,
+													    unsigned int x_size,
+													    unsigned int y_size) {
+	std::vector<unsigned short> channels_vec = desc.channels;
+	std::vector<int> widths_vec(desc.kernels.size() + 1, x_size);
+	widths_vec.back() *= 3;
+	std::vector<int> heights_vec(desc.kernels.size() + 1, y_size);
+	heights_vec.back() *= 3;
 
 	return predict_cnn_memory_consumption(channels_vec, widths_vec, heights_vec);
 }
@@ -115,3 +113,42 @@ unsigned long long func::predict_cnn_memory_consumption(std::vector<unsigned sho
 
 	return max_point;
 }
+
+// Windows implementation of free_physical_memory.
+#ifdef Q_OS_WIN
+#include <windows.h>
+
+unsigned long long func::free_physical_memory() {
+	// Use the Windows API for it.
+	MEMORYSTATUSEX statex;
+	statex.dwLength = sizeof(statex);
+	GlobalMemoryStatusEx(&statex);
+	return statex.ullAvailPhys;
+}
+
+#endif
+
+// Linux implementation of free_physical_memory.
+#ifdef Q_OS_LINUX
+#include <QFile>
+
+unsigned long long func::free_physical_memory() {
+	// Read data from the /proc/meminfo pseudofile.
+	QFile file("/proc/meminfo");
+	QString meminfo = file.readAll();
+
+	// Parse it.
+	// Algorithm explanation:
+	// "...\nMemAvailable:    12345 kB\n..." -> mid() ->
+	// "    12345 kB" -> chopped() ->
+	// "    12345" -> toULongLong() ->
+	// 12345 -> *1000 ->
+	// 12345000.
+	auto start = meminfo.indexOf("MemAvailable:") + sizeof "MemAvailable:";
+	return meminfo.mid(
+		start,
+		meminfo.indexOf('\n', start) - start
+	).chopped(sizeof " kB").toULongLong() * 1000;
+}
+
+#endif
