@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(ImageUpscalerQt)
 
-# Enable C++17
-set(CMAKE_CXX_STANDARD 17)
+# Enable C++20
+set(CMAKE_CXX_STANDARD 20)
 
 if (MSVC)
     set(CMAKE_CXX_FLAGS "/permissive-") # Disable the weird errors.
