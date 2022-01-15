@@ -39,15 +39,19 @@
         <item>
          <widget class="QPushButton" name="add_file_button">
           <property name="text">
-           <string>Add files and folders...</string>
+           <string>Add files...</string>
           </property>
           <property name="icon">
-           <iconset theme="list-add"/>
+           <iconset theme="list-add">
+            <normaloff>.</normaloff>.</iconset>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="file_up_button">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -59,6 +63,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="file_down_button">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -70,6 +77,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="file_remove_button">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -81,6 +91,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="file_clear_button">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -113,15 +126,19 @@
           <item>
            <widget class="QPushButton" name="add_task_button">
             <property name="text">
-             <string>Add task</string>
+             <string>Add task...</string>
             </property>
             <property name="icon">
-             <iconset theme="list-add"/>
+             <iconset theme="list-add">
+              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="task_up_button">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -133,6 +150,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="task_down_button">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -144,6 +164,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="task_remove_button">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -155,6 +178,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="task_clear_button">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -178,14 +204,30 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="start_task_button">
-          <property name="text">
-           <string>Start tasks</string>
-          </property>
-          <property name="icon">
-           <iconset theme="media-playback-start"/>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="start_task_layout" stretch="1,0">
+          <item>
+           <widget class="QPushButton" name="start_task_button">
+            <property name="text">
+             <string>Start tasks</string>
+            </property>
+            <property name="icon">
+             <iconset theme="media-playback-start">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="about_button">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset theme="help-about">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -197,5 +239,246 @@
  <resources>
   <include location="../../res/resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>file_up_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>move_file_up_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>494</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>41</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>file_down_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>move_file_down_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>265</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>68</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>file_remove_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>remove_file_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>298</x>
+     <y>501</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>file_clear_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>clear_files_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>337</x>
+     <y>500</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>130</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>add_task_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>add_task_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>446</x>
+     <y>240</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>163</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>task_up_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>move_task_up_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>567</x>
+     <y>236</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>192</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>task_down_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>move_task_down_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>606</x>
+     <y>236</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>221</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>task_remove_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>remove_task_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>627</x>
+     <y>240</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>task_clear_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>clear_tasks_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>670</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>284</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>start_task_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>start_tasks_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>480</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>312</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>about_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>about_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>668</x>
+     <y>492</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>348</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>file_list_widget</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>file_selection_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>189</x>
+     <y>248</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>380</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>task_list_widget</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>task_selection_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>612</x>
+     <y>130</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>412</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>add_file_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>add_files_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>500</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>13</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>add_files_clicked()</slot>
+  <slot>move_file_up_clicked()</slot>
+  <slot>move_file_down_clicked()</slot>
+  <slot>remove_file_clicked()</slot>
+  <slot>clear_files_clicked()</slot>
+  <slot>add_task_clicked()</slot>
+  <slot>move_task_up_clicked()</slot>
+  <slot>move_task_down_clicked()</slot>
+  <slot>remove_task_clicked()</slot>
+  <slot>clear_tasks_clicked()</slot>
+  <slot>start_tasks_clicked()</slot>
+  <slot>about_clicked()</slot>
+  <slot>file_selection_changed(int)</slot>
+  <slot>task_selection_changed(int)</slot>
+ </slots>
 </ui>
