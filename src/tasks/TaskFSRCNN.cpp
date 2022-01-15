@@ -20,12 +20,12 @@ TaskFSRCNN::TaskFSRCNN(TaskFSRCNNDesc desc) : desc(desc) {}
 QString TaskFSRCNN::to_string(unsigned short index) const {
 	// 1: use FSRCNN 3-1-3-4 512-32-64.
 	return QString("%1: use FSRCNN %2").arg(QString::number(index + 1),
-										    func::fsrcnn_to_string(desc.kernels, desc.channels));
+											desc.fsrcnn_desc.to_string());
 }
 
 QString TaskFSRCNN::to_string() const {
 	// use FSRCNN 3-1-3-4 512-32-64.
-	return QString("use FSRCNN %1").arg(func::fsrcnn_to_string(desc.kernels, desc.channels));
+	return QString("use FSRCNN %1").arg(desc.fsrcnn_desc.to_string());
 }
 
 float TaskFSRCNN::progress() const {
@@ -37,7 +37,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	auto spec = input.spec();
 	// Whole image size if we don't have to split image into blocks.
 	const int block_width = desc.block_size == 0 ? spec.width : desc.block_size;
-	const int block_height = block_size == 0 ? spec.height : desc.block_size;
+	const int block_height = desc.block_size == 0 ? spec.height : desc.block_size;
 
 	// Create output buffer.
 	const OIIO::ImageSpec out_spec(spec.width * 3, spec.height * 3, spec.nchannels);
@@ -54,7 +54,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	blocks_processed = 0;
 
 	// Initialize the neural network.
-	FSRCNN nn = FSRCNN::create(block_width, block_height, desc.kernels, desc.channels);
+	FSRCNN nn = FSRCNN::create(block_width, block_height, desc.fsrcnn_desc);
 	const std::vector<dnnl::memory::desc> ker_descs = nn.get_ker_descs();
 	const std::vector<dnnl::memory::desc> bias_descs = nn.get_bias_descs();
 	const dnnl::memory::desc input_desc = nn.get_input_desc();
@@ -73,7 +73,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	}
 
 	// Load file with parameters from resources.
-	QFile file(":/FSRCNN/" + func::fsrcnn_to_string(desc.kernels, desc.channels) + ".bin");
+	QFile file(":/FSRCNN/" + desc.fsrcnn_desc.to_string() + ".bin");
 	file.open(QFile::ReadOnly);
 	QByteArray file_array = file.read(512 * 1024 * 1024); //Maximum size is 512 MiB
 	assert(file_array.size() == total_params_size);
