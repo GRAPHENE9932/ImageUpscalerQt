@@ -17,11 +17,6 @@ public:
 
 	TaskSRCNN(TaskSRCNNDesc desc);
 
-	/// "1: use SRCNN 5-1-9 64-32".
-	QString to_string(unsigned short index) const override;
-	/// "use SRCNN 5-1-9 64-32".
-	QString to_string() const override;
-
 	float progress() const override;
 
 	OIIO::ImageBuf do_task(const OIIO::ImageBuf input) override;

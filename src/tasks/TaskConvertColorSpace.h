@@ -15,10 +15,6 @@ public:
 
 	TaskConvertColorSpace(TaskConvertColorSpaceDesc desc);
 
-	/// "1: convert from RGB to YCbCr".
-	QString to_string(unsigned short index) const override;
-	/// "convert from RGB to YCbCr".
-	QString to_string() const override;
 	float progress() const override;
 
 	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;

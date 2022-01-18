@@ -10,17 +10,6 @@
 
 TaskConvertColorSpace::TaskConvertColorSpace(TaskConvertColorSpaceDesc desc) : desc(desc) {}
 
-QString TaskConvertColorSpace::to_string(unsigned short index) const {
-	// 1: convert from RGB to YCbCr.
-	return QString("%1: convert from %2").arg(QString::number(index + 1),
-											  COLOR_SPACE_CONVERSION_NAMES[(unsigned char)desc.color_space_conversion]);
-}
-
-QString TaskConvertColorSpace::to_string() const {
-	// convert from RGB to YCbCr.
-	return QString("convert from %1").arg(COLOR_SPACE_CONVERSION_NAMES[(unsigned char)desc.color_space_conversion]);
-}
-
 float TaskConvertColorSpace::progress() const {
 	return progress_val;
 }

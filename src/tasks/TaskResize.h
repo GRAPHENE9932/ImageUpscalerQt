@@ -15,10 +15,5 @@ public:
 
 	TaskResize(TaskResizeDesc desc);
 
-	/// "1: resize to 1920x1080 | Bilinear".
-	QString to_string(unsigned short index) const override;
-	/// "resize to 1920x1080 | Bilinear".
-	QString to_string() const override;
-
 	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;
 };

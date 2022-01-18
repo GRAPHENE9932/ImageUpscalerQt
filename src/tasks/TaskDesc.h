@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <QString>
+#include <QSize>
 
 enum class TaskKind : unsigned char {
 	resize,
@@ -25,7 +26,7 @@ enum class Interpolation : unsigned char {
 };
 
 /// Interpolation names for the user.
-const QString INTERPOLATION_NAMES[14] = {
+const char* const INTERPOLATION_NAMES[14] = {
 	"B-spline", "Bilinear", "Blackman-Harris", "Box", "Catmull-Rom", "Cubic",
 	"Gaussian", "Lanczos3", "Mitchell", "Radial-lanczos3",
 	"Rifman", "Sharp-Gaussian", "Simon", "Sinc"
@@ -33,7 +34,7 @@ const QString INTERPOLATION_NAMES[14] = {
 
 /// Interpolation names for the OpenImageIO library.
 /// "none" and "bilinear" are not used.
-const QString INTERPOLATION_OIIO_NAMES[14] = {
+const char* const INTERPOLATION_OIIO_NAMES[14] = {
 	"bspline", "bilinear", "blackman-harris", "box", "catmull-rom", "cubic",
 	"gaussian", "lanczos3", "mitchell", "radial-lanczos3",
 	"rifman", "sharp-gaussian", "simon", "sinc"
@@ -44,20 +45,30 @@ enum class ColorSpaceConversion : unsigned char {
 };
 
 /// Color space names for the user.
-const QString COLOR_SPACE_CONVERSION_NAMES[4] = {
+const char* const COLOR_SPACE_CONVERSION_NAMES[4] = {
 	"RGB to YCbCr", "YCbCr to RGB", "RGB to YCoCg", "YCoCg to RGB"
 };
 
 struct TaskDesc {
+	virtual ~TaskDesc() = default;
+
+	virtual QString to_string() const = 0;
+
 	virtual TaskKind task_kind() const = 0;
 };
 
 struct TaskResizeDesc : TaskDesc {
 	Interpolation interpolation = Interpolation::bilinear;
-	unsigned int x_size = 0, y_size = 0;
+	QSize size;
 
-	TaskResizeDesc(Interpolation interpolation, unsigned int x_size, unsigned int y_size) :
-		interpolation(interpolation), x_size(x_size), y_size(y_size) {}
+	TaskResizeDesc() = default;
+
+	TaskResizeDesc(Interpolation interpolation, QSize size) :
+		interpolation(interpolation), size(size) {}
+
+	~TaskResizeDesc() = default;
+
+	QString to_string() const override;
 
 	TaskKind task_kind() const override {
 		return TaskKind::resize;
@@ -67,8 +78,14 @@ struct TaskResizeDesc : TaskDesc {
 struct TaskConvertColorSpaceDesc : TaskDesc {
 	ColorSpaceConversion color_space_conversion;
 
+	TaskConvertColorSpaceDesc() = default;
+
 	TaskConvertColorSpaceDesc(ColorSpaceConversion color_space_conversion) :
 		color_space_conversion(color_space_conversion) {}
+
+	~TaskConvertColorSpaceDesc() = default;
+
+	QString to_string() const override;
 
 	TaskKind task_kind() const override {
 		return TaskKind::convert_color_space;
@@ -102,7 +119,7 @@ struct TaskSRCNNDesc : TaskDesc {
 	SRCNNDesc srcnn_desc;
 	/// Block size of the input image that will be splitted into blocks before the CNN.
 	/// 0 if the input image have not to be splitted.
-	unsigned int block_size;
+	int block_size;
 
 	TaskSRCNNDesc(SRCNNDesc srcnn_desc, unsigned int block_size) :
 				  srcnn_desc(srcnn_desc), block_size(block_size) {}
@@ -112,6 +129,10 @@ struct TaskSRCNNDesc : TaskDesc {
 				  std::array<unsigned short, 4> channels,
 				  unsigned int block_size) :
 				  srcnn_desc(kernels, paddings, channels), block_size(block_size) {}
+
+	~TaskSRCNNDesc() = default;
+
+	QString to_string() const override;
 
 	TaskKind task_kind() const override {
 		return TaskKind::srcnn;
@@ -145,7 +166,7 @@ struct TaskFSRCNNDesc : TaskDesc {
 	FSRCNNDesc fsrcnn_desc;
 	/// Block size of the input image that will be splitted into blocks before the CNN.
 	/// 0 if the input image have not to be splitted.
-	unsigned int block_size;
+	int block_size;
 
 	TaskFSRCNNDesc(FSRCNNDesc fsrcnn_desc,
 				   unsigned int block_size) :
@@ -156,6 +177,10 @@ struct TaskFSRCNNDesc : TaskDesc {
 				   std::vector<unsigned short> channels,
 				   unsigned int block_size) :
 				   fsrcnn_desc(kernels, paddings, channels), block_size(block_size) {}
+
+	~TaskFSRCNNDesc() = default;
+
+	QString to_string() const override;
 
 	TaskKind task_kind() const override {
 		return TaskKind::fsrcnn;

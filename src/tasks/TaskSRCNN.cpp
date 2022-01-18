@@ -17,16 +17,6 @@
 
 TaskSRCNN::TaskSRCNN(TaskSRCNNDesc desc) : desc(desc) {}
 
-QString TaskSRCNN::to_string(unsigned short index) const {
-	// 1: use SRCNN 5-1-9 64-32.
-	return QString("%1: use SRCNN %2").arg(QString::number(index + 1), desc.srcnn_desc.to_string());
-}
-
-QString TaskSRCNN::to_string() const {
-	// use SRCNN 5-1-9 64-32.
-	return QString("use SRCNN %1").arg(desc.srcnn_desc.to_string());
-}
-
 float TaskSRCNN::progress() const {
 	return (float)blocks_processed / blocks_amount;
 }
