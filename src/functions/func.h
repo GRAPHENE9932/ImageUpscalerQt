@@ -11,6 +11,7 @@
 
 #include <QString>
 #include <QStringList>
+#include <QSize>
 
 #include "../tasks/TaskDesc.h"
 
@@ -29,37 +30,28 @@ namespace func {
 
 	void numerical_sort(QStringList& list);
 
-	QString big_number_to_string(long long num, QChar separator);
+	QString big_number_to_string(long long num, QChar separator = ' ');
 
 	QString bytes_amount_to_string(unsigned long long bytes);
 	// END String functions
 
 	// BEGIN Calculation functions
-	unsigned long long srcnn_operations_amount(SRCNNDesc desc,
-											   unsigned int x_size,
-											   unsigned int y_size);
+	unsigned long long srcnn_operations_amount(SRCNNDesc desc, QSize size);
 
-	unsigned long long fsrcnn_operations_amount(FSRCNNDesc desc,
-												unsigned int x_size,
-												unsigned int y_size);
+	unsigned long long fsrcnn_operations_amount(FSRCNNDesc desc, QSize size);
 
 	/// Predict the APPROXIMATE memory consumption of tensors that going throught the CNN.
 	/// @returns Amount of bytes that will consumed.
-	unsigned long long predict_cnn_memory_consumption(SRCNNDesc desc,
-													  unsigned int x_size,
-													  unsigned int y_size);
+	unsigned long long predict_cnn_memory_consumption(SRCNNDesc desc, QSize size);
 
 	/// Predict the APPROXIMATE memory consumption of tensors that going throught the CNN.
 	/// @returns Amount of bytes that will consumed.
-	unsigned long long predict_cnn_memory_consumption(FSRCNNDesc desc,
-													  unsigned int x_size,
-													  unsigned int y_size);
+	unsigned long long predict_cnn_memory_consumption(FSRCNNDesc desc, QSize size);
 
 	/// Predict the APPROXIMATE memory consumption of tensors that going throught the CNN.
 	/// @returns Amount of bytes that will consumed.
 	unsigned long long predict_cnn_memory_consumption(std::vector<unsigned short> channels,
-													  std::vector<int> widths,
-													  std::vector<int> heights);
+													  std::vector<QSize> sizes);
 
 	/// Get free physical memory in bytes.
 	unsigned long long free_physical_memory();

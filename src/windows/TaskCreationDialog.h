@@ -19,13 +19,14 @@ class TaskCreationDialog : public QDialog {
     Q_OBJECT
 
 public:
-	// Image width, height and amount of channels. Used for initialization of default task parameters.
-	int x_size = -1, y_size = -1;
-	char ch_n;
+	// Image width and height. Used for initialization of default task parameters.
+	QSize size;
 
     explicit TaskCreationDialog();
-    TaskCreationDialog(int x_size, int y_size, char ch_n);
+    TaskCreationDialog(QSize size);
 	~TaskCreationDialog() override;
+
+	std::shared_ptr<TaskDesc> get_task_desc();
 
 private:
     QScopedPointer<Ui::TaskCreationDialog> m_ui;

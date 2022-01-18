@@ -24,8 +24,8 @@ TaskCreationDialog::TaskCreationDialog() : m_ui(new Ui::TaskCreationDialog) {
 	setWindowIcon(QIcon(":icon.png"));
 }
 
-TaskCreationDialog::TaskCreationDialog(int x_size, int y_size, char ch_n) :
-	x_size(x_size), y_size(y_size), ch_n(ch_n), m_ui(new Ui::TaskCreationDialog) {
+TaskCreationDialog::TaskCreationDialog(QSize size) :
+	size(size), m_ui(new Ui::TaskCreationDialog) {
     m_ui->setupUi(this);
 
 	// Set dialog icon.
@@ -39,12 +39,12 @@ TaskCreationDialog::~TaskCreationDialog() {
 // BEGIN Initialization for every task kind.
 
 void TaskCreationDialog::init_resize() {
-	m_ui->resize_x->setValue(x_size == -1 ? DEF_RES : x_size);
-	m_ui->resize_y->setValue(y_size == -1 ? DEF_RES : y_size);
+	m_ui->resize_x->setValue(size.isNull() ? DEF_RES : size.width());
+	m_ui->resize_y->setValue(size.isNull() ? DEF_RES : size.height());
 
 	// Disable the keep ratio check box if we don't have image selected yet.
-	m_ui->resize_keep_ratio_check_box->setEnabled(x_size != -1 && y_size != -1);
-	m_ui->resize_keep_ratio_check_box->setChecked(x_size != -1 && y_size != -1);
+	m_ui->resize_keep_ratio_check_box->setEnabled(size.isNull());
+	m_ui->resize_keep_ratio_check_box->setChecked(size.isNull());
 
 	resize_update();
 }
@@ -78,7 +78,7 @@ void TaskCreationDialog::init_srcnn() {
 
 	// Set maximum to the block size spin box.
 	m_ui->srcnn_block_size_spin_box->setMaximum(
-		x_size == -1 || y_size == -1 ? DEF_MAX : std::max(x_size, y_size)
+		size.isNull() ? DEF_MAX : std::max(size.width(), size.height())
 	);
 
 	srcnn_update();
@@ -107,7 +107,7 @@ void TaskCreationDialog::init_fsrcnn() {
 
 	// Set maximum to the block size spin box.
 	m_ui->fsrcnn_block_size_spin_box->setMaximum(
-		x_size == -1 || y_size == -1 ? DEF_MAX : std::max(x_size, y_size)
+		size.isNull() ? DEF_MAX : std::max(size.width(), size.height())
 	);
 
 	fsrcnn_update();
@@ -160,20 +160,19 @@ void TaskCreationDialog::srcnn_update() {
 	// Display total operations and memory consumption
 	QString opers_str, mem_str;
 	size_t mem = 0;
-	if (x_size == -1 || y_size == -1 || srcnn_list.empty()) {
+	if (size.isNull() || srcnn_list.empty()) {
 		opers_str = "no image";
 		mem_str = "no image";
 	}
 	else {
 		opers_str = func::big_number_to_string(
 			func::srcnn_operations_amount(
-				srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()],
-				x_size, y_size
-			), ' '
+				srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()], size
+			)
 		);
 		mem = func::predict_cnn_memory_consumption(
-			srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()],
-			x_size, y_size);
+			srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()], size);
+
 		mem_str = func::bytes_amount_to_string(mem);
 	}
 
@@ -203,20 +202,19 @@ void TaskCreationDialog::fsrcnn_update() {
 	// Display total operations and memory consumption
 	QString opers_str, mem_str;
 	size_t mem = 0;
-	if (x_size == -1 || y_size == -1 || srcnn_list.empty()) {
+	if (size.isNull() || srcnn_list.empty()) {
 		opers_str = "no image";
 		mem_str = "no image";
 	}
 	else {
 		opers_str = func::big_number_to_string(
 			func::fsrcnn_operations_amount(
-				fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()],
-				x_size, y_size
-			), ' '
+				fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], size
+			)
 		);
 		mem = func::predict_cnn_memory_consumption(
-			fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()],
-			x_size, y_size);
+			fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], size);
+
 		mem_str = func::bytes_amount_to_string(mem);
 	}
 
@@ -244,7 +242,7 @@ void TaskCreationDialog::fsrcnn_update() {
 
 TaskResizeDesc TaskCreationDialog::create_resize() {
 	return TaskResizeDesc((Interpolation)m_ui->resize_interpolation_combo_box->currentIndex(),
-						  m_ui->resize_x->value(), m_ui->resize_x->value());
+						  QSize(m_ui->resize_x->value(), m_ui->resize_y->value()));
 }
 
 TaskConvertColorSpaceDesc TaskCreationDialog::create_ccs() {
@@ -259,6 +257,26 @@ TaskSRCNNDesc TaskCreationDialog::create_srcnn() {
 TaskFSRCNNDesc TaskCreationDialog::create_fsrcnn() {
 	return TaskFSRCNNDesc(fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()],
 						  m_ui->fsrcnn_block_size_spin_box->value());
+}
+
+std::shared_ptr<TaskDesc> TaskCreationDialog::get_task_desc() {
+	switch ((TaskKind)m_ui->parameters_stacked_widget->currentIndex()) {
+	case TaskKind::resize:
+		return std::make_shared<TaskResizeDesc>(create_resize());
+		break;
+	case TaskKind::convert_color_space:
+		return std::make_shared<TaskConvertColorSpaceDesc>(create_ccs());
+		break;
+	case TaskKind::srcnn:
+		return std::make_shared<TaskSRCNNDesc>(create_srcnn());
+		break;
+	case TaskKind::fsrcnn:
+		return std::make_shared<TaskFSRCNNDesc>(create_fsrcnn());
+		break;
+	default:
+		return nullptr; // Impossible.
+		break;
+	}
 }
 
 // END Construct every task description
@@ -285,8 +303,8 @@ void TaskCreationDialog::task_changed(int index) {
 }
 
 void TaskCreationDialog::resize_x_changed(int x) {
-	if (m_ui->resize_keep_ratio_check_box->isChecked() && x_size != -1 && y_size != -1) {
-		float xy_ratio = (float)x_size / y_size;
+	if (m_ui->resize_keep_ratio_check_box->isChecked() && !size.isNull()) {
+		float xy_ratio = (float)size.width() / size.height();
 
 		int y_value = x / xy_ratio;
 
@@ -297,8 +315,8 @@ void TaskCreationDialog::resize_x_changed(int x) {
 }
 
 void TaskCreationDialog::resize_y_changed(int y) {
-	if (m_ui->resize_keep_ratio_check_box->isChecked() && x_size != -1 && y_size != -1) {
-		float xy_ratio = (float)x_size / y_size;
+	if (m_ui->resize_keep_ratio_check_box->isChecked() && !size.isNull()) {
+		float xy_ratio = (float)size.width() / size.height();
 
 		int x_value = y * xy_ratio;
 
