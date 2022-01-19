@@ -180,34 +180,90 @@ void ImageUpscalerQt::file_selection_changed(int) {
 	update_file_buttons();
 }
 
+void ImageUpscalerQt::swap_tasks(int index_1, int index_2) {
+	assert(index_1 != index_2);
+	assert(index_1 < tasks.size());
+	assert(index_2 < tasks.size());
+
+	// It is important for us that index_2 is greater than index_1.
+	if (index_1 > index_2)
+		std::swap(index_1, index_2);
+
+	// Swap items in the list that in the GUI.
+	QListWidgetItem* item_1 = m_ui->task_list_widget->takeItem(index_1);
+	QListWidgetItem* item_2 = m_ui->task_list_widget->takeItem(index_2 - 1);
+	m_ui->task_list_widget->insertItem(index_1, item_2);
+	m_ui->task_list_widget->insertItem(index_2, item_1);
+
+	// Swap items in the file list.
+	std::swap(tasks[index_1], tasks[index_2]);
+}
+
+void ImageUpscalerQt::update_task_buttons() {
+	auto cur_row = m_ui->task_list_widget->currentRow();
+	auto cur_size = tasks.size();
+
+	m_ui->task_up_button->setEnabled(cur_size > 1 && cur_row > 0);
+	m_ui->task_down_button->setEnabled(cur_size > 1 && cur_row != -1 && cur_row < cur_size - 1);
+	m_ui->task_remove_button->setEnabled(cur_row != -1);
+	m_ui->task_clear_button->setEnabled(cur_size > 0);
+}
+
 void ImageUpscalerQt::add_task_clicked() {
 	TaskCreationDialog dialog(max_image_size());
 	if (dialog.exec()) {
 		const auto task_desc = dialog.get_task_desc();
-		task_queue.push_back(task_desc);
+		tasks.push_back(task_desc);
 
 		m_ui->task_list_widget->addItem(task_desc->to_string());
 	}
 }
 
 void ImageUpscalerQt::move_task_up_clicked() {
+	auto cur_row = m_ui->task_list_widget->currentRow();
+	if (cur_row == -1 || cur_row == 0 || tasks.size() < 2)
+		return;
 
+	swap_tasks(cur_row - 1, cur_row);
+	m_ui->task_list_widget->setCurrentRow(cur_row - 1);
+
+	update_task_buttons();
 }
 
 void ImageUpscalerQt::move_task_down_clicked() {
+	auto cur_row = m_ui->task_list_widget->currentRow();
+	if (cur_row == -1 || cur_row >= tasks.size() - 1 || tasks.size() < 2)
+		return;
 
+	swap_tasks(cur_row, cur_row + 1);
+	m_ui->task_list_widget->setCurrentRow(cur_row + 1);
+
+	update_task_buttons();
 }
 
 void ImageUpscalerQt::remove_task_clicked() {
+	auto cur_row = m_ui->task_list_widget->currentRow();
+	if (cur_row == -1 || cur_row > tasks.size() - 1)
+		return;
 
+	// Remove item from GUI.
+	delete m_ui->task_list_widget->takeItem(cur_row);
+
+	// Remove item from the list.
+	tasks.erase(tasks.begin() + cur_row);
+
+	update_task_buttons();
 }
 
 void ImageUpscalerQt::clear_tasks_clicked() {
+	m_ui->task_list_widget->clear();
+	tasks.clear();
 
+	update_task_buttons();
 }
 
 void ImageUpscalerQt::task_selection_changed(int index) {
-
+	update_task_buttons();
 }
 
 void ImageUpscalerQt::start_tasks_clicked() {

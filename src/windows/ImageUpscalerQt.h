@@ -27,7 +27,8 @@ public:
 
 private:
     QScopedPointer<Ui::ImageUpscalerQt> m_ui;
-	std::vector<std::shared_ptr<TaskDesc>> task_queue;
+
+	std::vector<std::shared_ptr<TaskDesc>> tasks;
 	QStringList files;
 
 	/// @returns Size of the biggest (by width*height area) image in list.
@@ -35,10 +36,15 @@ private:
 	/// Completely synchronize ImageUpscalerQt::files with file_list_widget.
 	void update_file_list();
 	void update_previews();
-	/// Swap files in the list.
+	/// Swap files in the list and in the GUI.
 	void swap_files(int index_1, int index_2);
-	/// Update every list manipulation button.
+	/// Update every file list manipulation button.
 	void update_file_buttons();
+
+	/// Swap tasks in the list and in the GUI.
+	void swap_tasks(int index_1, int index_2);
+	/// Update every task list manipulation button.
+	void update_task_buttons();
 
 private slots:
 	void add_files_clicked();
