@@ -157,6 +157,8 @@ void TaskCreationDialog::srcnn_update() {
 		valid_srcnn()
 	);
 
+	m_ui->srcnn_block_size_spin_box->setEnabled(m_ui->srcnn_split_check_box->isChecked());
+
 	// Display total operations and memory consumption
 	QString opers_str, mem_str;
 	size_t mem = 0;
@@ -179,11 +181,11 @@ void TaskCreationDialog::srcnn_update() {
 	// Mark memory text as bold and red or orange.
 	QString mem_begin_tag, mem_end_tag;
 	if (mem > RED_MEM) {
-		mem_begin_tag = "<span style=\"color:red;font-weight:bold\"";
+		mem_begin_tag = "<span style=\"color:red;font-weight:bold\">";
 		mem_end_tag = "</span>";
 	}
 	else if (mem > ORANGE_MEM) {
-		mem_begin_tag = "<span style=\"color:orange;font-weight:bold\"";
+		mem_begin_tag = "<span style=\"color:orange;font-weight:bold\">";
 		mem_end_tag = "</span>";
 	}
 
@@ -198,6 +200,8 @@ void TaskCreationDialog::fsrcnn_update() {
 	m_ui->main_button_box->button(QDialogButtonBox::Ok)->setEnabled(
 		valid_fsrcnn()
 	);
+
+	m_ui->fsrcnn_block_size_spin_box->setEnabled(m_ui->fsrcnn_split_check_box->isChecked());
 
 	// Display total operations and memory consumption
 	QString opers_str, mem_str;
@@ -304,6 +308,7 @@ void TaskCreationDialog::task_changed(int index) {
 
 void TaskCreationDialog::resize_x_changed(int x) {
 	if (m_ui->resize_keep_ratio_check_box->isChecked() && !size.isNull()) {
+		// Keep ratio.
 		float xy_ratio = (float)size.width() / size.height();
 
 		int y_value = x / xy_ratio;
@@ -312,10 +317,12 @@ void TaskCreationDialog::resize_x_changed(int x) {
 		m_ui->resize_y->setValue(y_value);
 		m_ui->resize_y->blockSignals(false);
 	}
+	resize_update();
 }
 
 void TaskCreationDialog::resize_y_changed(int y) {
 	if (m_ui->resize_keep_ratio_check_box->isChecked() && !size.isNull()) {
+		// Keep ratio.
 		float xy_ratio = (float)size.width() / size.height();
 
 		int x_value = y * xy_ratio;
@@ -324,6 +331,7 @@ void TaskCreationDialog::resize_y_changed(int y) {
 		m_ui->resize_x->setValue(x_value);
 		m_ui->resize_x->blockSignals(false);
 	}
+	resize_update();
 }
 
 void TaskCreationDialog::resize_keep_ratio_changed(bool checked) {
@@ -332,35 +340,35 @@ void TaskCreationDialog::resize_keep_ratio_changed(bool checked) {
 }
 
 void TaskCreationDialog::resize_interpolation_changed(int) {
-	// Do nothing.
+	resize_update();
 }
 
 void TaskCreationDialog::ccs_combo_box_changed(int) {
-	// Do nothing.
+	ccs_update();
 }
 
 void TaskCreationDialog::srcnn_architecture_changed(int) {
-	// Do nothing.
+	srcnn_update();
 }
 
 void TaskCreationDialog::srcnn_split_changed(bool checked) {
-	m_ui->srcnn_split_check_box->setEnabled(checked);
+	srcnn_update();
 }
 
 void TaskCreationDialog::srcnn_block_size_changed(int) {
-	// Do nothing.
+	srcnn_update();
 }
 
 void TaskCreationDialog::fsrcnn_architecture_changed(int) {
-	// Do nothing.
+	fsrcnn_update();
 }
 
 void TaskCreationDialog::fsrcnn_split_changed(bool checked) {
-	m_ui->fsrcnn_split_check_box->setEnabled(checked);
+	fsrcnn_update();
 }
 
 void TaskCreationDialog::fsrcnn_block_size_changed(int) {
-	 // Do nothing.
+	fsrcnn_update();
 }
 
 // END Slots.

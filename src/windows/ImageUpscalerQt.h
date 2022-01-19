@@ -10,7 +10,7 @@
 
 #include <QMainWindow>
 #include <QScopedPointer>
-#include <OpenImageIO/imageio.h>
+#include <QSize>
 
 #include "../tasks/TaskDesc.h"
 
@@ -27,9 +27,11 @@ public:
 
 private:
     QScopedPointer<Ui::ImageUpscalerQt> m_ui;
-	std::vector<TaskDesc*> task_queue;
+	std::vector<std::shared_ptr<TaskDesc>> task_queue;
 	QStringList files;
 
+	/// @returns Size of the biggest (by width*height area) image in list.
+	QSize max_image_size();
 	/// Completely synchronize ImageUpscalerQt::files with file_list_widget.
 	void update_file_list();
 	void update_previews();

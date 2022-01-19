@@ -4,8 +4,11 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
+#include <thread>
+
 #include <QFileDialog>
 #include <QMessageBox>
+#include <OpenImageIO/imageio.h>
 
 #include "ImageUpscalerQt.h"
 #include "ui_ImageUpscalerQt.h"
@@ -16,6 +19,7 @@ constexpr const char* VERSION = "1.2";
 constexpr const char* FILE_FILTER = "All images(*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.ico);;"
 									"PNG image(*.png);;JPEG image(*.jpg *.jpeg);;JPEG2000 image(*.jp2 *.jpg2);;"
 									"Bitmap image(*.bmp);;TIFF image (*.tiff *.tif);;Icon(*.ico)";
+constexpr QSize SIZE_NULL = QSize(0, 0);
 
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
     m_ui(new Ui::ImageUpscalerQt) {
@@ -26,6 +30,23 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 }
 
 ImageUpscalerQt::~ImageUpscalerQt() = default;
+
+QSize ImageUpscalerQt::max_image_size() {
+	QSize max_size = SIZE_NULL;
+
+	for (int i = 0; i < files.size(); i++) {
+		auto img_input = OIIO::ImageInput::open(files[i].toStdString());
+
+		if (!img_input)
+			continue;
+
+		auto spec = img_input->spec();
+		if (spec.width * spec.height > max_size.width() * max_size.height())
+			max_size = QSize(spec.width, spec.height);
+	}
+
+	return max_size;
+}
 
 void ImageUpscalerQt::update_file_list() {
 	// We have to save current (selected) item.
@@ -52,8 +73,6 @@ void ImageUpscalerQt::update_previews() {
 		// Check if file is corrupt.
 		if (icon.pixmap(QSize(1, 1)).isNull())
 			icon = QIcon(":unknown.svg");
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
 		m_ui->file_list_widget->item(i)->setIcon(icon);
 	}
@@ -92,7 +111,7 @@ void ImageUpscalerQt::update_file_buttons() {
 
 void ImageUpscalerQt::add_files_clicked() {
 	// Create a QFileDialog
-	QFileDialog dialog(this, tr("Add images and folders"), "~", FILE_FILTER);
+	QFileDialog dialog(this, tr("Add images and folders"), QString(), FILE_FILTER);
 	dialog.setFileMode(QFileDialog::FileMode::ExistingFiles);
 	if (dialog.exec()) {
 		files += dialog.selectedFiles();
@@ -162,7 +181,13 @@ void ImageUpscalerQt::file_selection_changed(int) {
 }
 
 void ImageUpscalerQt::add_task_clicked() {
-	//TaskCreationDialog dialog(
+	TaskCreationDialog dialog(max_image_size());
+	if (dialog.exec()) {
+		const auto task_desc = dialog.get_task_desc();
+		task_queue.push_back(task_desc);
+
+		m_ui->task_list_widget->addItem(task_desc->to_string());
+	}
 }
 
 void ImageUpscalerQt::move_task_up_clicked() {
