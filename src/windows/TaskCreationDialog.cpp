@@ -254,13 +254,25 @@ TaskConvertColorSpaceDesc TaskCreationDialog::create_ccs() {
 }
 
 TaskSRCNNDesc TaskCreationDialog::create_srcnn() {
+	int block_size;
+	if (m_ui->srcnn_split_check_box->isChecked())
+		block_size = m_ui->srcnn_block_size_spin_box->value();
+	else
+		block_size = -1;
+
 	return TaskSRCNNDesc(srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()],
-						 m_ui->srcnn_block_size_spin_box->value());
+						 block_size);
 }
 
 TaskFSRCNNDesc TaskCreationDialog::create_fsrcnn() {
+	int block_size;
+	if (m_ui->fsrcnn_split_check_box->isChecked())
+		block_size = m_ui->fsrcnn_block_size_spin_box->value();
+	else
+		block_size = -1;
+
 	return TaskFSRCNNDesc(fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()],
-						  m_ui->fsrcnn_block_size_spin_box->value());
+						  block_size);
 }
 
 std::shared_ptr<TaskDesc> TaskCreationDialog::get_task_desc() {
