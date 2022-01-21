@@ -17,8 +17,12 @@
 
 constexpr const char* VERSION = "1.2";
 constexpr const char* FILE_FILTER = "All images(*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.ico);;"
-									"PNG image(*.png);;JPEG image(*.jpg *.jpeg);;JPEG2000 image(*.jp2 *.jpg2);;"
+									"PNG image(*.png);;JPEG image(*.jpg *.jpeg);;"
+									"JPEG2000 image(*.jp2 *.jpg2);;"
 									"Bitmap image(*.bmp);;TIFF image (*.tiff *.tif);;Icon(*.ico)";
+constexpr const char* ABOUT_TEXT = "ImageUpscalerQt is a program for image upscaling "
+								   "using neural networks, but it also have other auxiliary functions.\n\n"
+								   "Made by Artem Kliminskyi in Ukraine, Zhytomyr.";
 constexpr QSize SIZE_NULL = QSize(0, 0);
 
 ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
@@ -266,11 +270,18 @@ void ImageUpscalerQt::task_selection_changed(int index) {
 	update_task_buttons();
 }
 
-void ImageUpscalerQt::start_tasks_clicked() {
-
+void ImageUpscalerQt::about_program_triggered() {
+	QMessageBox::about(this, tr("About ImageUpscalerQt"), tr("Version: ") +
+														  VERSION + ".\n\n" +
+														  tr(ABOUT_TEXT));
 }
 
-void ImageUpscalerQt::about_clicked() {
+void ImageUpscalerQt::about_qt_triggered() {
+	QMessageBox::aboutQt(this);
+}
+
+
+void ImageUpscalerQt::start_tasks_clicked() {
 
 }
 

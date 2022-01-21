@@ -204,7 +204,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="start_task_layout" stretch="1,0">
+         <layout class="QHBoxLayout" name="start_task_layout" stretch="1">
           <item>
            <widget class="QPushButton" name="start_task_button">
             <property name="text">
@@ -212,17 +212,6 @@
             </property>
             <property name="icon">
              <iconset theme="media-playback-start">
-              <normaloff>.</normaloff>.</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="about_button">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset theme="help-about">
               <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
@@ -235,6 +224,34 @@
     </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="main_menu_bar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>700</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_about">
+    <property name="title">
+     <string>About</string>
+    </property>
+    <addaction name="action_about_program"/>
+    <addaction name="action_about_qt"/>
+   </widget>
+   <addaction name="menu_about"/>
+  </widget>
+  <action name="action_about_qt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+  </action>
+  <action name="action_about_program">
+   <property name="text">
+    <string>About ImageUpscalerQt</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../res/resources.qrc"/>
@@ -327,8 +344,8 @@
    <slot>move_task_up_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>567</x>
-     <y>236</y>
+     <x>579</x>
+     <y>269</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -343,8 +360,8 @@
    <slot>move_task_down_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>606</x>
-     <y>236</y>
+     <x>616</x>
+     <y>269</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -375,8 +392,8 @@
    <slot>clear_tasks_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>670</x>
-     <y>228</y>
+     <x>690</x>
+     <y>269</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -397,22 +414,6 @@
     <hint type="destinationlabel">
      <x>3</x>
      <y>312</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>about_button</sender>
-   <signal>clicked()</signal>
-   <receiver>ImageUpscalerQt</receiver>
-   <slot>about_clicked()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>668</x>
-     <y>492</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>2</x>
-     <y>348</y>
     </hint>
    </hints>
   </connection>
@@ -464,6 +465,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_about_qt</sender>
+   <signal>triggered()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>about_qt_triggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>349</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_about_program</sender>
+   <signal>triggered()</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>about_program_triggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>349</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>add_files_clicked()</slot>
@@ -477,8 +510,9 @@
   <slot>remove_task_clicked()</slot>
   <slot>clear_tasks_clicked()</slot>
   <slot>start_tasks_clicked()</slot>
-  <slot>about_clicked()</slot>
+  <slot>about_program_triggered()</slot>
   <slot>file_selection_changed(int)</slot>
   <slot>task_selection_changed(int)</slot>
+  <slot>about_qt_triggered()</slot>
  </slots>
 </ui>

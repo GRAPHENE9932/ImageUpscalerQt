@@ -61,6 +61,8 @@ private slots:
 	void clear_tasks_clicked();
 	void task_selection_changed(int index);
 
+	void about_program_triggered();
+	void about_qt_triggered();
+
 	void start_tasks_clicked();
-	void about_clicked();
 };
