@@ -81,16 +81,20 @@ bool SRCNNDesc::operator<(const SRCNNDesc right) {
 	for (unsigned char i = 0; i < 3; i++)
 		if (kernels[i] < right.kernels[i])
 			return true;
+		else if (kernels[i] > right.kernels[i])
+			return false;
 
 	for (unsigned char i = 0; i < 3; i++)
 		if (channels[i] < right.channels[i])
 			return true;
+		else if (channels[i] > right.channels[i])
+			return false;
 
 	return false;
 }
 
 bool SRCNNDesc::operator>(const SRCNNDesc right) {
-	return (*this < right || *this == right);
+	return !(*this < right || *this == right);
 }
 
 bool SRCNNDesc::operator==(const SRCNNDesc right) {
@@ -190,16 +194,20 @@ bool FSRCNNDesc::operator<(const FSRCNNDesc right) {
 	for (unsigned char i = 0; i < kernels.size(); i++)
 		if (kernels[i] < right.kernels[i])
 			return true;
+		else if (kernels[i] > right.kernels[i])
+			return false;
 
 	for (unsigned char i = 0; i < channels.size(); i++)
 		if (channels[i] < right.channels[i])
 			return true;
+		else if (channels[i] > right.channels[i])
+			return false;
 
 	return false;
 }
 
 bool FSRCNNDesc::operator>(const FSRCNNDesc right) {
-	return (*this < right || *this == right);
+	return !(*this < right || *this == right);
 }
 
 bool FSRCNNDesc::operator==(const FSRCNNDesc right) {
