@@ -55,10 +55,18 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="resize_x"/>
+          <widget class="QSpinBox" name="resize_x">
+           <property name="maximum">
+            <number>2147483647</number>
+           </property>
+          </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="resize_y"/>
+          <widget class="QSpinBox" name="resize_y">
+           <property name="maximum">
+            <number>2147483647</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
