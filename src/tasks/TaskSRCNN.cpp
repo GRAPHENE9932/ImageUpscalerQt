@@ -110,3 +110,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 
 	return output;
 }
+
+const TaskDesc* TaskSRCNN::get_desc() const {
+	return dynamic_cast<const TaskDesc*>(&desc);
+}

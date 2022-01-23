@@ -314,3 +314,7 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 
 	return output;
 }
+
+const TaskDesc* TaskConvertColorSpace::get_desc() const {
+	return dynamic_cast<const TaskDesc*>(&desc);
+}

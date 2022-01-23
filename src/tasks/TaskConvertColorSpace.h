@@ -19,6 +19,8 @@ public:
 
 	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;
 
+	const TaskDesc* get_desc() const override;
+
 private:
 	float progress_val;
 };

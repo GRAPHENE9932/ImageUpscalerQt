@@ -1,24 +1,28 @@
 /*
  * ImageUpscalerQt - tasks worker header
- * SPDX-FileCopyrightText: 2021 Artem Kliminskyi, artemklim50@gmail.com
+ * SPDX-FileCopyrightText: 2021-2022 Artem Kliminskyi, artemklim50@gmail.com
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 #pragma once
 
+#include <QStringList>
+#include <OpenImageIO/imagebuf.h>
+
+#include "TaskDesc.h"
 #include "Task.h"
 
 class Worker {
 public:
-	/// Already finished image.
-	OIIO::ImageBuf finished_image;
+	/// Resulting images (may be unfinished).
+	std::vector<OIIO::ImageBuf> res_images;
 
 	Worker();
 	/// Not only construct, but also init().
-	Worker(std::vector<Task*> queue, QString input_filename);
+	Worker(std::vector<std::shared_ptr<TaskDesc>> tasks, QStringList files);
 
 	/// Needed if the worker was constructed with default constructor.
-	void init(std::vector<Task*> queue, QString input_filename);
+	void init(std::vector<std::shared_ptr<TaskDesc>> tasks, QStringList files);
 	QString cur_status() const;
 	/// Progress of current task.
 	float cur_task_progress() const;
@@ -27,16 +31,13 @@ public:
 
 	void do_tasks(std::function<void()> success, std::function<void()> canceled,
 				  std::function<void(QString)> error);
-	void save_image(QString filename, std::function<void(QString)> error);
+	void save_images(QString folder_path, std::function<void(QString)> error);
 	void cancel();
 
 private:
-	/// Current image (can be unfinished).
-	OIIO::ImageBuf cur_image;
-
-	QString input_filename;
-	std::vector<Task*> tasks_queue;
-	unsigned short cur_task = 0;
+	QStringList files;
+	std::vector<Task*> tasks;
+	int cur_task = 0;
 
 	bool cancel_requested = false;
 };

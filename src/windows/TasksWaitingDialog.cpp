@@ -1,6 +1,6 @@
 /*
  * ImageUpscalerQt - task waiting dialog
- * SPDX-FileCopyrightText: 2021 Artem Kliminskyi, artemklim50@gmail.com
+ * SPDX-FileCopyrightText: 2021-2022 Artem Kliminskyi, artemklim50@gmail.com
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
@@ -35,8 +35,8 @@ TasksWaitingDialog::~TasksWaitingDialog() {
 
 }
 
-void TasksWaitingDialog::do_tasks(std::vector<Task*> task_queue, QString image_filename) {
-	worker = new Worker(task_queue, image_filename);
+void TasksWaitingDialog::do_tasks(std::vector<std::shared_ptr<TaskDesc>> tasks, QStringList files) {
+	worker = new Worker(tasks, files);
 	tasks_complete = false;
 
 	// Start tasks.
@@ -119,23 +119,20 @@ void TasksWaitingDialog::cancel_clicked() {
 
 void TasksWaitingDialog::save_clicked() {
 	// Create the file dialog.
-	QFileDialog dialog(this, "Save image", "/home",
-					   "PNG image(*.png);;JPEG image(*.jpg *.jpeg);;JPEG2000 image(*.jp2 *.jpg2);;\
-					   Bitmap image(*.bmp);;TIFF image(*.tiff *.tif);;Icon(*.ico)");
-	dialog.setFileMode(QFileDialog::FileMode::AnyFile);
-	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
-	dialog.setDefaultSuffix(".png");
+	QFileDialog dialog(this, "Save results", "/home");
+	dialog.setFileMode(QFileDialog::FileMode::Directory);
+	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
 
 	// If accepted.
 	if (dialog.exec() == QDialog::DialogCode::Accepted) {
-		// Extract filename.
-		QString filename = dialog.selectedFiles()[0];
-		// Save the image.
-		worker->save_image(
-			filename,
+		// Extract the folder path.
+		QString folder_path = dialog.selectedFiles()[0];
+		// Save the images.
+		worker->save_images(
+			folder_path,
 			[this](QString error) {
-				QMessageBox::critical(this, "Failed to write image",
-					"Failed to write image:\n" + error);
+				QMessageBox::critical(this, "Failed to write the images",
+					"Failed to write the images:\n" + error);
 			}
 		);
 		// Close this dialog.

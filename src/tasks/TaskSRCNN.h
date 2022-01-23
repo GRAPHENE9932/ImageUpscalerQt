@@ -21,6 +21,8 @@ public:
 
 	OIIO::ImageBuf do_task(const OIIO::ImageBuf input) override;
 
+	const TaskDesc* get_desc() const override;
+
 private:
 	long long blocks_amount;
 	long long blocks_processed;

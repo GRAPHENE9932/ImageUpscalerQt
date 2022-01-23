@@ -17,13 +17,11 @@ public:
 
 	TaskFSRCNN(TaskFSRCNNDesc desc);
 
-	/// "1: use FSRCNN 3-1-3-4 64-32-32".
-	QString to_string(unsigned short index) const override;
-	/// "use FSRCNN 3-1-3-4 64-32-32".
-	QString to_string() const override;
 	float progress() const override;
 
 	OIIO::ImageBuf do_task(const OIIO::ImageBuf input) override;
+
+	const TaskDesc* get_desc() const override;
 
 private:
 	long long blocks_amount;

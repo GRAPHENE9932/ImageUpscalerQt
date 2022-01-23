@@ -1,6 +1,6 @@
 /*
  * ImageUpscalerQt - abstract task header
- * SPDX-FileCopyrightText: 2021 Artem Kliminskyi, artemklim50@gmail.com
+ * SPDX-FileCopyrightText: 2021-2022 Artem Kliminskyi, artemklim50@gmail.com
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
@@ -11,15 +11,13 @@
 #include <OpenImageIO/imagebuf.h>
 #include <QString>
 
+#include "TaskDesc.h"
+
 class Task {
 public:
 	bool cancel_requested = false;
 
-	virtual QString to_string(unsigned short index) const = 0;
-	virtual QString to_string() const = 0;
-
-	virtual float progress() const {
-		return 0;
-	};
+	virtual float progress() const { return 0; };
 	virtual OIIO::ImageBuf do_task(const OIIO::ImageBuf input) = 0;
+	virtual const TaskDesc* get_desc() const = 0;
 };

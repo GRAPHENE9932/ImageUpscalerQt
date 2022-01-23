@@ -33,3 +33,7 @@ OIIO::ImageBuf TaskResize::do_task(OIIO::ImageBuf input) {
 	// Return result.
 	return output;
 }
+
+const TaskDesc* TaskResize::get_desc() const {
+	return dynamic_cast<const TaskDesc*>(&desc);
+}

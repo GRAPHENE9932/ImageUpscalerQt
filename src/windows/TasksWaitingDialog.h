@@ -1,6 +1,6 @@
 /*
  * ImageUpscalerQt - task waiting dialog header
- * SPDX-FileCopyrightText: 2021 Artem Kliminskyi, artemklim50@gmail.com
+ * SPDX-FileCopyrightText: 2021-2022 Artem Kliminskyi, artemklim50@gmail.com
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
@@ -12,7 +12,7 @@
 #include <QElapsedTimer>
 #include <OpenImageIO/imagebuf.h>
 
-#include "../tasks/Task.h"
+#include "../tasks/TaskDesc.h"
 #include "../tasks/Worker.h"
 
 namespace Ui {
@@ -25,7 +25,7 @@ public:
 	TasksWaitingDialog();
 	~TasksWaitingDialog();
 
-	void do_tasks(std::vector<Task*> task_queue, QString image_filename);
+	void do_tasks(std::vector<std::shared_ptr<TaskDesc>> tasks, QStringList image_filename);
 
 private:
 	QScopedPointer<Ui::TasksWaitingDialog> m_ui;

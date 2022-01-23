@@ -1,6 +1,6 @@
 /*
  * ImageUpscalerQt - main window
- * SPDX-FileCopyrightText: 2021 Artem Kliminskyi, artemklim50@gmail.com
+ * SPDX-FileCopyrightText: 2021-2022 Artem Kliminskyi, artemklim50@gmail.com
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
@@ -13,6 +13,7 @@
 #include "ImageUpscalerQt.h"
 #include "ui_ImageUpscalerQt.h"
 #include "TaskCreationDialog.h"
+#include "TasksWaitingDialog.h"
 #include "../functions/func.h"
 
 constexpr const char* VERSION = "1.2";
@@ -282,7 +283,20 @@ void ImageUpscalerQt::about_qt_triggered() {
 
 
 void ImageUpscalerQt::start_tasks_clicked() {
+	// Invalid cases.
+	if (tasks.empty()) {
+		QMessageBox::warning(this, tr("No tasks"), tr("Impossible to start tasks: task queue is empty."));
+		return;
+	}
+	if (files.isEmpty()) {
+		QMessageBox::warning(this, tr("No images"), tr("Impossible to start tasks: no files selected."));
+		return;
+	}
 
+	TasksWaitingDialog* dialog = new TasksWaitingDialog();
+	dialog->setModal(true);
+	dialog->show();
+	dialog->do_tasks(tasks, files);
 }
 
 // END Slots

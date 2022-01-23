@@ -17,17 +17,6 @@
 
 TaskFSRCNN::TaskFSRCNN(TaskFSRCNNDesc desc) : desc(desc) {}
 
-QString TaskFSRCNN::to_string(unsigned short index) const {
-	// 1: use FSRCNN 3-1-3-4 512-32-64.
-	return QString("%1: use FSRCNN %2").arg(QString::number(index + 1),
-											desc.fsrcnn_desc.to_string());
-}
-
-QString TaskFSRCNN::to_string() const {
-	// use FSRCNN 3-1-3-4 512-32-64.
-	return QString("use FSRCNN %1").arg(desc.fsrcnn_desc.to_string());
-}
-
 float TaskFSRCNN::progress() const {
 	return (float)blocks_processed / blocks_amount;
 }
@@ -126,4 +115,8 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input) {
 	}
 
 	return output;
+}
+
+const TaskDesc* TaskFSRCNN::get_desc() const {
+	return dynamic_cast<const TaskDesc*>(&desc);
 }

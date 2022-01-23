@@ -16,4 +16,6 @@ public:
 	TaskResize(TaskResizeDesc desc);
 
 	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;
+
+	const TaskDesc* get_desc() const override;
 };
