@@ -73,6 +73,8 @@ void ImageUpscalerQt::update_file_list() {
 
 void ImageUpscalerQt::update_previews() {
 	for (int i = 0; i < files.size(); i++) {
+		// TODO: load the embedded thumbnails of the images with OpenImageIO 2.3.
+		// Arch Linux 24.01.2022: OpenImageIO 2.2.18.0-4. Waiting for 2.3...
 		QIcon icon(files[i]);
 
 		// Check if file is corrupt.
