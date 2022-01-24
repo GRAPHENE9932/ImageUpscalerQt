@@ -77,7 +77,7 @@ QString format_ms(long long ms_num) {
 void TasksWaitingDialog::progress_check() {
 	// Progressbars.
 	m_ui->current_task_progressbar->setValue(worker->cur_task_progress() * 100.0F);
-	m_ui->all_tasks_progressbar->setValue(worker->overall_progress() * 100.0F);
+	m_ui->overall_progressbar->setValue(worker->overall_progress() * 100.0F);
 
 	// Text for current task label.
 	m_ui->current_task_label->setText(worker->cur_status());
@@ -88,7 +88,7 @@ void TasksWaitingDialog::progress_check() {
 	if (tasks_complete) {
 		// When completed.
 		m_ui->current_task_progressbar->setValue(100);
-		m_ui->all_tasks_progressbar->setValue(100);
+		m_ui->overall_progressbar->setValue(100);
 		m_ui->current_task_label->setText("All tasks completed!");
 		m_ui->save_button->setEnabled(true); // Enable "Save result" button.
 		m_ui->cancel_button->setEnabled(false); // Disable "Cancel" button.

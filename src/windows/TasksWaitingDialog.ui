@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="current_task_label">
      <property name="text">
-      <string>Task 1/1: Unknown task (100%)</string>
+      <string>Image 1/1, task 1/1: Unknown task (100%)</string>
      </property>
     </widget>
    </item>
@@ -36,7 +36,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QProgressBar" name="all_tasks_progressbar">
+    <widget class="QProgressBar" name="overall_progressbar">
      <property name="value">
       <number>0</number>
      </property>
