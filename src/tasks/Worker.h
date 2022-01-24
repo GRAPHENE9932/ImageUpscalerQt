@@ -24,9 +24,9 @@ public:
 	/// Needed if the worker was constructed with default constructor.
 	void init(std::vector<std::shared_ptr<TaskDesc>> tasks, QStringList files);
 	QString cur_status() const;
-	/// Progress of current task.
+	/// Progress of the current task (from 0 to 1).
 	float cur_task_progress() const;
-	/// Progress of all tasks.
+	/// Progress of all tasks and all images (from 0 to 1).
 	float overall_progress() const;
 
 	void do_tasks(std::function<void()> success, std::function<void()> canceled,
@@ -37,7 +37,7 @@ public:
 private:
 	QStringList files;
 	std::vector<Task*> tasks;
-	int cur_task = 0;
+	int cur_task = 0, cur_img = 0;
 
 	bool cancel_requested = false;
 };
