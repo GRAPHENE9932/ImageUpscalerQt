@@ -222,6 +222,8 @@ void ImageUpscalerQt::add_task_clicked() {
 
 		m_ui->task_list_widget->addItem(task_desc->to_string());
 	}
+
+	update_task_buttons();
 }
 
 void ImageUpscalerQt::move_task_up_clicked() {
