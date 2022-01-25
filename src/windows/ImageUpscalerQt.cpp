@@ -75,11 +75,15 @@ void ImageUpscalerQt::update_previews() {
 	for (int i = 0; i < files.size(); i++) {
 		// TODO: load the embedded thumbnails of the images with OpenImageIO 2.3.
 		// Arch Linux 24.01.2022: OpenImageIO 2.2.18.0-4. Waiting for 2.3...
-		QIcon icon(files[i]);
+		QPixmap icon_pixmap(files[i]);
+		if (icon_pixmap.isNull()) {
+			m_ui->file_list_widget->item(i)->setIcon(QIcon(":unknown.svg"));
+			continue;
+		}
 
-		// Check if file is corrupt.
-		if (icon.pixmap(QSize(1, 1)).isNull())
-			icon = QIcon(":unknown.svg");
+		QIcon icon(icon_pixmap.width() > icon_pixmap.height() ?
+			icon_pixmap.scaledToWidth(32) :
+			icon_pixmap.scaledToHeight(32));
 
 		m_ui->file_list_widget->item(i)->setIcon(icon);
 	}
