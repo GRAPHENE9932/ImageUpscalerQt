@@ -114,79 +114,6 @@ void ImageUpscalerQt::update_file_buttons() {
 	m_ui->file_clear_button->setEnabled(cur_size > 0);
 }
 
-// BEGIN Slots
-
-void ImageUpscalerQt::add_files_clicked() {
-	// Create a QFileDialog
-	QFileDialog dialog(this, tr("Add images and folders"), QString(), FILE_FILTER);
-	dialog.setFileMode(QFileDialog::FileMode::ExistingFiles);
-	if (dialog.exec()) {
-		files += dialog.selectedFiles();
-
-		int duplicates = files.removeDuplicates();
-
-		update_file_list();
-
-		// Warn user about removed duplicates.
-		if (duplicates > 0) {
-			QString message = QString::number(duplicates) + ' ' + (duplicates == 1 ?
-				tr("duplicate was removed from the list.") :
-				tr("duplicates were removed from the list."));
-
-			QMessageBox::information(this, tr("Duplicates"), message, QMessageBox::StandardButton::Ok);
-		}
-	}
-
-	update_file_buttons();
-}
-
-void ImageUpscalerQt::move_file_up_clicked() {
-	auto cur_row = m_ui->file_list_widget->currentRow();
-	if (cur_row == -1 || cur_row == 0 || files.size() < 2)
-		return;
-
-	swap_files(cur_row - 1, cur_row);
-	m_ui->file_list_widget->setCurrentRow(cur_row - 1);
-
-	update_file_buttons();
-}
-
-void ImageUpscalerQt::move_file_down_clicked() {
-	auto cur_row = m_ui->file_list_widget->currentRow();
-	if (cur_row == -1 || cur_row >= files.size() - 1 || files.size() < 2)
-		return;
-
-	swap_files(cur_row, cur_row + 1);
-	m_ui->file_list_widget->setCurrentRow(cur_row + 1);
-
-	update_file_buttons();
-}
-
-void ImageUpscalerQt::remove_file_clicked() {
-	auto cur_row = m_ui->file_list_widget->currentRow();
-	if (cur_row == -1 || cur_row > files.size() - 1)
-		return;
-
-	// Remove item from GUI.
-	delete m_ui->file_list_widget->takeItem(cur_row);
-
-	// Remove item from the list.
-	files.removeAt(cur_row);
-
-	update_file_buttons();
-}
-
-void ImageUpscalerQt::clear_files_clicked() {
-	m_ui->file_list_widget->clear();
-	files.clear();
-
-	update_file_buttons();
-}
-
-void ImageUpscalerQt::file_selection_changed(int) {
-	update_file_buttons();
-}
-
 void ImageUpscalerQt::swap_tasks(int index_1, int index_2) {
 	assert(index_1 != index_2);
 	assert(index_1 < tasks.size());
@@ -216,6 +143,103 @@ void ImageUpscalerQt::update_task_buttons() {
 	m_ui->task_clear_button->setEnabled(cur_size > 0);
 }
 
+unsigned long long ImageUpscalerQt::total_pixels() {
+	unsigned long long res = 0;
+	for (QString cur_file : files) {
+		auto input = OIIO::ImageInput::open(cur_file.toStdString());
+		auto spec = input->spec();
+		res += spec.width * spec.height;
+	}
+	return res;
+}
+
+void ImageUpscalerQt::update_info_text() {
+	QString text;
+	text += tr("Images: ") + QString::number(files.size()) + '\n';
+	text += tr("Tasks: ") + QString::number(tasks.size()) + '\n';
+	text += tr("Total pixels: ") + func::pixel_amount_to_string(total_pixels()) + '\n';
+
+	m_ui->info_plain_text_edit->setPlainText(text);
+}
+
+// BEGIN Slots
+
+void ImageUpscalerQt::add_files_clicked() {
+	// Create a QFileDialog
+	QFileDialog dialog(this, tr("Add images and folders"), QString(), FILE_FILTER);
+	dialog.setFileMode(QFileDialog::FileMode::ExistingFiles);
+	if (dialog.exec()) {
+		files += dialog.selectedFiles();
+
+		int duplicates = files.removeDuplicates();
+
+		update_file_list();
+
+		// Warn user about removed duplicates.
+		if (duplicates > 0) {
+			QString message = QString::number(duplicates) + ' ' + (duplicates == 1 ?
+				tr("duplicate was removed from the list.") :
+				tr("duplicates were removed from the list."));
+
+			QMessageBox::information(this, tr("Duplicates"), message, QMessageBox::StandardButton::Ok);
+		}
+	}
+
+	update_file_buttons();
+	update_info_text();
+}
+
+void ImageUpscalerQt::move_file_up_clicked() {
+	auto cur_row = m_ui->file_list_widget->currentRow();
+	if (cur_row == -1 || cur_row == 0 || files.size() < 2)
+		return;
+
+	swap_files(cur_row - 1, cur_row);
+	m_ui->file_list_widget->setCurrentRow(cur_row - 1);
+
+	update_file_buttons();
+	update_info_text();
+}
+
+void ImageUpscalerQt::move_file_down_clicked() {
+	auto cur_row = m_ui->file_list_widget->currentRow();
+	if (cur_row == -1 || cur_row >= files.size() - 1 || files.size() < 2)
+		return;
+
+	swap_files(cur_row, cur_row + 1);
+	m_ui->file_list_widget->setCurrentRow(cur_row + 1);
+
+	update_file_buttons();
+	update_info_text();
+}
+
+void ImageUpscalerQt::remove_file_clicked() {
+	auto cur_row = m_ui->file_list_widget->currentRow();
+	if (cur_row == -1 || cur_row > files.size() - 1)
+		return;
+
+	// Remove item from GUI.
+	delete m_ui->file_list_widget->takeItem(cur_row);
+
+	// Remove item from the list.
+	files.removeAt(cur_row);
+
+	update_file_buttons();
+	update_info_text();
+}
+
+void ImageUpscalerQt::clear_files_clicked() {
+	m_ui->file_list_widget->clear();
+	files.clear();
+
+	update_file_buttons();
+	update_info_text();
+}
+
+void ImageUpscalerQt::file_selection_changed(int) {
+	update_file_buttons();
+}
+
 void ImageUpscalerQt::add_task_clicked() {
 	TaskCreationDialog dialog(max_image_size());
 	if (dialog.exec()) {
@@ -226,6 +250,7 @@ void ImageUpscalerQt::add_task_clicked() {
 	}
 
 	update_task_buttons();
+	update_info_text();
 }
 
 void ImageUpscalerQt::move_task_up_clicked() {
@@ -237,6 +262,7 @@ void ImageUpscalerQt::move_task_up_clicked() {
 	m_ui->task_list_widget->setCurrentRow(cur_row - 1);
 
 	update_task_buttons();
+	update_info_text();
 }
 
 void ImageUpscalerQt::move_task_down_clicked() {
@@ -248,6 +274,7 @@ void ImageUpscalerQt::move_task_down_clicked() {
 	m_ui->task_list_widget->setCurrentRow(cur_row + 1);
 
 	update_task_buttons();
+	update_info_text();
 }
 
 void ImageUpscalerQt::remove_task_clicked() {
@@ -262,6 +289,7 @@ void ImageUpscalerQt::remove_task_clicked() {
 	tasks.erase(tasks.begin() + cur_row);
 
 	update_task_buttons();
+	update_info_text();
 }
 
 void ImageUpscalerQt::clear_tasks_clicked() {
@@ -269,6 +297,7 @@ void ImageUpscalerQt::clear_tasks_clicked() {
 	tasks.clear();
 
 	update_task_buttons();
+	update_info_text();
 }
 
 void ImageUpscalerQt::task_selection_changed(int index) {

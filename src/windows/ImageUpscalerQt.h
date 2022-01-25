@@ -46,6 +46,10 @@ private:
 	/// Update every task list manipulation button.
 	void update_task_buttons();
 
+	/// Total amount of pixels in all files.
+	unsigned long long total_pixels();
+	void update_info_text();
+
 private slots:
 	void add_files_clicked();
 	void move_file_up_clicked();
