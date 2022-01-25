@@ -5,6 +5,7 @@
  */
 
 #include <unordered_map>
+#include <cmath>
 
 #include <QStringList>
 #include <QCollator>
@@ -103,20 +104,28 @@ void func::numerical_sort(QStringList& list) {
 	);
 }
 
-QString func::big_number_to_string(long long num, QChar separator) {
-	// Get separate digits.
-	QString original = QString::number(num);
-
-	// Do this.
-	QString result = "";
-	for (int i = 0; i < original.size(); i++) {
-		if ((original.size() - i) % 3 == 0 && i != 0 && i != original.size() - 1 && original[i] != '-')
-			result += separator;
-
-		result += original[i];
+QString func::separate_string_with_char(QString orig, QChar spl_char, int sec_size, int right_start) {
+	QString result;
+	for (int i = 0; i < orig.size(); i++) {
+		if ((i + right_start) % sec_size == 0 && i < orig.size() - right_start)
+			result += spl_char;
+		result += orig[i];
 	}
-
 	return result;
+}
+
+QString func::big_number_to_string(long long num, QChar separator) {
+	// Convert the number to string (without sign).
+	QString str = QString::number(std::abs(num));
+
+	// Add gaps between every third order.
+	str = separate_string_with_char(str, ' ', 3, 0);
+
+	// Add the minus if needed.
+	if (num < 0)
+		str.insert(0, '-');
+
+	return str;
 }
 
 QString func::bytes_amount_to_string(unsigned long long bytes) {
@@ -131,5 +140,27 @@ QString func::bytes_amount_to_string(unsigned long long bytes) {
 	}
 	else { // Gibibytes.
 		return QString::number(bytes / (1024.0 * 1024.0 * 1024.0), 'f', 1) + " GiB";
+	}
+}
+
+QString func::pixel_amount_to_string(unsigned long long pixels) {
+	// If there are less than 1 MP, leave exactly 1 non-zero number after the point.
+	if (pixels < 1'000'000ull) {
+		auto bb = 1'000'000.0l;
+		auto ll = std::log10(pixels / 1'000'000.0l);
+		int exp = std::floor(std::log10(pixels / 1'000'000.0l));
+		return QString::number(pixels / 1'000'000.0l, 'f', -exp) + " MP";
+	}
+	// Megapixels.
+	else if (pixels < 1'000'000'000ull) {
+		return QString::number(pixels / 1'000'000.0l, 'f', 1) + " MP";
+	}
+	// Gigapixels.
+	else if (pixels < 1'000'000'000'000ull) {
+		return QString::number(pixels / 1'000'000'000.0l, 'f', 1) + " GP";
+	}
+	// Terapixels.
+	else {
+		return QString::number(pixels / 1'000'000'000'000.0l, 'f', 1) + " TP";
 	}
 }

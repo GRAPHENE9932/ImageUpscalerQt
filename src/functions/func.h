@@ -30,9 +30,14 @@ namespace func {
 
 	void numerical_sort(QStringList& list);
 
+	/// Example
+	/// orig = "HELLOWORLD", spl_char = '-', sec_size = 3, right_start = 1.
+	/// Outputs "HEL-LOW-ORLD".
+	QString separate_string_with_char(QString orig, QChar spl_char, int sec_size, int right_start);
 	QString big_number_to_string(long long num, QChar separator = ' ');
 
 	QString bytes_amount_to_string(unsigned long long bytes);
+	QString pixel_amount_to_string(unsigned long long pixels);
 	// END String functions
 
 	// BEGIN Calculation functions
