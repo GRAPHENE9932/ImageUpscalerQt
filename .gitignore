@@ -45,19 +45,24 @@ target_wrapper.*
 # QtCreator CMake
 CMakeLists.txt.user*
 
-# QtCreator 4.8< compilation database
-compile_commands.json
-
 # QtCreator local machine specific files for imported projects
 *creator.user*
 
 *_qmlcache.qrc
 
-#Builds
+# Compile commands
+compile_commands.json
+
+# Builds
 debug/
 release/
-release_win/
 
-#KDevelop project files
+# KDevelop project files
 *.kdev4
 .kdev4/
+
+# Kate project
+*.kateproject
+
+# Clangd cache
+.cache/
