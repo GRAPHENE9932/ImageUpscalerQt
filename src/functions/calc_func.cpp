@@ -6,6 +6,17 @@
 
 #include "func.h"
 
+int func::blocks_amount(QSize full_size, QSize block_size) {
+	int blocks_width = full_size.width() / block_size.width();
+	if (blocks_width * block_size.width() < full_size.width())
+		blocks_width++;
+	int blocks_height = full_size.height() / block_size.height();
+	if (blocks_height * block_size.height() < full_size.height())
+		blocks_height++;
+
+	return blocks_height * blocks_width;
+}
+
 unsigned long long func::srcnn_operations_amount(SRCNNDesc desc,
 											     QSize size) {
 	// Use formula for it.
