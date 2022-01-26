@@ -13,7 +13,6 @@
 #include "../functions/func.h"
 
 constexpr int DEF_RES = 512;
-constexpr int DEF_MAX = INT_MAX;
 constexpr size_t ORANGE_MEM = 1ull * 1024ull * 1024ull * 1024ull; // 1 GiB.
 constexpr size_t RED_MEM = 2ull * 1024ull * 1024ull * 1024ull; // 2 GiB.
 
@@ -76,11 +75,6 @@ void TaskCreationDialog::init_srcnn() {
 	for (SRCNNDesc cur_desc : srcnn_list)
 		m_ui->srcnn_architecture_combo_box->addItem(cur_desc.to_string());
 
-	// Set maximum to the block size spin box.
-	m_ui->srcnn_block_size_spin_box->setMaximum(
-		size.isNull() ? DEF_MAX : std::max(size.width(), size.height())
-	);
-
 	srcnn_update();
 }
 
@@ -104,11 +98,6 @@ void TaskCreationDialog::init_fsrcnn() {
 	m_ui->fsrcnn_architecture_combo_box->clear();
 	for (FSRCNNDesc cur_desc : fsrcnn_list)
 		m_ui->fsrcnn_architecture_combo_box->addItem(cur_desc.to_string());
-
-	// Set maximum to the block size spin box.
-	m_ui->fsrcnn_block_size_spin_box->setMaximum(
-		size.isNull() ? DEF_MAX : std::max(size.width(), size.height())
-	);
 
 	fsrcnn_update();
 }
@@ -152,92 +141,87 @@ void TaskCreationDialog::ccs_update() {
 	);
 }
 
-void TaskCreationDialog::srcnn_update() {
-	m_ui->main_button_box->button(QDialogButtonBox::Ok)->setEnabled(
-		valid_srcnn()
-	);
+QString TaskCreationDialog::mem_consumption_to_string(unsigned long long bytes) {
+	if (bytes == 0)
+		return tr("no image");
 
+	QString mem_str = func::bytes_amount_to_string(bytes);
+
+	QString begin_tag, end_tag;
+	if (bytes > RED_MEM) {
+		begin_tag = "<span style=\"color:red;font-weight:bold\">";
+		end_tag = "</span>";
+	}
+	else if (bytes > ORANGE_MEM) {
+		begin_tag = "<span style=\"color:orange;font-weight:bold\">";
+		end_tag = "</span>";
+	}
+
+	return begin_tag + mem_str + end_tag;
+}
+
+QSize TaskCreationDialog::srcnn_block_size() {
+	if (m_ui->srcnn_split_check_box->isChecked())
+		return QSize(m_ui->srcnn_block_size_spin_box->value(), m_ui->srcnn_block_size_spin_box->value());
+
+	return size;
+}
+
+void TaskCreationDialog::srcnn_update() {
+	m_ui->main_button_box->button(QDialogButtonBox::Ok)->setEnabled(valid_srcnn());
 	m_ui->srcnn_block_size_spin_box->setEnabled(m_ui->srcnn_split_check_box->isChecked());
 
-	// Display total operations and memory consumption
-	QString opers_str, mem_str;
-	size_t mem = 0;
-	if (size.isNull() || srcnn_list.empty()) {
-		opers_str = "no image";
-		mem_str = "no image";
-	}
-	else {
-		opers_str = func::big_number_to_string(
-			func::srcnn_operations_amount(
-				srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()], size
-			)
-		);
-		mem = func::predict_cnn_memory_consumption(
-			srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()], size);
 
-		mem_str = func::bytes_amount_to_string(mem);
-	}
-
-	// Mark memory text as bold and red or orange.
-	QString mem_begin_tag, mem_end_tag;
-	if (mem > RED_MEM) {
-		mem_begin_tag = "<span style=\"color:red;font-weight:bold\">";
-		mem_end_tag = "</span>";
-	}
-	else if (mem > ORANGE_MEM) {
-		mem_begin_tag = "<span style=\"color:orange;font-weight:bold\">";
-		mem_end_tag = "</span>";
-	}
-
-	m_ui->srcnn_info_label->setText(
-		QString("Total operations: %1\n"
-		"Approximate memory consumption: %2%3%4").arg(
-			opers_str, mem_begin_tag, mem_str, mem_end_tag)
+	// Construct the memory consumption string.
+	unsigned long long mem = func::predict_cnn_memory_consumption(
+		srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()], srcnn_block_size()
 	);
+	QString mem_str = mem_consumption_to_string(mem);
+
+	// Construct the operations amount string.
+	unsigned long long opers = func::srcnn_operations_amount(
+		srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()], srcnn_block_size()
+	);
+	opers *= func::blocks_amount(size, srcnn_block_size());
+	QString opers_str = func::big_number_to_string(opers);
+
+	QString result_str = QString("<p>Total operations: %1</p>"
+								 "<p>Approximate memory consumption: %2</p>").arg(
+								 opers_str, mem_str);
+
+	m_ui->srcnn_info_label->setText(result_str);
+}
+
+QSize TaskCreationDialog::fsrcnn_block_size() {
+	if (m_ui->fsrcnn_split_check_box->isChecked())
+		return QSize(m_ui->fsrcnn_block_size_spin_box->value(), m_ui->fsrcnn_block_size_spin_box->value());
+
+	return size;
 }
 
 void TaskCreationDialog::fsrcnn_update() {
-	m_ui->main_button_box->button(QDialogButtonBox::Ok)->setEnabled(
-		valid_fsrcnn()
-	);
-
+	m_ui->main_button_box->button(QDialogButtonBox::Ok)->setEnabled(valid_fsrcnn());
 	m_ui->fsrcnn_block_size_spin_box->setEnabled(m_ui->fsrcnn_split_check_box->isChecked());
 
-	// Display total operations and memory consumption
-	QString opers_str, mem_str;
-	size_t mem = 0;
-	if (size.isNull() || srcnn_list.empty()) {
-		opers_str = "no image";
-		mem_str = "no image";
-	}
-	else {
-		opers_str = func::big_number_to_string(
-			func::fsrcnn_operations_amount(
-				fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], size
-			)
-		);
-		mem = func::predict_cnn_memory_consumption(
-			fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], size);
 
-		mem_str = func::bytes_amount_to_string(mem);
-	}
-
-	// Mark memory text as bold and red or orange.
-	QString mem_begin_tag, mem_end_tag;
-	if (mem > RED_MEM) {
-		mem_begin_tag = "<span style=\"color:red;font-weight:bold\"";
-		mem_end_tag = "</span>";
-	}
-	else if (mem > ORANGE_MEM) {
-		mem_begin_tag = "<span style=\"color:orange;font-weight:bold\"";
-		mem_end_tag = "</span>";
-	}
-
-	m_ui->fsrcnn_info_label->setText(
-		QString("Total operations: %1\n"
-		"Approximate memory consumption: %2%3%4").arg(
-			opers_str, mem_begin_tag, mem_str, mem_end_tag)
+	// Construct the memory consumption string.
+	unsigned long long mem = func::predict_cnn_memory_consumption(
+		fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], fsrcnn_block_size()
 	);
+	QString mem_str = mem_consumption_to_string(mem);
+
+	// Construct the operations amount string.
+	unsigned long long opers = func::fsrcnn_operations_amount(
+		fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], fsrcnn_block_size()
+	);
+	opers *= func::blocks_amount(size, fsrcnn_block_size());
+	QString opers_str = func::big_number_to_string(opers);
+
+	QString result_str = QString("<p>Total operations: %1</p>"
+								 "<p>Approximate memory consumption: %2</p>").arg(
+								 opers_str, mem_str);
+
+	m_ui->fsrcnn_info_label->setText(result_str);
 }
 
 // END Update every task kind.

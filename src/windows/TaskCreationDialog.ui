@@ -268,7 +268,7 @@
             <number>16</number>
            </property>
            <property name="maximum">
-            <number>16</number>
+            <number>2147483647</number>
            </property>
            <property name="singleStep">
             <number>16</number>
@@ -284,6 +284,9 @@
         <widget class="QLabel" name="srcnn_info_label">
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Total operations: no image&lt;/p&gt;&lt;p&gt;Approximate memory consumption: no image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::RichText</enum>
          </property>
          <property name="wordWrap">
           <bool>false</bool>
@@ -344,11 +347,14 @@
          </item>
          <item>
           <widget class="QSpinBox" name="fsrcnn_block_size_spin_box">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="minimum">
             <number>16</number>
            </property>
            <property name="maximum">
-            <number>16</number>
+            <number>2147483647</number>
            </property>
           </widget>
          </item>
@@ -358,6 +364,9 @@
         <widget class="QLabel" name="fsrcnn_info_label">
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Total operations: no image&lt;/p&gt;&lt;p&gt;Approximate memory consumption: no image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::RichText</enum>
          </property>
          <property name="wordWrap">
           <bool>false</bool>

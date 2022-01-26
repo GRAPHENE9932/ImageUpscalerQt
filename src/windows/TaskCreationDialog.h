@@ -48,6 +48,11 @@ private:
 	// Parameters update event for every task kind.
 	void resize_update();
 	void ccs_update();
+
+	QString mem_consumption_to_string(unsigned long long bytes);
+	QSize srcnn_block_size();
+	QSize fsrcnn_block_size();
+
 	void srcnn_update();
 	void fsrcnn_update();
 
