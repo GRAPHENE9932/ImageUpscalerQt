@@ -182,6 +182,10 @@ unsigned long long ImageUpscalerQt::total_pixels() {
 	unsigned long long res = 0;
 	for (QString cur_file : files) {
 		auto input = OIIO::ImageInput::open(cur_file.toStdString());
+
+		if (!input)
+			continue;
+
 		auto spec = input->spec();
 		res += spec.width * spec.height;
 	}
