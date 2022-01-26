@@ -32,6 +32,9 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 
 	// Set window icon.
 	setWindowIcon(QIcon(":icon.png"));
+
+	// Update info text.
+	update_info_text();
 }
 
 ImageUpscalerQt::~ImageUpscalerQt() = default;
