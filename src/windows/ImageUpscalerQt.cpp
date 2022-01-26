@@ -53,6 +53,34 @@ QSize ImageUpscalerQt::max_image_size() {
 	return max_size;
 }
 
+unsigned long long ImageUpscalerQt::max_nn_memory_consumption() {
+	QSize max_img_size = max_image_size();
+	unsigned long long cur_max = 0;
+	for (int i = 0; i < tasks.size(); i++) {
+		if (tasks[i].get()->task_kind() == TaskKind::srcnn) {
+			TaskSRCNNDesc* desc = static_cast<TaskSRCNNDesc*>(tasks[i].get());
+			QSize cur_block_size = desc->block_size == 0 ?
+				max_img_size :
+				QSize(desc->block_size, desc->block_size);
+			unsigned long long cur_mem =
+				func::predict_cnn_memory_consumption(desc->srcnn_desc, cur_block_size);
+			if (cur_mem > cur_max)
+				cur_max = cur_mem;
+		}
+		else if (tasks[i].get()->task_kind() == TaskKind::fsrcnn) {
+			TaskFSRCNNDesc* desc = static_cast<TaskFSRCNNDesc*>(tasks[i].get());
+			QSize cur_block_size = desc->block_size == 0 ?
+				max_img_size :
+				QSize(desc->block_size, desc->block_size);
+			unsigned long long cur_mem =
+				func::predict_cnn_memory_consumption(desc->fsrcnn_desc, cur_block_size);
+			if (cur_mem > cur_max)
+				cur_max = cur_mem;
+		}
+	}
+	return cur_max;
+}
+
 void ImageUpscalerQt::update_file_list() {
 	// We have to save current (selected) item.
 	auto cur_row = m_ui->file_list_widget->currentRow();
@@ -162,6 +190,16 @@ void ImageUpscalerQt::update_info_text() {
 	text += tr("Images: ") + QString::number(files.size()) + '\n';
 	text += tr("Tasks: ") + QString::number(tasks.size()) + '\n';
 	text += tr("Total pixels: ") + func::pixel_amount_to_string(total_pixels()) + '\n';
+
+	auto nn_mem = max_nn_memory_consumption();
+	QString nn_mem_str;
+	if (nn_mem == 0)
+		nn_mem_str = tr("unknown");
+	else if (nn_mem < 250 * 1024 * 1024)
+		nn_mem_str = "< 250 MiB";
+	else
+		nn_mem_str = func::bytes_amount_to_string(nn_mem);
+	text += tr("Maximal memory consumption: ") + nn_mem_str + '\n';
 
 	m_ui->info_plain_text_edit->setPlainText(text);
 }

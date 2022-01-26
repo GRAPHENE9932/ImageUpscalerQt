@@ -33,6 +33,8 @@ private:
 
 	/// @returns Size of the biggest (by width*height area) image in list.
 	QSize max_image_size();
+	/// @return Memory consumption of the heaviest neural network.
+	unsigned long long max_nn_memory_consumption();
 	/// Completely synchronize ImageUpscalerQt::files with file_list_widget.
 	void update_file_list();
 	void update_previews();
