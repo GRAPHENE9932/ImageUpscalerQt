@@ -70,7 +70,7 @@ QString Worker::cur_status() const {
 		// Task 1/1: Unknown task.
 		if (cur_task_progress() == 0)
 			return QString("Image %1/%2, task %3/%4: %5").arg(
-				QString::number(cur_img_copy),
+				QString::number(cur_img_copy + 1),
 				QString::number(files.size()),
 				QString::number(cur_task_copy + 1),
 				QString::number(tasks.size()),
@@ -78,7 +78,7 @@ QString Worker::cur_status() const {
 		// Task 1/1: Unknown task (100%).
 		else
 			return QString("Image %1/%2, task %3/%4: %5 (%6%)").arg(
-				QString::number(cur_img_copy),
+				QString::number(cur_img_copy + 1),
 				QString::number(files.size()),
 				QString::number(cur_task_copy + 1),
 				QString::number(tasks.size()),
