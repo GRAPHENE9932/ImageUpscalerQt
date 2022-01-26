@@ -107,7 +107,7 @@ void func::numerical_sort(QStringList& list) {
 QString func::separate_string_with_char(QString orig, QChar spl_char, int sec_size, int right_start) {
 	QString result;
 	for (int i = 0; i < orig.size(); i++) {
-		if ((i + right_start) % sec_size == 0 && i < orig.size() - right_start)
+		if ((orig.size() - i - right_start) % sec_size == 0 && i < orig.size() - right_start)
 			result += spl_char;
 		result += orig[i];
 	}
@@ -119,7 +119,7 @@ QString func::big_number_to_string(long long num, QChar separator) {
 	QString str = QString::number(std::abs(num));
 
 	// Add gaps between every third order.
-	str = separate_string_with_char(str, ' ', 3, 0);
+	str = separate_string_with_char(str, separator, 3, 0);
 
 	// Add the minus if needed.
 	if (num < 0)
@@ -144,6 +144,9 @@ QString func::bytes_amount_to_string(unsigned long long bytes) {
 }
 
 QString func::pixel_amount_to_string(unsigned long long pixels) {
+	if (pixels == 0)
+		return "0 MP";
+
 	// If there are less than 1 MP, leave exactly 1 non-zero number after the point.
 	if (pixels < 1'000'000ull) {
 		int exp = std::floor(std::log10(pixels / 1'000'000.0l));
