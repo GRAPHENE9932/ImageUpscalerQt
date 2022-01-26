@@ -31,14 +31,8 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 	// Create an output buffer.
 	OIIO::ImageBuf output(spec);
 
-	// Compute the blocks amount.
-	int blocks_width = spec.width / block_width;
-	if (blocks_width * block_width < spec.width)
-		blocks_width++;
-	int blocks_height = spec.height / block_height;
-	if (blocks_height * block_height < spec.height)
-		blocks_height++;
-	blocks_amount = blocks_height * blocks_width * spec.nchannels;
+	blocks_amount = func::blocks_amount(QSize(spec.width, spec.height),
+										QSize(block_width, block_height)) * spec.nchannels;
 	blocks_processed = 0;
 
 	// Initialize the neural network.
