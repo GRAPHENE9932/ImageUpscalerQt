@@ -122,6 +122,7 @@ void TasksWaitingDialog::save_clicked() {
 	QFileDialog dialog(this, "Save results", "/home");
 	dialog.setFileMode(QFileDialog::FileMode::Directory);
 	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
+	dialog.setOption(QFileDialog::ShowDirsOnly, true);
 
 	// If accepted.
 	if (dialog.exec() == QDialog::DialogCode::Accepted) {
