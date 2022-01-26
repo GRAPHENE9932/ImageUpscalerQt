@@ -146,8 +146,6 @@ QString func::bytes_amount_to_string(unsigned long long bytes) {
 QString func::pixel_amount_to_string(unsigned long long pixels) {
 	// If there are less than 1 MP, leave exactly 1 non-zero number after the point.
 	if (pixels < 1'000'000ull) {
-		auto bb = 1'000'000.0l;
-		auto ll = std::log10(pixels / 1'000'000.0l);
 		int exp = std::floor(std::log10(pixels / 1'000'000.0l));
 		return QString::number(pixels / 1'000'000.0l, 'f', -exp) + " MP";
 	}
