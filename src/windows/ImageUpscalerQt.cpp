@@ -56,32 +56,46 @@ QSize ImageUpscalerQt::max_image_size() {
 	return max_size;
 }
 
+QSize ImageUpscalerQt::max_result_image_size() {
+	QSize cur_max_img_size = max_image_size();
+
+	for (int i = 0; i < tasks.size(); i++)
+		cur_max_img_size = tasks[i]->img_size_after(cur_max_img_size);
+
+	return cur_max_img_size;
+}
+
 unsigned long long ImageUpscalerQt::max_nn_memory_consumption() {
-	QSize max_img_size = max_image_size();
-	unsigned long long cur_max = 0;
+	QSize cur_max_img_size = max_image_size();
+	unsigned long long cur_max_mem = 0;
 	for (int i = 0; i < tasks.size(); i++) {
-		if (tasks[i].get()->task_kind() == TaskKind::srcnn) {
+		// Compute current image size after every task.
+		cur_max_img_size = tasks[i]->img_size_after(cur_max_img_size);
+
+		if (tasks[i]->task_kind() == TaskKind::srcnn) {
 			TaskSRCNNDesc* desc = static_cast<TaskSRCNNDesc*>(tasks[i].get());
 			QSize cur_block_size = desc->block_size == 0 ?
-				max_img_size :
+				cur_max_img_size :
 				QSize(desc->block_size, desc->block_size);
+
 			unsigned long long cur_mem =
 				func::predict_cnn_memory_consumption(desc->srcnn_desc, cur_block_size);
-			if (cur_mem > cur_max)
-				cur_max = cur_mem;
+			if (cur_mem > cur_max_mem)
+				cur_max_mem = cur_mem;
 		}
 		else if (tasks[i].get()->task_kind() == TaskKind::fsrcnn) {
 			TaskFSRCNNDesc* desc = static_cast<TaskFSRCNNDesc*>(tasks[i].get());
 			QSize cur_block_size = desc->block_size == 0 ?
-				max_img_size :
+				cur_max_img_size :
 				QSize(desc->block_size, desc->block_size);
+
 			unsigned long long cur_mem =
 				func::predict_cnn_memory_consumption(desc->fsrcnn_desc, cur_block_size);
-			if (cur_mem > cur_max)
-				cur_max = cur_mem;
+			if (cur_mem > cur_max_mem)
+				cur_max_mem = cur_mem;
 		}
 	}
-	return cur_max;
+	return cur_max_mem;
 }
 
 void ImageUpscalerQt::update_file_list() {
@@ -290,7 +304,7 @@ void ImageUpscalerQt::file_selection_changed(int) {
 }
 
 void ImageUpscalerQt::add_task_clicked() {
-	TaskCreationDialog dialog(max_image_size());
+	TaskCreationDialog dialog(max_result_image_size());
 	if (dialog.exec()) {
 		const auto task_desc = dialog.get_task_desc();
 		tasks.push_back(task_desc);
