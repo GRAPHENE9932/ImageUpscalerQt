@@ -54,6 +54,8 @@ struct TaskDesc {
 
 	virtual QString to_string() const = 0;
 
+	virtual QSize img_size_after(QSize cur_size) const = 0;
+
 	virtual TaskKind task_kind() const = 0;
 };
 
@@ -69,6 +71,8 @@ struct TaskResizeDesc : TaskDesc {
 	~TaskResizeDesc() = default;
 
 	QString to_string() const override;
+
+	QSize img_size_after(QSize cur_size) const override;
 
 	TaskKind task_kind() const override {
 		return TaskKind::resize;
@@ -86,6 +90,8 @@ struct TaskConvertColorSpaceDesc : TaskDesc {
 	~TaskConvertColorSpaceDesc() = default;
 
 	QString to_string() const override;
+
+	QSize img_size_after(QSize cur_size) const override;
 
 	TaskKind task_kind() const override {
 		return TaskKind::convert_color_space;
@@ -134,6 +140,8 @@ struct TaskSRCNNDesc : TaskDesc {
 
 	QString to_string() const override;
 
+	QSize img_size_after(QSize cur_size) const override;
+
 	TaskKind task_kind() const override {
 		return TaskKind::srcnn;
 	}
@@ -181,6 +189,8 @@ struct TaskFSRCNNDesc : TaskDesc {
 	~TaskFSRCNNDesc() = default;
 
 	QString to_string() const override;
+
+	QSize img_size_after(QSize cur_size) const override;
 
 	TaskKind task_kind() const override {
 		return TaskKind::fsrcnn;

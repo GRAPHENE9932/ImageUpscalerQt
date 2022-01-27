@@ -24,6 +24,10 @@ QString TaskSRCNNDesc::to_string() const {
 	return QCoreApplication::translate("ImageUpscalerQt", "Use SRCNN %1").arg(srcnn_desc.to_string());
 }
 
+QSize TaskSRCNNDesc::img_size_after(QSize cur_size) const {
+	return cur_size;
+}
+
 bool SRCNNDesc::from_string(QString str, SRCNNDesc* srcnn) {
 	try {
 		QStringList parts = str.split(' ');
@@ -129,6 +133,10 @@ QString TaskFSRCNNDesc::to_string() const {
 	return QCoreApplication::translate("ImageUpscalerQt", "Use FSRCNN %1").arg(fsrcnn_desc.to_string());
 }
 
+QSize TaskFSRCNNDesc::img_size_after(QSize cur_size) const {
+	return cur_size * 3;
+}
+
 bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* fsrcnn) {
 	try {
 		QStringList parts = str.split(' ');
@@ -222,9 +230,18 @@ QString TaskResizeDesc::to_string() const {
 											   INTERPOLATION_NAMES[(unsigned char)interpolation]);
 }
 
+QSize TaskResizeDesc::img_size_after(QSize) const {
+	return size;
+}
+
+
 QString TaskConvertColorSpaceDesc::to_string() const {
 	return QCoreApplication::translate("ImageUpscalerQt", "Convert from %1").arg(
 		QCoreApplication::translate("ImageUpscalerQt",
 		COLOR_SPACE_CONVERSION_NAMES[(unsigned char)color_space_conversion])
 	);
+}
+
+QSize TaskConvertColorSpaceDesc::img_size_after(QSize cur_size) const {
+	return cur_size;
 }
