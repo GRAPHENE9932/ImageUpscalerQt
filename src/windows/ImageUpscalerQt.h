@@ -29,17 +29,20 @@ private:
     QScopedPointer<Ui::ImageUpscalerQt> m_ui;
 
 	std::vector<std::shared_ptr<TaskDesc>> tasks;
-	QStringList files;
+	/// Vector of pairs "original file - result file".
+	std::vector<std::pair<QString, QString>> files;
 
 	/// Size of the biggest (by width*height area) image in the list.
 	QSize max_image_size();
 	/// Size of the biggest image in the list after every task.
 	QSize max_result_image_size();
+	/// Create the output image path automatically from the original path.
+	QString auto_output_path(QString orig_path);
 	/// Memory consumption of the heaviest neural network.
 	unsigned long long max_nn_memory_consumption();
-	/// Completely synchronize ImageUpscalerQt::files with file_list_widget.
-	void update_file_list();
-	void update_previews();
+	/// Add files to the list and GUI.
+	void add_files(QStringList files);
+	void update_previews(int first, int end);
 	/// Swap files in the list and in the GUI.
 	void swap_files(int index_1, int index_2);
 	/// Update every file list manipulation button.

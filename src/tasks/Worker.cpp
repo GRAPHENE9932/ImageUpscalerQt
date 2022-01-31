@@ -14,11 +14,13 @@ Worker::Worker() {
 
 }
 
-Worker::Worker(std::vector<std::shared_ptr<TaskDesc>> tasks, QStringList files) {
+Worker::Worker(std::vector<std::shared_ptr<TaskDesc>> tasks,
+			   std::vector<std::pair<QString, QString>> files) {
 	init(tasks, files);
 }
 
-void Worker::init(std::vector<std::shared_ptr<TaskDesc>> tasks_descs, QStringList files) {
+void Worker::init(std::vector<std::shared_ptr<TaskDesc>> tasks_descs,
+				  std::vector<std::pair<QString, QString>> files) {
 	// Construct tasks from theirs descriptions.
 	tasks.resize(tasks_descs.size());
 	for (int i = 0; i < tasks_descs.size(); i++) {
@@ -45,7 +47,6 @@ void Worker::init(std::vector<std::shared_ptr<TaskDesc>> tasks_descs, QStringLis
 	}
 
 	this->files = files;
-	this->res_images.resize(files.size());
 }
 
 float Worker::cur_task_progress() const {
@@ -99,20 +100,24 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 	try {
 		for (cur_img = 0; cur_img < files.size(); cur_img++) {
 			// Read image.
-			res_images[cur_img] = OIIO::ImageBuf(files[cur_img].toStdString());
+			auto cur_img_buf = OIIO::ImageBuf(files[cur_img].first.toStdString());
 
 			for (cur_task = 0; cur_task < tasks.size(); cur_task++) {
-				auto temp_img = res_images[cur_img];
-				res_images[cur_img] = tasks[cur_task]->do_task(temp_img);
+				auto temp_img_buf = cur_img_buf;
+				cur_img_buf = tasks[cur_task]->do_task(temp_img_buf);
 
 				if (cancel_requested) {
 					canceled();
 					return;
 				}
 			}
+			// Write image.
+			// TODO: handle errors.
+			cur_img_buf.write(files[cur_img].second.toStdString());
 		}
 	}
 	catch (const char* str) {
+		// TODO: better cancelation handling.
 		if (strcmp(str, "canc") == 0)
 			canceled();
 		else
@@ -134,15 +139,6 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 	}
 #endif
 	success(); // If not canceled and no errors occured.
-}
-
-void Worker::save_images(QString folder_path, std::function<void(QString)> error) {
-	for (int i = 0; i < res_images.size(); i++) {
-		// Combine the name of the original file and the folder path.
-		QString path = folder_path + '/' + files[i].section('/', -1, -1);
-		if (!res_images[i].write(path.toStdString()))
-			error(QString::fromStdString(res_images[i].geterror()));
-	}
 }
 
 void Worker::cancel() {

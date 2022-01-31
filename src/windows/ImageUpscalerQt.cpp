@@ -33,6 +33,10 @@ ImageUpscalerQt::ImageUpscalerQt(QWidget *parent) : QMainWindow(parent),
 	// Set window icon.
 	setWindowIcon(QIcon(":icon.png"));
 
+	// Make the columns of the file list table be equal.
+	m_ui->file_list_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode::Stretch);
+	m_ui->file_list_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode::Stretch);
+
 	// Update info text.
 	update_info_text();
 }
@@ -43,7 +47,7 @@ QSize ImageUpscalerQt::max_image_size() {
 	QSize max_size = SIZE_NULL;
 
 	for (int i = 0; i < files.size(); i++) {
-		auto img_input = OIIO::ImageInput::open(files[i].toStdString());
+		auto img_input = OIIO::ImageInput::open(files[i].first.toStdString());
 
 		if (!img_input)
 			continue;
@@ -63,6 +67,25 @@ QSize ImageUpscalerQt::max_result_image_size() {
 		cur_max_img_size = tasks[i]->img_size_after(cur_max_img_size);
 
 	return cur_max_img_size;
+}
+
+QString ImageUpscalerQt::auto_output_path(QString orig_path) {
+	QString extension = orig_path.section('.', -1, -1); // Extract the extension.
+	orig_path.chop(extension.size() + 1); // Remove extension from the path.
+
+	if (orig_path[orig_path.size() - 1].isDigit())
+		orig_path += '_';
+
+	// Try to name the file like "/bla/bla/orig1.png".
+	// But if this file already exists, try "/bla/bla/orig2.png" and so on...
+	for (int i = 1; i < INT_MAX; i++) {
+		QString cur_path = orig_path + QString::number(i) + '.' + extension;
+		if (!QFile::exists(cur_path))
+			return cur_path;
+	}
+
+	// We have reached INT_MAX? Impossible. Throw an exception!
+	throw std::runtime_error("Can't select the output folder automatically.");
 }
 
 unsigned long long ImageUpscalerQt::max_nn_memory_consumption() {
@@ -98,31 +121,51 @@ unsigned long long ImageUpscalerQt::max_nn_memory_consumption() {
 	return cur_max_mem;
 }
 
-void ImageUpscalerQt::update_file_list() {
-	// We have to save current (selected) item.
-	auto cur_row = m_ui->file_list_widget->currentRow();
+void ImageUpscalerQt::add_files(QStringList files) {
+	int duplicates = files.removeDuplicates();
+	int start_index = this->files.size();
+	int end_index = start_index + files.size();
 
-	// Set items.
-	m_ui->file_list_widget->clear();
-	m_ui->file_list_widget->addItems(func::shorten_file_paths(files));
+	for (int i = 0; i < files.size(); i++) {
+		// Add to the file list.
+		QString input_file = files[i];
+		QString output_file = auto_output_path(files[i]);
+		this->files.push_back(std::make_pair(input_file, output_file));
 
-	// Set tooltips.
-	for (int i = 0; i < files.size(); i++)
-		m_ui->file_list_widget->item(i)->setToolTip(files[i]);
+		// Add to the GUI.
+		int cur_row = m_ui->file_list_table->rowCount();
+		m_ui->file_list_table->insertRow(cur_row);
+		QTableWidgetItem* item_0 = new QTableWidgetItem(input_file);
+		QTableWidgetItem* item_1 = new QTableWidgetItem(output_file);
+		m_ui->file_list_table->setItem(cur_row, 0, item_0);
+		m_ui->file_list_table->setItem(cur_row, 1, item_1);
+	}
+	// Update previews.
+	std::thread prev_thr(&ImageUpscalerQt::update_previews, this, start_index, end_index);
+	prev_thr.detach();
 
-	m_ui->file_list_widget->setCurrentRow(cur_row);
+	// Warn user about duplicates.
+	if (duplicates > 0) {
+		QString message = QString::number(duplicates) + ' ' + (duplicates == 1 ?
+			tr("duplicate was removed from the list.") :
+			tr("duplicates were removed from the list."));
 
-	auto prev_thread = std::thread(&ImageUpscalerQt::update_previews, this);
-	prev_thread.detach();
+		QMessageBox::information(this, tr("Duplicates"), message, QMessageBox::StandardButton::Ok);
+	}
 }
 
-void ImageUpscalerQt::update_previews() {
-	for (int i = 0; i < files.size(); i++) {
+void ImageUpscalerQt::update_previews(int start, int end) {
+	// Copy links here, because they can change during the process in other thread.
+	std::vector<QTableWidgetItem*> items(end - start);
+	for (int i = 0; i < end - start; i++)
+		items[i] = m_ui->file_list_table->item(i + start, 0);
+
+	for (int i = 0; i < items.size(); i++) {
 		// TODO: load the embedded thumbnails of the images with OpenImageIO 2.3.
 		// Arch Linux 24.01.2022: OpenImageIO 2.2.18.0-4. Waiting for 2.3...
-		QPixmap icon_pixmap(files[i]);
+		QPixmap icon_pixmap(files[i].first);
 		if (icon_pixmap.isNull()) {
-			m_ui->file_list_widget->item(i)->setIcon(QIcon(":unknown.svg"));
+			items[i]->setIcon(QIcon(":unknown.svg"));
 			continue;
 		}
 
@@ -130,7 +173,7 @@ void ImageUpscalerQt::update_previews() {
 			icon_pixmap.scaledToWidth(32) :
 			icon_pixmap.scaledToHeight(32));
 
-		m_ui->file_list_widget->item(i)->setIcon(icon);
+		items[i]->setIcon(icon);
 	}
 }
 
@@ -144,17 +187,21 @@ void ImageUpscalerQt::swap_files(int index_1, int index_2) {
 		std::swap(index_1, index_2);
 
 	// Swap items in the list that in the GUI.
-	QListWidgetItem* item_1 = m_ui->file_list_widget->takeItem(index_1);
-	QListWidgetItem* item_2 = m_ui->file_list_widget->takeItem(index_2 - 1);
-	m_ui->file_list_widget->insertItem(index_1, item_2);
-	m_ui->file_list_widget->insertItem(index_2, item_1);
+	QTableWidgetItem* item_1_col_0 = m_ui->file_list_table->item(index_1, 0);
+	QTableWidgetItem* item_2_col_0 = m_ui->file_list_table->item(index_2, 0);
+	QTableWidgetItem* item_1_col_1 = m_ui->file_list_table->item(index_1, 1);
+	QTableWidgetItem* item_2_col_1 = m_ui->file_list_table->item(index_2, 1);
+	m_ui->file_list_table->setItem(index_2, 0, item_1_col_0);
+	m_ui->file_list_table->setItem(index_1, 0, item_2_col_0);
+	m_ui->file_list_table->setItem(index_2, 1, item_1_col_1);
+	m_ui->file_list_table->setItem(index_1, 1, item_2_col_1);
 
 	// Swap items in the file list.
 	std::swap(files[index_1], files[index_2]);
 }
 
 void ImageUpscalerQt::update_file_buttons() {
-	auto cur_row = m_ui->file_list_widget->currentRow();
+	auto cur_row = m_ui->file_list_table->currentRow();
 	auto cur_size = files.size();
 
 	m_ui->file_up_button->setEnabled(cur_size > 1 && cur_row > 0);
@@ -194,8 +241,8 @@ void ImageUpscalerQt::update_task_buttons() {
 
 unsigned long long ImageUpscalerQt::total_pixels() {
 	unsigned long long res = 0;
-	for (QString cur_file : files) {
-		auto input = OIIO::ImageInput::open(cur_file.toStdString());
+	for (auto cur_pair : files) {
+		auto input = OIIO::ImageInput::open(cur_pair.first.toStdString());
 
 		if (!input)
 			continue;
@@ -231,68 +278,57 @@ void ImageUpscalerQt::add_files_clicked() {
 	// Create a QFileDialog
 	QFileDialog dialog(this, tr("Add images and folders"), QString(), FILE_FILTER);
 	dialog.setFileMode(QFileDialog::FileMode::ExistingFiles);
-	if (dialog.exec()) {
-		files += dialog.selectedFiles();
-
-		int duplicates = files.removeDuplicates();
-
-		update_file_list();
-
-		// Warn user about removed duplicates.
-		if (duplicates > 0) {
-			QString message = QString::number(duplicates) + ' ' + (duplicates == 1 ?
-				tr("duplicate was removed from the list.") :
-				tr("duplicates were removed from the list."));
-
-			QMessageBox::information(this, tr("Duplicates"), message, QMessageBox::StandardButton::Ok);
-		}
-	}
+	if (dialog.exec())
+		add_files(dialog.selectedFiles());
 
 	update_file_buttons();
 	update_info_text();
 }
 
 void ImageUpscalerQt::move_file_up_clicked() {
-	auto cur_row = m_ui->file_list_widget->currentRow();
+	auto cur_row = m_ui->file_list_table->currentRow();
+	auto cur_col = m_ui->file_list_table->currentColumn();
 	if (cur_row == -1 || cur_row == 0 || files.size() < 2)
 		return;
 
 	swap_files(cur_row - 1, cur_row);
-	m_ui->file_list_widget->setCurrentRow(cur_row - 1);
+	m_ui->file_list_table->setCurrentCell(cur_row - 1, cur_col);
 
 	update_file_buttons();
 	update_info_text();
 }
 
 void ImageUpscalerQt::move_file_down_clicked() {
-	auto cur_row = m_ui->file_list_widget->currentRow();
+	auto cur_row = m_ui->file_list_table->currentRow();
+	auto cur_col = m_ui->file_list_table->currentColumn();
 	if (cur_row == -1 || cur_row >= files.size() - 1 || files.size() < 2)
 		return;
 
 	swap_files(cur_row, cur_row + 1);
-	m_ui->file_list_widget->setCurrentRow(cur_row + 1);
+	m_ui->file_list_table->setCurrentCell(cur_row + 1, cur_col);
 
 	update_file_buttons();
 	update_info_text();
 }
 
 void ImageUpscalerQt::remove_file_clicked() {
-	auto cur_row = m_ui->file_list_widget->currentRow();
+	auto cur_row = m_ui->file_list_table->currentRow();
 	if (cur_row == -1 || cur_row > files.size() - 1)
 		return;
 
 	// Remove item from GUI.
-	delete m_ui->file_list_widget->takeItem(cur_row);
+	delete m_ui->file_list_table->takeItem(cur_row, 0);
+	delete m_ui->file_list_table->takeItem(cur_row, 1);
 
 	// Remove item from the list.
-	files.removeAt(cur_row);
+	files.erase(files.begin() + cur_row);
 
 	update_file_buttons();
 	update_info_text();
 }
 
 void ImageUpscalerQt::clear_files_clicked() {
-	m_ui->file_list_widget->clear();
+	m_ui->file_list_table->clear();
 	files.clear();
 
 	update_file_buttons();
@@ -384,7 +420,7 @@ void ImageUpscalerQt::start_tasks_clicked() {
 		QMessageBox::warning(this, tr("No tasks"), tr("Impossible to start tasks: task queue is empty."));
 		return;
 	}
-	if (files.isEmpty()) {
+	if (files.empty()) {
 		QMessageBox::warning(this, tr("No images"), tr("Impossible to start tasks: no files selected."));
 		return;
 	}

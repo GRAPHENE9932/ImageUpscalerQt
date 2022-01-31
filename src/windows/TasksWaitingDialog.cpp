@@ -25,7 +25,6 @@ TasksWaitingDialog::TasksWaitingDialog() : m_ui(new Ui::TasksWaitingDialog) {
 	timer = new QTimer(this);
 
 	// BEGIN Connect signals
-	connect(m_ui->save_button, SIGNAL(clicked()), this, SLOT(save_clicked()));
 	connect(m_ui->cancel_button, SIGNAL(clicked()), this, SLOT(cancel_clicked()));
 	connect(timer, SIGNAL(timeout()), this, SLOT(progress_check()));
 	// END Connect signals
@@ -35,7 +34,8 @@ TasksWaitingDialog::~TasksWaitingDialog() {
 
 }
 
-void TasksWaitingDialog::do_tasks(std::vector<std::shared_ptr<TaskDesc>> tasks, QStringList files) {
+void TasksWaitingDialog::do_tasks(std::vector<std::shared_ptr<TaskDesc>> tasks,
+								  std::vector<std::pair<QString, QString>> files) {
 	worker = new Worker(tasks, files);
 	tasks_complete = false;
 
@@ -115,30 +115,6 @@ void TasksWaitingDialog::progress_check() {
 void TasksWaitingDialog::cancel_clicked() {
 	worker->cancel();
 	m_ui->cancel_button->setEnabled(false); // Disable cancel button.
-}
-
-void TasksWaitingDialog::save_clicked() {
-	// Create the file dialog.
-	QFileDialog dialog(this, "Save results", "/home");
-	dialog.setFileMode(QFileDialog::FileMode::Directory);
-	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
-	dialog.setOption(QFileDialog::ShowDirsOnly, true);
-
-	// If accepted.
-	if (dialog.exec() == QDialog::DialogCode::Accepted) {
-		// Extract the folder path.
-		QString folder_path = dialog.selectedFiles()[0];
-		// Save the images.
-		worker->save_images(
-			folder_path,
-			[this](QString error) {
-				QMessageBox::critical(this, "Failed to write the images",
-					"Failed to write the images:\n" + error);
-			}
-		);
-		// Close this dialog.
-		this->done(0);
-	}
 }
 
 // On close using the X button.

@@ -25,7 +25,8 @@ public:
 	TasksWaitingDialog();
 	~TasksWaitingDialog();
 
-	void do_tasks(std::vector<std::shared_ptr<TaskDesc>> tasks, QStringList image_filename);
+	void do_tasks(std::vector<std::shared_ptr<TaskDesc>> tasks,
+				  std::vector<std::pair<QString, QString>> files);
 
 private:
 	QScopedPointer<Ui::TasksWaitingDialog> m_ui;
@@ -49,6 +50,5 @@ private:
 
 private slots:
 	void cancel_clicked();
-	void save_clicked();
 	void progress_check();
 };

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>521</height>
+    <width>816</width>
+    <height>558</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
     <item>
      <layout class="QVBoxLayout" name="file_list_layout">
       <item>
@@ -32,7 +32,33 @@
        </widget>
       </item>
       <item>
-       <widget class="QListWidget" name="file_list_widget"/>
+       <widget class="QTableWidget" name="file_list_table">
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::SingleSelection</enum>
+        </property>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>10</number>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Original</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Result</string>
+         </property>
+        </column>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" name="file_list_button_layout" stretch="1,0,0,0,0">
@@ -229,8 +255,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>700</width>
-     <height>30</height>
+     <width>816</width>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_about">
@@ -414,22 +440,6 @@
     <hint type="destinationlabel">
      <x>3</x>
      <y>312</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>file_list_widget</sender>
-   <signal>currentRowChanged(int)</signal>
-   <receiver>ImageUpscalerQt</receiver>
-   <slot>file_selection_changed(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>189</x>
-     <y>248</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>3</x>
-     <y>380</y>
     </hint>
    </hints>
   </connection>

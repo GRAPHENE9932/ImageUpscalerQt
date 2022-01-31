@@ -14,15 +14,12 @@
 
 class Worker {
 public:
-	/// Resulting images (may be unfinished).
-	std::vector<OIIO::ImageBuf> res_images;
-
 	Worker();
 	/// Not only construct, but also init().
-	Worker(std::vector<std::shared_ptr<TaskDesc>> tasks, QStringList files);
+	Worker(std::vector<std::shared_ptr<TaskDesc>> tasks, std::vector<std::pair<QString, QString>> files);
 
 	/// Needed if the worker was constructed with default constructor.
-	void init(std::vector<std::shared_ptr<TaskDesc>> tasks, QStringList files);
+	void init(std::vector<std::shared_ptr<TaskDesc>> tasks, std::vector<std::pair<QString, QString>> files);
 	QString cur_status() const;
 	/// Progress of the current task (from 0 to 1).
 	float cur_task_progress() const;
@@ -31,11 +28,11 @@ public:
 
 	void do_tasks(std::function<void()> success, std::function<void()> canceled,
 				  std::function<void(QString)> error);
-	void save_images(QString folder_path, std::function<void(QString)> error);
 	void cancel();
 
 private:
-	QStringList files;
+	/// Vector of pairs "original file - result file".
+	std::vector<std::pair<QString, QString>> files;
 	std::vector<Task*> tasks;
 	int cur_task = 0, cur_img = 0;
 
