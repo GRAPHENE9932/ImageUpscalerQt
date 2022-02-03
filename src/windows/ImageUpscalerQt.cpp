@@ -186,15 +186,18 @@ void ImageUpscalerQt::reselect_output_file(int row) {
 }
 
 void ImageUpscalerQt::update_previews(int start, int end) {
-	// Copy links here, because they can change during the process in other thread.
+	// Copy links and paths here, because they can change during the process in other thread.
 	std::vector<QTableWidgetItem*> items(end - start);
-	for (int i = 0; i < end - start; i++)
+	std::vector<QString> files(end - start);
+	for (int i = 0; i < end - start; i++) {
 		items[i] = m_ui->file_list_table->item(i + start, 0);
+		files[i] = this->files[i + start].first;
+	}
 
 	for (int i = 0; i < items.size(); i++) {
 		// TODO: load the embedded thumbnails of the images with OpenImageIO 2.3.
 		// Arch Linux 24.01.2022: OpenImageIO 2.2.18.0-4. Waiting for 2.3...
-		QPixmap icon_pixmap(files[i].first);
+		QPixmap icon_pixmap(files[i]);
 		if (icon_pixmap.isNull()) {
 			items[i]->setIcon(QIcon(":unknown.svg"));
 			continue;
