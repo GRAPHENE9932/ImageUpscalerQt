@@ -154,6 +154,37 @@ void ImageUpscalerQt::add_files(QStringList files) {
 	}
 }
 
+void ImageUpscalerQt::reselect_input_file(int row) {
+	QFileDialog dialog(this, tr("Select input file"), QString(), FILE_FILTER);
+	dialog.setFileMode(QFileDialog::FileMode::ExistingFile);
+	if (dialog.exec()) {
+		// If the output path is the same as one generated automatically,
+		// the generate it automatically from the new path.
+		bool auto_output = files[row].second == auto_output_path(files[row].first);
+
+		files[row].first = dialog.selectedFiles()[0];
+
+		if (auto_output) {
+			files[row].second = auto_output_path(files[row].first);
+			m_ui->file_list_table->item(row, 1)->setText(files[row].second);
+		}
+		m_ui->file_list_table->item(row, 0)->setText(files[row].first);
+
+		std::thread thread(&ImageUpscalerQt::update_previews, this, row, row + 1);
+		thread.detach();
+	}
+}
+
+void ImageUpscalerQt::reselect_output_file(int row) {
+	QFileDialog dialog(this, tr("Select output file"), QString(), FILE_FILTER);
+	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
+	dialog.setFileMode(QFileDialog::FileMode::AnyFile);
+	if (dialog.exec()) {
+		files[row].second = dialog.selectedFiles()[0];
+		m_ui->file_list_table->item(row, 1)->setText(files[row].second);
+	}
+}
+
 void ImageUpscalerQt::update_previews(int start, int end) {
 	// Copy links here, because they can change during the process in other thread.
 	std::vector<QTableWidgetItem*> items(end - start);
@@ -337,6 +368,13 @@ void ImageUpscalerQt::clear_files_clicked() {
 
 void ImageUpscalerQt::file_selection_changed(int) {
 	update_file_buttons();
+}
+
+void ImageUpscalerQt::file_cell_double_clicked(int row, int column) {
+	if (column == 0)
+		reselect_input_file(row);
+	else if (column == 1)
+		reselect_output_file(row);
 }
 
 void ImageUpscalerQt::add_task_clicked() {

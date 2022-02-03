@@ -42,6 +42,10 @@ private:
 	unsigned long long max_nn_memory_consumption();
 	/// Add files to the list and GUI.
 	void add_files(QStringList files);
+	/// Reselect a single input file in the table.
+	void reselect_input_file(int row);
+	/// Reselect a single output file in the table.
+	void reselect_output_file(int row);
 	void update_previews(int first, int end);
 	/// Swap files in the list and in the GUI.
 	void swap_files(int index_1, int index_2);
@@ -64,6 +68,7 @@ private slots:
 	void remove_file_clicked();
 	void clear_files_clicked();
 	void file_selection_changed(int index);
+	void file_cell_double_clicked(int row, int column);
 
 	void add_task_clicked();
 	void move_task_up_clicked();

@@ -256,7 +256,7 @@
      <x>0</x>
      <y>0</y>
      <width>816</width>
-     <height>28</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_about">
@@ -290,8 +290,8 @@
    <slot>move_file_up_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>220</x>
-     <y>494</y>
+     <x>430</x>
+     <y>548</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -306,8 +306,8 @@
    <slot>move_file_down_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>265</x>
-     <y>489</y>
+     <x>467</x>
+     <y>548</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -322,8 +322,8 @@
    <slot>remove_file_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>298</x>
-     <y>501</y>
+     <x>504</x>
+     <y>548</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -338,8 +338,8 @@
    <slot>clear_files_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>337</x>
-     <y>500</y>
+     <x>541</x>
+     <y>548</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -354,8 +354,8 @@
    <slot>add_task_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>446</x>
-     <y>240</y>
+     <x>658</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -370,8 +370,8 @@
    <slot>move_task_up_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>579</x>
-     <y>269</y>
+     <x>695</x>
+     <y>287</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -386,8 +386,8 @@
    <slot>move_task_down_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>616</x>
-     <y>269</y>
+     <x>732</x>
+     <y>287</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -402,8 +402,8 @@
    <slot>remove_task_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>627</x>
-     <y>240</y>
+     <x>769</x>
+     <y>287</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -418,8 +418,8 @@
    <slot>clear_tasks_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>690</x>
-     <y>269</y>
+     <x>806</x>
+     <y>287</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -434,8 +434,8 @@
    <slot>start_tasks_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>480</x>
-     <y>493</y>
+     <x>806</x>
+     <y>548</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -466,8 +466,8 @@
    <slot>add_files_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>79</x>
-     <y>500</y>
+     <x>87</x>
+     <y>549</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -507,6 +507,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>file_list_table</sender>
+   <signal>cellDoubleClicked(int,int)</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>file_cell_double_clicked(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>326</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>352</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>add_files_clicked()</slot>
@@ -524,5 +540,6 @@
   <slot>file_selection_changed(int)</slot>
   <slot>task_selection_changed(int)</slot>
   <slot>about_qt_triggered()</slot>
+  <slot>file_cell_double_clicked(int,int)</slot>
  </slots>
 </ui>
