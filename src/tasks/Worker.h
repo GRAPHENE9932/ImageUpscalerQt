@@ -21,6 +21,8 @@ public:
 	/// Needed if the worker was constructed with default constructor.
 	void init(std::vector<std::shared_ptr<TaskDesc>> tasks, std::vector<std::pair<QString, QString>> files);
 	QString cur_status() const;
+	int get_cur_task_index() const;
+	int get_cur_img_index() const;
 	/// Progress of the current task (from 0 to 1).
 	float cur_task_progress() const;
 	/// Progress of all tasks and all images (from 0 to 1).

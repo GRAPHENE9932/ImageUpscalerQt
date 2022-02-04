@@ -50,45 +50,53 @@ void Worker::init(std::vector<std::shared_ptr<TaskDesc>> tasks_descs,
 }
 
 float Worker::cur_task_progress() const {
-	if (cur_task >= tasks.size())
-		return 1;
-	else
-		return tasks[cur_task]->progress();
+	return tasks[get_cur_task_index()]->progress();
 }
 
 float Worker::overall_progress() const {
-	float cur_img_progress = ((float)cur_task + cur_task_progress()) / (float)tasks.size();
-	return ((float)cur_img + cur_img_progress) / files.size();
+	float cur_img_progress = ((float)get_cur_task_index() + cur_task_progress()) / (float)tasks.size();
+	return ((float)get_cur_img_index() + cur_img_progress) / files.size();
 }
 
 QString Worker::cur_status() const {
 	// Save cur_task and cur_img for this function because
 	// other thread can change these values during execution of this function.
-	auto cur_task_copy = cur_task;
-	auto cur_img_copy = cur_img;
-	if (cur_task_copy < tasks.size()) {
-		// Prepare text for current task label.
-		// Task 1/1: Unknown task.
-		if (cur_task_progress() == 0)
-			return QString("Image %1/%2, task %3/%4: %5").arg(
-				QString::number(cur_img_copy + 1),
-				QString::number(files.size()),
-				QString::number(cur_task_copy + 1),
-				QString::number(tasks.size()),
-				tasks[cur_task_copy]->get_desc()->to_string());
-		// Task 1/1: Unknown task (100%).
-		else
-			return QString("Image %1/%2, task %3/%4: %5 (%6%)").arg(
-				QString::number(cur_img_copy + 1),
-				QString::number(files.size()),
-				QString::number(cur_task_copy + 1),
-				QString::number(tasks.size()),
-				tasks[cur_task_copy]->get_desc()->to_string(),
-				QString::number((unsigned short)(cur_task_progress() * 100.0F)));
-	}
-	else {
+	auto cur_task_copy = get_cur_task_index();
+	auto cur_img_copy = get_cur_img_index();
+
+	if (cur_task_copy == tasks.size() && cur_img_copy == files.size())
 		return "Done!";
-	}
+
+	// Prepare text for current task label.
+	// Task 1/1: Unknown task.
+	if (cur_task_progress() == 0)
+		return QString("Image %1/%2, task %3/%4: %5").arg(
+			QString::number(cur_img_copy + 1),
+			QString::number(files.size()),
+			QString::number(cur_task_copy + 1),
+			QString::number(tasks.size()),
+			tasks[cur_task_copy]->get_desc()->to_string());
+	// Task 1/1: Unknown task (100%).
+	else
+		return QString("Image %1/%2, task %3/%4: %5 (%6%)").arg(
+			QString::number(cur_img_copy + 1),
+			QString::number(files.size()),
+			QString::number(cur_task_copy + 1),
+			QString::number(tasks.size()),
+			tasks[cur_task_copy]->get_desc()->to_string(),
+			QString::number((unsigned short)(cur_task_progress() * 100.0F)));
+}
+
+int Worker::get_cur_task_index() const {
+	if (cur_task >= tasks.size())
+		return tasks.size() - 1;
+	return cur_task;
+}
+
+int Worker::get_cur_img_index() const {
+	if (cur_img >= files.size())
+		return files.size() - 1;
+	return cur_img;
 }
 
 void Worker::do_tasks(std::function<void()> success, std::function<void()> canceled,
@@ -142,6 +150,6 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 }
 
 void Worker::cancel() {
-	tasks[cur_task]->cancel_requested = true;
+	tasks[get_cur_task_index()]->cancel_requested = true;
 	cancel_requested = true;
 }
