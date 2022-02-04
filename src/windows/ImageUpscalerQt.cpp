@@ -221,10 +221,10 @@ void ImageUpscalerQt::swap_files(int index_1, int index_2) {
 		std::swap(index_1, index_2);
 
 	// Swap items in the list that in the GUI.
-	QTableWidgetItem* item_1_col_0 = m_ui->file_list_table->item(index_1, 0);
-	QTableWidgetItem* item_2_col_0 = m_ui->file_list_table->item(index_2, 0);
-	QTableWidgetItem* item_1_col_1 = m_ui->file_list_table->item(index_1, 1);
-	QTableWidgetItem* item_2_col_1 = m_ui->file_list_table->item(index_2, 1);
+	QTableWidgetItem* item_1_col_0 = m_ui->file_list_table->takeItem(index_1, 0);
+	QTableWidgetItem* item_2_col_0 = m_ui->file_list_table->takeItem(index_2, 0);
+	QTableWidgetItem* item_1_col_1 = m_ui->file_list_table->takeItem(index_1, 1);
+	QTableWidgetItem* item_2_col_1 = m_ui->file_list_table->takeItem(index_2, 1);
 	m_ui->file_list_table->setItem(index_2, 0, item_1_col_0);
 	m_ui->file_list_table->setItem(index_1, 0, item_2_col_0);
 	m_ui->file_list_table->setItem(index_2, 1, item_1_col_1);
@@ -351,8 +351,7 @@ void ImageUpscalerQt::remove_file_clicked() {
 		return;
 
 	// Remove item from GUI.
-	delete m_ui->file_list_table->takeItem(cur_row, 0);
-	delete m_ui->file_list_table->takeItem(cur_row, 1);
+	m_ui->file_list_table->removeRow(cur_row);
 
 	// Remove item from the list.
 	files.erase(files.begin() + cur_row);
@@ -362,14 +361,15 @@ void ImageUpscalerQt::remove_file_clicked() {
 }
 
 void ImageUpscalerQt::clear_files_clicked() {
-	m_ui->file_list_table->clear();
+	m_ui->file_list_table->clearContents();
+	m_ui->file_list_table->setRowCount(0);
 	files.clear();
 
 	update_file_buttons();
 	update_info_text();
 }
 
-void ImageUpscalerQt::file_selection_changed(int) {
+void ImageUpscalerQt::file_selection_changed(int, int, int, int) {
 	update_file_buttons();
 }
 

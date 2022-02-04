@@ -523,6 +523,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>file_list_table</sender>
+   <signal>currentCellChanged(int,int,int,int)</signal>
+   <receiver>ImageUpscalerQt</receiver>
+   <slot>file_selection_changed(int,int,int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>305</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>446</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>add_files_clicked()</slot>
@@ -537,7 +553,7 @@
   <slot>clear_tasks_clicked()</slot>
   <slot>start_tasks_clicked()</slot>
   <slot>about_program_triggered()</slot>
-  <slot>file_selection_changed(int)</slot>
+  <slot>file_selection_changed(int,int,int,int)</slot>
   <slot>task_selection_changed(int)</slot>
   <slot>about_qt_triggered()</slot>
   <slot>file_cell_double_clicked(int,int)</slot>

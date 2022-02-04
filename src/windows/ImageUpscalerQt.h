@@ -67,7 +67,7 @@ private slots:
 	void move_file_down_clicked();
 	void remove_file_clicked();
 	void clear_files_clicked();
-	void file_selection_changed(int index);
+	void file_selection_changed(int row, int column, int prev_row, int prev_col);
 	void file_cell_double_clicked(int row, int column);
 
 	void add_task_clicked();
