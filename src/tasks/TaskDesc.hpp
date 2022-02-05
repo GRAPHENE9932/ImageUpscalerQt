@@ -100,15 +100,13 @@ struct TaskConvertColorSpaceDesc : TaskDesc {
 
 struct SRCNNDesc {
 	std::array<unsigned short, 3> kernels;
-	std::array<unsigned short, 3> paddings;
 	std::array<unsigned short, 4> channels;
 
 	SRCNNDesc() = default;
 
 	SRCNNDesc(std::array<unsigned short, 3> kernels,
-			  std::array<unsigned short, 3> paddings,
 			  std::array<unsigned short, 4> channels) :
-			  kernels(kernels), paddings(paddings), channels(channels) {}
+			  kernels(kernels), channels(channels) {}
 
 	QString to_string() const;
 	/// Parse SRCNN. Returns true if parsing is successful.
@@ -131,10 +129,9 @@ struct TaskSRCNNDesc : TaskDesc {
 				  srcnn_desc(srcnn_desc), block_size(block_size) {}
 
 	TaskSRCNNDesc(std::array<unsigned short, 3> kernels,
-				  std::array<unsigned short, 3> paddings,
 				  std::array<unsigned short, 4> channels,
 				  unsigned int block_size) :
-				  srcnn_desc(kernels, paddings, channels), block_size(block_size) {}
+				  srcnn_desc(kernels, channels), block_size(block_size) {}
 
 	~TaskSRCNNDesc() = default;
 
@@ -149,15 +146,13 @@ struct TaskSRCNNDesc : TaskDesc {
 
 struct FSRCNNDesc {
 	std::vector<unsigned short> kernels;
-	std::vector<unsigned short> paddings;
 	std::vector<unsigned short> channels;
 
 	FSRCNNDesc() = default;
 
 	FSRCNNDesc(std::vector<unsigned short> kernels,
-			   std::vector<unsigned short> paddings,
 			   std::vector<unsigned short> channels) :
-			   kernels(kernels), paddings(paddings), channels(channels) {}
+			   kernels(kernels), channels(channels) {}
 
 	QString to_string() const;
 	/// Parse FSRCNN. Returns true if parsing is successful.
@@ -181,10 +176,9 @@ struct TaskFSRCNNDesc : TaskDesc {
 				   fsrcnn_desc(fsrcnn_desc), block_size(block_size) {}
 
 	TaskFSRCNNDesc(std::vector<unsigned short> kernels,
-				   std::vector<unsigned short> paddings,
 				   std::vector<unsigned short> channels,
 				   unsigned int block_size) :
-				   fsrcnn_desc(kernels, paddings, channels), block_size(block_size) {}
+				   fsrcnn_desc(kernels, channels), block_size(block_size) {}
 
 	~TaskFSRCNNDesc() = default;
 

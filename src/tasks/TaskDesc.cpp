@@ -36,7 +36,6 @@ bool SRCNNDesc::from_string(QString str, SRCNNDesc* srcnn) {
 			return false;
 
 		std::array<unsigned short, 3> kernels = {0, 0, 0};
-		std::array<unsigned short, 3> paddings = {0, 0, 0};
 		std::array<unsigned short, 4> channels = {1, 0, 0, 1};
 
 		// BEGIN Parse first part (kernels)
@@ -50,7 +49,6 @@ bool SRCNNDesc::from_string(QString str, SRCNNDesc* srcnn) {
 		for (unsigned char i = 0; i < 3; i++) {
 			// Parse name.
 			kernels[i] = splitted_ker[i].toUShort();
-			paddings[i] = (kernels[i] - 1) / 2; // Formulas simplified from (w - k + 2p) / s + 1.
 			bad_params |= kernels[i] % 2 != 1;
 		}
 
@@ -71,7 +69,6 @@ bool SRCNNDesc::from_string(QString str, SRCNNDesc* srcnn) {
 		// Return values.
 		if (srcnn != nullptr) {
 			srcnn->kernels = kernels;
-			srcnn->paddings = paddings;
 			srcnn->channels = channels;
 		}
 		return true;
@@ -155,13 +152,8 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* fsrcnn) {
 
 		for (uint8_t i = 0; i < splitted_ker.size(); i++) {
 			kernels[i] = splitted_ker[i].toUShort();
-			if (i == splitted_ker.size() - 1) { // Last element (conv transpos).
-				paddings[i] = (kernels[i] - 3) / 2;
-			}
-			else {
-				paddings[i] = (kernels[i] - 1) / 2; // Formulas simplified from (w - k + 2p) / s + 1.
+			if (i != splitted_ker.size() - 1)// Any, except last element (conv transpose).
 				bad_params |= (kernels[i] % 2) != 1;
-			}
 		}
 
 		if (bad_params)
@@ -183,7 +175,6 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* fsrcnn) {
 		// Return values.
 		if (fsrcnn != nullptr) {
 			fsrcnn->kernels = kernels;
-			fsrcnn->paddings = paddings;
 			fsrcnn->channels = channels;
 		}
 		return true;
