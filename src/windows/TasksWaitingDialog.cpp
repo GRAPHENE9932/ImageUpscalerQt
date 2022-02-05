@@ -11,8 +11,9 @@
 
 #include <QMessageBox>
 #include <QFileDialog>
-#include <QDebug>
+#include <QTime>
 
+#include "../functions/func.hpp"
 #include "TasksWaitingDialog.hpp"
 #include "ui_TasksWaitingDialog.h"
 
@@ -23,6 +24,7 @@ TasksWaitingDialog::TasksWaitingDialog() : m_ui(new Ui::TasksWaitingDialog) {
 	setWindowIcon(QIcon(":icon.png"));
 
 	timer = new QTimer(this);
+	timer->setInterval(250);
 
 	// BEGIN Connect signals
 	connect(m_ui->cancel_button, SIGNAL(clicked()), this, SLOT(cancel_clicked()));
@@ -59,21 +61,6 @@ void TasksWaitingDialog::do_tasks(std::vector<std::shared_ptr<TaskDesc>> tasks,
 	timer->start();
 }
 
-/// Convert 43200000 ms to 12:00:00, for example.
-QString format_ms(long long ms_num) {
-	std::chrono::milliseconds ms(ms_num);
-	auto s = std::chrono::duration_cast<std::chrono::seconds>(ms);
-	ms -= std::chrono::duration_cast<std::chrono::milliseconds>(s);
-	auto m = std::chrono::duration_cast<std::chrono::minutes>(s);
-	s -= std::chrono::duration_cast<std::chrono::seconds>(m);
-	auto h = std::chrono::duration_cast<std::chrono::hours>(m);
-	m -= std::chrono::duration_cast<std::chrono::minutes>(h);
-
-	return QString("%1:%2:%3").arg(QString::number(h.count()).rightJustified(2, '0'),
-								   QString::number(m.count()).rightJustified(2, '0'),
-								   QString::number(s.count()).rightJustified(2, '0'));
-}
-
 void TasksWaitingDialog::progress_check() {
 	// Progressbars.
 	m_ui->current_task_progressbar->setValue(worker->cur_task_progress() * 100.0F);
@@ -83,7 +70,7 @@ void TasksWaitingDialog::progress_check() {
 	m_ui->current_task_label->setText(worker->cur_status());
 
 	// Text for the time label.
-	m_ui->time_label->setText(format_ms(elapsed_timer.elapsed()));
+	m_ui->time_label->setText(func::milliseconds_to_string(elapsed_timer.elapsed()));
 
 	if (tasks_complete) {
 		// When completed.

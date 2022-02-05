@@ -165,3 +165,17 @@ QString func::pixel_amount_to_string(unsigned long long pixels) {
 		return QString::number(pixels / 1'000'000'000'000.0l, 'f', 1) + " TP";
 	}
 }
+
+QString func::milliseconds_to_string(unsigned long long millis) {
+	auto hours = millis / (1000ull * 60ull * 60ull);
+	auto minutes = millis / (1000ull * 60ull) % 60ull;
+	auto seconds = millis / 1000ull % 60ull;
+	millis %= 1000ull;
+
+	return QString("%1:%2:%3.%4").arg(
+		QString::number(hours).rightJustified(2, '0'),
+		QString::number(minutes).rightJustified(2, '0'),
+		QString::number(seconds).rightJustified(2, '0'),
+		QString::number(millis).rightJustified(3, '0')
+	);
+}
