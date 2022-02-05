@@ -38,8 +38,6 @@ private:
 	bool error_received = false;
 	QString error_message;
 
-	bool image_saved = false;
-
 	std::thread* progress_thread;
 	std::thread* tasks_thread;
 

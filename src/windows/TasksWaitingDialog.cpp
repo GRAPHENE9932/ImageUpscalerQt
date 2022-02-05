@@ -77,7 +77,6 @@ void TasksWaitingDialog::progress_check() {
 		m_ui->current_task_progressbar->setValue(100);
 		m_ui->overall_progressbar->setValue(100);
 		m_ui->current_task_label->setText("All tasks completed!");
-		m_ui->save_button->setEnabled(true); // Enable "Save result" button.
 		m_ui->cancel_button->setEnabled(false); // Disable "Cancel" button.
 
 		timer->stop(); // Stop timer.
@@ -110,13 +109,8 @@ void TasksWaitingDialog::reject() {
 		if (QMessageBox::question(this, "Cancel?", "Tasks are not already finished. Do you want to cancel this tasks?",
 			QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes) {
 			cancel_clicked();
+			return;
 		}
 	}
-
-	if (!image_saved && tasks_complete) {
-		if (QMessageBox::question(this, "Save?", "You have not saved the result, close anyway?",
-			QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes) {
-			QDialog::reject();
-		}
-	}
+	QDialog::reject();
 }
