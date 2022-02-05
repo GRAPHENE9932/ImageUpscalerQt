@@ -227,7 +227,7 @@ bool FSRCNNDesc::operator==(const FSRCNNDesc right) {
 QString TaskResizeDesc::to_string() const {
 	return QString("Resize to %1x%2 | %3").arg(QString::number(size.width()),
 											   QString::number(size.height()),
-											   INTERPOLATION_NAMES[(unsigned char)interpolation]);
+											   INTERPOLATION_NAMES[static_cast<unsigned char>(interpolation)]);
 }
 
 QSize TaskResizeDesc::img_size_after(QSize) const {
@@ -238,7 +238,7 @@ QSize TaskResizeDesc::img_size_after(QSize) const {
 QString TaskConvertColorSpaceDesc::to_string() const {
 	return QCoreApplication::translate("ImageUpscalerQt", "Convert from %1").arg(
 		QCoreApplication::translate("ImageUpscalerQt",
-		COLOR_SPACE_CONVERSION_NAMES[(unsigned char)color_space_conversion])
+		COLOR_SPACE_CONVERSION_NAMES[static_cast<unsigned char>(color_space_conversion)])
 	);
 }
 

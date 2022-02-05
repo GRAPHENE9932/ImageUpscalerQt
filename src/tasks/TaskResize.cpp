@@ -25,7 +25,7 @@ OIIO::ImageBuf TaskResize::do_task(OIIO::ImageBuf input) {
 		}
 		default: {
 			output = OIIO::ImageBufAlgo::resize(input,
-				INTERPOLATION_OIIO_NAMES[(unsigned char)desc.interpolation],
+				INTERPOLATION_OIIO_NAMES[static_cast<unsigned char>(desc.interpolation)],
 				0.0F, output_roi);
 		}
 	}

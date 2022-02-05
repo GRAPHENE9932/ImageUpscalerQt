@@ -54,8 +54,9 @@ float Worker::cur_task_progress() const {
 }
 
 float Worker::overall_progress() const {
-	float cur_img_progress = ((float)get_cur_task_index() + cur_task_progress()) / (float)tasks.size();
-	return ((float)get_cur_img_index() + cur_img_progress) / files.size();
+	float cur_img_progress = (static_cast<float>(get_cur_task_index()) + cur_task_progress()) /
+		static_cast<float>(tasks.size());
+	return (static_cast<float>(get_cur_img_index()) + cur_img_progress) / files.size();
 }
 
 QString Worker::cur_status() const {
@@ -84,7 +85,7 @@ QString Worker::cur_status() const {
 			QString::number(cur_task_copy + 1),
 			QString::number(tasks.size()),
 			tasks[cur_task_copy]->get_desc()->to_string(),
-			QString::number((unsigned short)(cur_task_progress() * 100.0F)));
+			QString::number(static_cast<int>(cur_task_progress() * 100.0F)));
 }
 
 int Worker::get_cur_task_index() const {

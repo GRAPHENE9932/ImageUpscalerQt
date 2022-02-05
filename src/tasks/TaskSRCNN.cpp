@@ -18,7 +18,7 @@
 TaskSRCNN::TaskSRCNN(TaskSRCNNDesc desc) : desc(desc) {}
 
 float TaskSRCNN::progress() const {
-	return (float)blocks_processed / blocks_amount;
+	return static_cast<float>(blocks_processed) / blocks_amount;
 }
 
 OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {

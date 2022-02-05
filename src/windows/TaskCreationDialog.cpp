@@ -305,7 +305,7 @@ void TaskCreationDialog::task_changed(int index) {
 void TaskCreationDialog::resize_x_changed(int x) {
 	if (m_ui->resize_keep_ratio_check_box->isChecked() && !size.isNull()) {
 		// Keep ratio.
-		float xy_ratio = (float)size.width() / size.height();
+		float xy_ratio = static_cast<float>(size.width()) / size.height();
 
 		int y_value = x / xy_ratio;
 
@@ -319,7 +319,7 @@ void TaskCreationDialog::resize_x_changed(int x) {
 void TaskCreationDialog::resize_y_changed(int y) {
 	if (m_ui->resize_keep_ratio_check_box->isChecked() && !size.isNull()) {
 		// Keep ratio.
-		float xy_ratio = (float)size.width() / size.height();
+		float xy_ratio = static_cast<float>(size.width()) / size.height();
 
 		int x_value = y * xy_ratio;
 

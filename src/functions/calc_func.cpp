@@ -27,9 +27,9 @@ unsigned long long func::srcnn_operations_amount(SRCNNDesc desc,
 
 	for (unsigned char i = 0; i < 3; i++) {
 		result +=
-			(unsigned long long)size.width() * size.height() * desc.channels[i + 1] *
+			static_cast<unsigned long long>(size.width()) * size.height() * desc.channels[i + 1] *
 			(2ull * desc.channels[i] * desc.kernels[i] * desc.kernels[i] - 1ull) +
-			(unsigned long long)size.width() * size.height() * 1ull;
+			static_cast<unsigned long long>(size.width()) * size.height() * 1ull;
 	}
 
 	return result;
@@ -54,9 +54,9 @@ unsigned long long func::fsrcnn_operations_amount(FSRCNNDesc desc,
 
 	for (unsigned char i = 0; i < nn_size - 1; i++) {
 		result +=
-			widths[i] * heights[i] * desc.channels[i + 1] *
+			static_cast<unsigned long long>(widths[i]) * heights[i] * desc.channels[i + 1] *
 			(2ull * desc.channels[i] * desc.kernels[i] * desc.kernels[i] - 1ull) +
-			(unsigned long long)widths[i + 1] * heights[i + 1] * 1ull;
+			static_cast<unsigned long long>(widths[i + 1]) * heights[i + 1] * 1ull;
 	}
 
 	return result;
@@ -99,8 +99,8 @@ unsigned long long func::predict_cnn_memory_consumption(std::vector<unsigned sho
 	unsigned long long max_point = 0;
 
 	for (unsigned char i = 0; i < channels.size() - 1; i++) {
-		unsigned long long cur_max_point = (long long)sizes[i].width() * sizes[i].height() * channels[i] +
-										   (long long)sizes[i].width() * sizes[i + 1].height() *
+		unsigned long long cur_max_point = static_cast<long long>(sizes[i].width()) * sizes[i].height() * channels[i] +
+										   static_cast<long long>(sizes[i].width()) * sizes[i + 1].height() *
 										   channels[i + 1];
 
 		if (cur_max_point > max_point)
