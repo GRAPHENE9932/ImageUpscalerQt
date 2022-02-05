@@ -11,9 +11,9 @@
 #include <QDir>
 #include <QFile>
 
-#include "TaskFSRCNN.h"
-#include "../nn/FSRCNN.h"
-#include "../functions/func.h"
+#include "TaskFSRCNN.hpp"
+#include "../nn/FSRCNN.hpp"
+#include "../functions/func.hpp"
 
 TaskFSRCNN::TaskFSRCNN(TaskFSRCNNDesc desc) : desc(desc) {}
 

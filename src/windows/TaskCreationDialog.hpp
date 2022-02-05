@@ -9,7 +9,7 @@
 #include <QDialog>
 #include <QScopedPointer>
 
-#include "../tasks/TaskDesc.h"
+#include "../tasks/TaskDesc.hpp"
 
 namespace Ui {
 	class TaskCreationDialog;

@@ -12,8 +12,8 @@
 #include <QElapsedTimer>
 #include <OpenImageIO/imagebuf.h>
 
-#include "../tasks/TaskDesc.h"
-#include "../tasks/Worker.h"
+#include "../tasks/TaskDesc.hpp"
+#include "../tasks/Worker.hpp"
 
 namespace Ui {
 	class TasksWaitingDialog;

@@ -6,7 +6,7 @@
 
 #include <cassert>
 
-#include "FSRCNN.h"
+#include "FSRCNN.hpp"
 
 FSRCNN FSRCNN::create(unsigned short img_w, unsigned short img_h, FSRCNNDesc desc) {
 	// Shortcuts

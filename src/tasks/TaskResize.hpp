@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "Task.h"
-#include "TaskDesc.h"
+#include "Task.hpp"
+#include "TaskDesc.hpp"
 
 class TaskResize : public Task {
 public:

@@ -8,8 +8,8 @@
 
 #include <array>
 
-#include "Task.h"
-#include "TaskDesc.h"
+#include "Task.hpp"
+#include "TaskDesc.hpp"
 
 struct TaskFSRCNN : public Task {
 public:

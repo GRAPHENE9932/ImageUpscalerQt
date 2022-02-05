@@ -9,8 +9,8 @@
 #include <QStringList>
 #include <OpenImageIO/imagebuf.h>
 
-#include "TaskDesc.h"
-#include "Task.h"
+#include "TaskDesc.hpp"
+#include "Task.hpp"
 
 class Worker {
 public:

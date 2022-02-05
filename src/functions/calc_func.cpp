@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#include "func.h"
+#include "func.hpp"
 
 int func::blocks_amount(QSize full_size, QSize block_size) {
 	int blocks_width = full_size.width() / block_size.width();

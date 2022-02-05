@@ -7,10 +7,10 @@
 #include <QDirIterator>
 #include <QPushButton>
 
-#include "TaskCreationDialog.h"
+#include "TaskCreationDialog.hpp"
 #include "ui_TaskCreationDialog.h"
 
-#include "../functions/func.h"
+#include "../functions/func.hpp"
 
 constexpr int DEF_RES = 512;
 constexpr size_t ORANGE_MEM = 1ull * 1024ull * 1024ull * 1024ull; // 1 GiB.

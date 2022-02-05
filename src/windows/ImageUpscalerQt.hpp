@@ -12,7 +12,7 @@
 #include <QScopedPointer>
 #include <QSize>
 
-#include "../tasks/TaskDesc.h"
+#include "../tasks/TaskDesc.hpp"
 
 namespace Ui {
 	class ImageUpscalerQt;

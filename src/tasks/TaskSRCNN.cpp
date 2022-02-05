@@ -11,9 +11,9 @@
 #include <QDir>
 #include <QFile>
 
-#include "TaskSRCNN.h"
-#include "../nn/SRCNN.h"
-#include "../functions/func.h"
+#include "TaskSRCNN.hpp"
+#include "../nn/SRCNN.hpp"
+#include "../functions/func.hpp"
 
 TaskSRCNN::TaskSRCNN(TaskSRCNNDesc desc) : desc(desc) {}
 

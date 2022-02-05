@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#include "windows/ImageUpscalerQt.h"
+#include "windows/ImageUpscalerQt.hpp"
 #include <QApplication>
 
 int main(int argc, char *argv[])

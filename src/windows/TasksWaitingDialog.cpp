@@ -13,7 +13,7 @@
 #include <QFileDialog>
 #include <QDebug>
 
-#include "TasksWaitingDialog.h"
+#include "TasksWaitingDialog.hpp"
 #include "ui_TasksWaitingDialog.h"
 
 TasksWaitingDialog::TasksWaitingDialog() : m_ui(new Ui::TasksWaitingDialog) {

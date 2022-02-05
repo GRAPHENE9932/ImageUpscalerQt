@@ -6,7 +6,7 @@
 
 #include <OpenImageIO/imagebufalgo.h>
 
-#include "TaskConvertColorSpace.h"
+#include "TaskConvertColorSpace.hpp"
 
 TaskConvertColorSpace::TaskConvertColorSpace(TaskConvertColorSpaceDesc desc) : desc(desc) {}
 

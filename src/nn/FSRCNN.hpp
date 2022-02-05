@@ -10,7 +10,7 @@
 
 #include <dnnl.hpp>
 
-#include "../tasks/TaskDesc.h"
+#include "../tasks/TaskDesc.hpp"
 
 class FSRCNN {
 private:

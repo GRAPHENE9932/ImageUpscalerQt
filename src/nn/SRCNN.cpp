@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#include "SRCNN.h"
+#include "SRCNN.hpp"
 
 SRCNN SRCNN::create(unsigned short img_w, unsigned short img_h, SRCNNDesc desc) {
 	// Shortcuts

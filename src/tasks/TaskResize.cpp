@@ -8,7 +8,7 @@
 #include <OpenImageIO/imagebuf.h>
 #include <OpenImageIO/imagebufalgo.h>
 
-#include "TaskResize.h"
+#include "TaskResize.hpp"
 
 TaskResize::TaskResize(TaskResizeDesc desc) : desc(desc) {}
 

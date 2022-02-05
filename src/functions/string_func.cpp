@@ -10,7 +10,7 @@
 #include <QStringList>
 #include <QCollator>
 
-#include "func.h"
+#include "func.hpp"
 
 const QString ENG_ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 

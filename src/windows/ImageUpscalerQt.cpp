@@ -10,11 +10,11 @@
 #include <QMessageBox>
 #include <OpenImageIO/imageio.h>
 
-#include "ImageUpscalerQt.h"
+#include "ImageUpscalerQt.hpp"
 #include "ui_ImageUpscalerQt.h"
-#include "TaskCreationDialog.h"
-#include "TasksWaitingDialog.h"
-#include "../functions/func.h"
+#include "TaskCreationDialog.hpp"
+#include "TasksWaitingDialog.hpp"
+#include "../functions/func.hpp"
 
 constexpr const char* VERSION = "1.2";
 constexpr const char* FILE_FILTER = "All images(*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.ico);;"

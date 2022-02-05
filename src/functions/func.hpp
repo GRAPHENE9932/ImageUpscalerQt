@@ -13,7 +13,7 @@
 #include <QStringList>
 #include <QSize>
 
-#include "../tasks/TaskDesc.h"
+#include "../tasks/TaskDesc.hpp"
 
 namespace func {
 	// BEGIN String functions

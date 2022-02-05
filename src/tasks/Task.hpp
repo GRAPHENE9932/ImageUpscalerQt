@@ -11,7 +11,7 @@
 #include <OpenImageIO/imagebuf.h>
 #include <QString>
 
-#include "TaskDesc.h"
+#include "TaskDesc.hpp"
 
 class Task {
 public:

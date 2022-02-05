@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#include "Worker.h"
-#include "TaskResize.h"
-#include "TaskConvertColorSpace.h"
-#include "TaskSRCNN.h"
-#include "TaskFSRCNN.h"
+#include "Worker.hpp"
+#include "TaskResize.hpp"
+#include "TaskConvertColorSpace.hpp"
+#include "TaskSRCNN.hpp"
+#include "TaskFSRCNN.hpp"
 
 Worker::Worker() {
 

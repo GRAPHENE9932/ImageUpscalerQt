@@ -7,7 +7,7 @@
 #include <QStringList>
 #include <QCoreApplication>
 
-#include "TaskDesc.h"
+#include "TaskDesc.hpp"
 
 // BEGIN SRCNN
 
