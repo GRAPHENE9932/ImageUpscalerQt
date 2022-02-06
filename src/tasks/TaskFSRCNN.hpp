@@ -15,7 +15,7 @@ struct TaskFSRCNN : public Task {
 public:
 	TaskFSRCNNDesc desc;
 
-	TaskFSRCNN(TaskFSRCNNDesc desc);
+	explicit TaskFSRCNN(const TaskFSRCNNDesc& desc);
 
 	float progress() const override;
 
@@ -24,6 +24,6 @@ public:
 	const TaskDesc* get_desc() const override;
 
 private:
-	long long blocks_amount;
-	long long blocks_processed;
+	long long blocks_amount = 0;
+	long long blocks_processed = 0;
 };

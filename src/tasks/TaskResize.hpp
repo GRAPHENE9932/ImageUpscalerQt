@@ -13,7 +13,7 @@ class TaskResize : public Task {
 public:
 	TaskResizeDesc desc;
 
-	TaskResize(TaskResizeDesc desc);
+	explicit TaskResize(TaskResizeDesc desc);
 
 	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;
 

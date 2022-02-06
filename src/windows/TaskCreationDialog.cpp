@@ -96,7 +96,7 @@ void TaskCreationDialog::init_fsrcnn() {
 
 	// Add entries to combo box.
 	m_ui->fsrcnn_architecture_combo_box->clear();
-	for (FSRCNNDesc cur_desc : fsrcnn_list)
+	for (const FSRCNNDesc& cur_desc : fsrcnn_list)
 		m_ui->fsrcnn_architecture_combo_box->addItem(cur_desc.to_string());
 
 	fsrcnn_update();

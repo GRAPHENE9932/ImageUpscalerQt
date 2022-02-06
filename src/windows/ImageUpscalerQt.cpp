@@ -162,7 +162,8 @@ void ImageUpscalerQt::reselect_input_file(int row) {
 		// the generate it automatically from the new path.
 		bool auto_output = files[row].second == auto_output_path(files[row].first);
 
-		files[row].first = dialog.selectedFiles()[0];
+		auto selected_files = dialog.selectedFiles();
+		files[row].first = selected_files.first();
 
 		if (auto_output) {
 			files[row].second = auto_output_path(files[row].first);
@@ -275,7 +276,7 @@ void ImageUpscalerQt::update_task_buttons() {
 
 unsigned long long ImageUpscalerQt::total_pixels() {
 	unsigned long long res = 0;
-	for (auto cur_pair : files) {
+	for (const auto &cur_pair : files) {
 		auto input = OIIO::ImageInput::open(cur_pair.first.toStdString());
 
 		if (!input)

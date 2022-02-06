@@ -36,33 +36,33 @@ public:
 						 std::vector<dnnl::memory::dims> bias_dims, std::vector<dnnl::memory::dims> dest_dims,
 						 std::vector<dnnl::memory::dims> pads_l, std::vector<dnnl::memory::dims> pads_r);
 
-	FSRCNN(dnnl::engine eng, dnnl::stream eng_str, std::vector<dnnl::memory::desc> src_descs,
-		  std::vector<dnnl::memory::desc> ker_descs, std::vector<dnnl::memory::desc> bias_descs,
-		  std::vector<dnnl::memory::desc> dest_descs, std::vector<dnnl::memory::dims> pads_l,
-		  std::vector<dnnl::memory::dims> pads_r, std::vector<dnnl::convolution_forward> convs,
+	FSRCNN(dnnl::engine eng, dnnl::stream eng_str, const std::vector<dnnl::memory::desc>& src_descs,
+		  const std::vector<dnnl::memory::desc>& ker_descs, const std::vector<dnnl::memory::desc>& bias_descs,
+		  const std::vector<dnnl::memory::desc>& dest_descs, const std::vector<dnnl::memory::dims>& pads_l,
+		  const std::vector<dnnl::memory::dims>& pads_r, const std::vector<dnnl::convolution_forward>& convs,
 		  dnnl::deconvolution_forward deconv) :
 
 		  eng(eng), eng_str(eng_str), src_descs(src_descs), ker_descs(ker_descs),
 		  bias_descs(bias_descs), dest_descs(dest_descs), pads_l(pads_l),
 		  pads_r(pads_r), convs(convs), deconv(deconv) {}
 
-	std::vector<dnnl::memory::desc> get_ker_descs() {
+	std::vector<dnnl::memory::desc> get_ker_descs() const {
 		return ker_descs;
 	}
 
-	std::vector<dnnl::memory::desc> get_bias_descs() {
+	std::vector<dnnl::memory::desc> get_bias_descs() const {
 		return bias_descs;
 	}
 
-	dnnl::memory::desc get_input_desc() {
+	dnnl::memory::desc get_input_desc() const {
 		return src_descs[0];
 	}
 
-	dnnl::memory::desc get_output_desc() {
+	dnnl::memory::desc get_output_desc() const {
 		return dest_descs[dest_descs.size() - 1];
 	}
 
-	dnnl::engine get_engine() {
+	dnnl::engine get_engine() const {
 		return eng;
 	}
 

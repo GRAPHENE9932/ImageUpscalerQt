@@ -84,7 +84,7 @@ struct TaskConvertColorSpaceDesc : TaskDesc {
 
 	TaskConvertColorSpaceDesc() = default;
 
-	TaskConvertColorSpaceDesc(ColorSpaceConversion color_space_conversion) :
+	explicit TaskConvertColorSpaceDesc(ColorSpaceConversion color_space_conversion) :
 		color_space_conversion(color_space_conversion) {}
 
 	~TaskConvertColorSpaceDesc() = default;
@@ -114,9 +114,9 @@ struct SRCNNDesc {
 	/// Pass nullptr as pointer for desc to validate if it is valid SRCNN description string.
 	static bool from_string(QString str, SRCNNDesc* desc);
 
-	bool operator< (const SRCNNDesc right);
-	bool operator> (const SRCNNDesc right);
-	bool operator== (const SRCNNDesc right);
+	bool operator< (const SRCNNDesc& right) const;
+	bool operator> (const SRCNNDesc& right) const;
+	bool operator== (const SRCNNDesc& right) const;
 };
 
 struct TaskSRCNNDesc : TaskDesc {
@@ -125,7 +125,7 @@ struct TaskSRCNNDesc : TaskDesc {
 	/// 0 if the input image have not to be splitted.
 	int block_size;
 
-	TaskSRCNNDesc(SRCNNDesc srcnn_desc, unsigned int block_size) :
+	TaskSRCNNDesc(const SRCNNDesc& srcnn_desc, unsigned int block_size) :
 				  srcnn_desc(srcnn_desc), block_size(block_size) {}
 
 	TaskSRCNNDesc(std::array<unsigned short, 3> kernels,
@@ -150,8 +150,8 @@ struct FSRCNNDesc {
 
 	FSRCNNDesc() = default;
 
-	FSRCNNDesc(std::vector<unsigned short> kernels,
-			   std::vector<unsigned short> channels) :
+	FSRCNNDesc(const std::vector<unsigned short>& kernels,
+			   const std::vector<unsigned short>& channels) :
 			   kernels(kernels), channels(channels) {}
 
 	QString to_string() const;
@@ -160,9 +160,9 @@ struct FSRCNNDesc {
 	/// Pass nullptr as pointer for desc to validate if it is valid FSRCNN description string.
 	static bool from_string(QString str, FSRCNNDesc* desc);
 
-	bool operator< (const FSRCNNDesc right);
-	bool operator> (const FSRCNNDesc right);
-	bool operator== (const FSRCNNDesc right);
+	bool operator< (const FSRCNNDesc& right) const;
+	bool operator> (const FSRCNNDesc& right) const;
+	bool operator== (const FSRCNNDesc& right) const;
 };
 
 struct TaskFSRCNNDesc : TaskDesc {
@@ -171,12 +171,12 @@ struct TaskFSRCNNDesc : TaskDesc {
 	/// 0 if the input image have not to be splitted.
 	int block_size;
 
-	TaskFSRCNNDesc(FSRCNNDesc fsrcnn_desc,
+	TaskFSRCNNDesc(const FSRCNNDesc& fsrcnn_desc,
 				   unsigned int block_size) :
 				   fsrcnn_desc(fsrcnn_desc), block_size(block_size) {}
 
-	TaskFSRCNNDesc(std::vector<unsigned short> kernels,
-				   std::vector<unsigned short> channels,
+	TaskFSRCNNDesc(const std::vector<unsigned short>& kernels,
+				   const std::vector<unsigned short>& channels,
 				   unsigned int block_size) :
 				   fsrcnn_desc(kernels, channels), block_size(block_size) {}
 

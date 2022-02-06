@@ -15,7 +15,7 @@
 #include "../nn/SRCNN.hpp"
 #include "../functions/func.hpp"
 
-TaskSRCNN::TaskSRCNN(TaskSRCNNDesc desc) : desc(desc) {}
+TaskSRCNN::TaskSRCNN(const TaskSRCNNDesc& desc) : desc(desc) {}
 
 float TaskSRCNN::progress() const {
 	return static_cast<float>(blocks_processed) / blocks_amount;

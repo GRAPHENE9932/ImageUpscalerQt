@@ -13,7 +13,7 @@ class TaskConvertColorSpace : public Task {
 public:
 	TaskConvertColorSpaceDesc desc;
 
-	TaskConvertColorSpace(TaskConvertColorSpaceDesc desc);
+	explicit TaskConvertColorSpace(TaskConvertColorSpaceDesc desc);
 
 	float progress() const override;
 
@@ -22,5 +22,5 @@ public:
 	const TaskDesc* get_desc() const override;
 
 private:
-	float progress_val;
+	float progress_val = 0.0f;
 };

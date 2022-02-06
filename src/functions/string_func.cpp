@@ -12,8 +12,6 @@
 
 #include "func.hpp"
 
-const QString ENG_ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 std::vector<int> func::duplicate_indexes(const QStringList& list) {
 	std::vector<int> indexes;
 	auto list_size = list.size();
@@ -63,12 +61,11 @@ QString func::shorten_file_path(const QString path) {
 	// C:/Users/image.png -> C:/Users/image.png
 
 	int folder_depth = path.count('/');
-
+	QString folder_lvl_2 = path.section('/', -3, -3);
 	if (folder_depth > 1) {
-		QString folder_lvl_2 = path.section('/', -3, -3);
-
 		// For Windows, check if the second folder is 'X:', where X - uppercase english letter.
 #ifdef Q_OS_WIN
+		const QString ENG_ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		if (folder_lvl_2.size() == 2 &&
 			ENG_ABC.contains(folder_lvl_2[0]) &&
 			folder_lvl_2[1] == ':')

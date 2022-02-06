@@ -28,7 +28,7 @@ QSize TaskSRCNNDesc::img_size_after(QSize cur_size) const {
 	return cur_size;
 }
 
-bool SRCNNDesc::from_string(QString str, SRCNNDesc* srcnn) {
+bool SRCNNDesc::from_string(QString str, SRCNNDesc* desc) {
 	try {
 		QStringList parts = str.split(' ');
 
@@ -67,9 +67,9 @@ bool SRCNNDesc::from_string(QString str, SRCNNDesc* srcnn) {
 		// END
 
 		// Return values.
-		if (srcnn != nullptr) {
-			srcnn->kernels = kernels;
-			srcnn->channels = channels;
+		if (desc != nullptr) {
+			std::copy(desc->kernels.begin(), desc->kernels.end(), kernels.begin());
+			std::copy(desc->channels.begin(), desc->channels.end(), channels.begin());
 		}
 		return true;
 	}
@@ -78,7 +78,7 @@ bool SRCNNDesc::from_string(QString str, SRCNNDesc* srcnn) {
 	}
 }
 
-bool SRCNNDesc::operator<(const SRCNNDesc right) {
+bool SRCNNDesc::operator<(const SRCNNDesc& right) const {
 	for (unsigned char i = 0; i < 3; i++)
 		if (kernels[i] < right.kernels[i])
 			return true;
@@ -94,11 +94,11 @@ bool SRCNNDesc::operator<(const SRCNNDesc right) {
 	return false;
 }
 
-bool SRCNNDesc::operator>(const SRCNNDesc right) {
+bool SRCNNDesc::operator>(const SRCNNDesc& right) const {
 	return !(*this < right || *this == right);
 }
 
-bool SRCNNDesc::operator==(const SRCNNDesc right) {
+bool SRCNNDesc::operator==(const SRCNNDesc& right) const {
 	return kernels == right.kernels && channels == right.channels;
 }
 
@@ -134,7 +134,7 @@ QSize TaskFSRCNNDesc::img_size_after(QSize cur_size) const {
 	return cur_size * 3;
 }
 
-bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* fsrcnn) {
+bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* desc) {
 	try {
 		QStringList parts = str.split(' ');
 
@@ -173,9 +173,9 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* fsrcnn) {
 		// END
 
 		// Return values.
-		if (fsrcnn != nullptr) {
-			fsrcnn->kernels = kernels;
-			fsrcnn->channels = channels;
+		if (desc != nullptr) {
+			desc->kernels = kernels;
+			desc->channels = channels;
 		}
 		return true;
 	}
@@ -184,7 +184,7 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* fsrcnn) {
 	}
 }
 
-bool FSRCNNDesc::operator<(const FSRCNNDesc right) {
+bool FSRCNNDesc::operator<(const FSRCNNDesc& right) const {
 	if (kernels.size() < right.kernels.size() || channels.size() < right.channels.size())
 		return true;
 
@@ -205,11 +205,11 @@ bool FSRCNNDesc::operator<(const FSRCNNDesc right) {
 	return false;
 }
 
-bool FSRCNNDesc::operator>(const FSRCNNDesc right) {
+bool FSRCNNDesc::operator>(const FSRCNNDesc& right) const {
 	return !(*this < right || *this == right);
 }
 
-bool FSRCNNDesc::operator==(const FSRCNNDesc right) {
+bool FSRCNNDesc::operator==(const FSRCNNDesc& right) const {
 	return kernels == right.kernels && channels == right.channels;
 }
 

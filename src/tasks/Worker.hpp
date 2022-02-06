@@ -16,10 +16,12 @@ class Worker {
 public:
 	Worker();
 	/// Not only construct, but also init().
-	Worker(std::vector<std::shared_ptr<TaskDesc>> tasks, std::vector<std::pair<QString, QString>> files);
+	Worker(const std::vector<std::shared_ptr<TaskDesc>>& tasks,
+		   const std::vector<std::pair<QString, QString>>& files);
 
 	/// Needed if the worker was constructed with default constructor.
-	void init(std::vector<std::shared_ptr<TaskDesc>> tasks, std::vector<std::pair<QString, QString>> files);
+	void init(std::vector<std::shared_ptr<TaskDesc>> task_descs,
+			  std::vector<std::pair<QString, QString>> files);
 	QString cur_status() const;
 	int get_cur_task_index() const;
 	int get_cur_img_index() const;

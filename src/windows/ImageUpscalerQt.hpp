@@ -46,7 +46,7 @@ private:
 	void reselect_input_file(int row);
 	/// Reselect a single output file in the table.
 	void reselect_output_file(int row);
-	void update_previews(int first, int end);
+	void update_previews(int start, int end);
 	/// Swap files in the list and in the GUI.
 	void swap_files(int index_1, int index_2);
 	/// Update every file list manipulation button.

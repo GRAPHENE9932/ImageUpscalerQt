@@ -23,7 +23,7 @@ public:
 	QSize size;
 
     explicit TaskCreationDialog();
-    TaskCreationDialog(QSize size);
+    explicit TaskCreationDialog(QSize size);
 	~TaskCreationDialog() override;
 
 	std::shared_ptr<TaskDesc> get_task_desc();

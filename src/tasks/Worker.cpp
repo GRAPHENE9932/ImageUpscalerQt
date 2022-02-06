@@ -14,17 +14,17 @@ Worker::Worker() {
 
 }
 
-Worker::Worker(std::vector<std::shared_ptr<TaskDesc>> tasks,
-			   std::vector<std::pair<QString, QString>> files) {
+Worker::Worker(const std::vector<std::shared_ptr<TaskDesc>>& tasks,
+			   const std::vector<std::pair<QString, QString>>& files) {
 	init(tasks, files);
 }
 
-void Worker::init(std::vector<std::shared_ptr<TaskDesc>> tasks_descs,
+void Worker::init(std::vector<std::shared_ptr<TaskDesc>> task_descs,
 				  std::vector<std::pair<QString, QString>> files) {
 	// Construct tasks from theirs descriptions.
-	tasks.resize(tasks_descs.size());
-	for (int i = 0; i < tasks_descs.size(); i++) {
-		const auto ptr = tasks_descs[i];
+	tasks.resize(task_descs.size());
+	for (int i = 0; i < task_descs.size(); i++) {
+		const auto ptr = task_descs[i];
 
 		switch (ptr->task_kind()) {
 		case TaskKind::resize: {
@@ -134,11 +134,11 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 		return;
 	}
 #ifdef NDEBUG
-	catch (std::runtime_error e) {
+	catch (const std::runtime_error& e) {
 		error(e.what());
 		return;
 	}
-	catch (std::exception e) {
+	catch (const std::exception& e) {
 		error(e.what());
 		return;
 	}
