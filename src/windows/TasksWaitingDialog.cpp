@@ -63,8 +63,8 @@ void TasksWaitingDialog::do_tasks(std::vector<std::shared_ptr<TaskDesc>> tasks,
 
 void TasksWaitingDialog::progress_check() {
 	// Progressbars.
-	m_ui->current_task_progressbar->setValue(worker->cur_task_progress() * 100.0F);
-	m_ui->overall_progressbar->setValue(worker->overall_progress() * 100.0F);
+	m_ui->current_task_progressbar->setValue(worker->cur_task_progress() * 100.0f);
+	m_ui->overall_progressbar->setValue(worker->overall_progress() * 100.0f);
 
 	// Text for current task label.
 	m_ui->current_task_label->setText(worker->cur_status());

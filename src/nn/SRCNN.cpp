@@ -70,7 +70,7 @@ SRCNN SRCNN::create(std::array<dnnl::memory::dims, 3> src_dims,
 
 			//Initialize convolutions
 			dnnl::post_ops post_ops;
-			post_ops.append_eltwise(1.0F, dnnl::algorithm::eltwise_relu, 0.15F, 0.0F);
+			post_ops.append_eltwise(1.0f, dnnl::algorithm::eltwise_relu, 0.15f, 0.0f);
 			dnnl::primitive_attr attr;
 			attr.set_post_ops(post_ops);
 

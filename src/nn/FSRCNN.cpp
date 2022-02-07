@@ -84,7 +84,7 @@ FSRCNN FSRCNN::create(std::vector<dnnl::memory::dims> src_dims,
 
 			// Initialize convolutions.
 			dnnl::post_ops post_ops;
-			post_ops.append_eltwise(1.0F, dnnl::algorithm::eltwise_relu, 0.01F, 0.0F);
+			post_ops.append_eltwise(1.0f, dnnl::algorithm::eltwise_relu, 0.01f, 0.0f);
 			dnnl::primitive_attr attr;
 			attr.set_post_ops(post_ops);
 

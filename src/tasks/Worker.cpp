@@ -85,7 +85,7 @@ QString Worker::cur_status() const {
 			QString::number(cur_task_copy + 1),
 			QString::number(tasks.size()),
 			tasks[cur_task_copy]->get_desc()->to_string(),
-			QString::number(static_cast<int>(cur_task_progress() * 100.0F)));
+			QString::number(static_cast<int>(cur_task_progress() * 100.0f)));
 }
 
 int Worker::get_cur_task_index() const {

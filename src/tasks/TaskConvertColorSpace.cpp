@@ -15,26 +15,26 @@ float TaskConvertColorSpace::progress() const {
 }
 
 // BEGIN Coefficients
-const float ycbcr_offset[3] {0, 0.5F, 0.5F};
+const float ycbcr_offset[3] {0, 0.5f, 0.5f};
 const float ycbcr_offset_neg[3] {-ycbcr_offset[0], -ycbcr_offset[1], -ycbcr_offset[2]};
 const float rgb_to_ycbcr_coef[3][3] {
-	{0.299F, 0.587F, 0.114F},
-	{-0.168736F, -0.331264F, 0.5F},
-	{0.5F, -0.418688F, -0.081312F}
+	{0.299f, 0.587f, 0.114f},
+	{-0.168736f, -0.331264f, 0.5f},
+	{0.5f, -0.418688f, -0.081312f}
 };
 
 const float ycbcr_to_rgb_coef[3][3] {
-	{1.0F, 0, 1.402F},
-	{1.0F, -0.344136F, -0.714136F},
-	{1.0F, 1.772F, 0}
+	{1.0f, 0, 1.402f},
+	{1.0f, -0.344136f, -0.714136f},
+	{1.0f, 1.772f, 0}
 };
 
-const float ycocg_offset[3] {0, 0.5F, 0.5F};
+const float ycocg_offset[3] {0, 0.5f, 0.5f};
 const float ycocg_offset_neg[3] {-ycocg_offset[0], -ycocg_offset[1], -ycocg_offset[2]};
 const float rgb_to_ycocg_coef[3][3] {
-	{0.25F, 0.5F, 0.25F},
-	{0.5F, 0, -0.5F},
-	{-0.25F, 0.5F, -0.25F}
+	{0.25f, 0.5f, 0.25f},
+	{0.5f, 0, -0.5f},
+	{-0.25f, 0.5f, -0.25f}
 };
 
 const float ycocg_to_rgb_coef[3][3] {
@@ -266,7 +266,7 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input, std::functio
 		input.get_pixels(roi, OIIO::TypeDesc::FLOAT, inputs[i].get());
 	}
 
-	progress_val = 0.1F;
+	progress_val = 0.1f;
 
 	// Output will be also splitted.
 	// Init outputs as float arrays.
@@ -301,7 +301,7 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input, std::functio
 		if (offset_after_p != nullptr)
 			add_to_existing(outputs[c_out].get(), (*offset_after_p)[c_out], channel_size); // Offset after.
 
-		progress_val = 0.1F + 0.9F / (3 - c_out);
+		progress_val = 0.1f + 0.9f / (3 - c_out);
 	}
 
 	// Merge single-channel outputs to triple-channel one.
@@ -312,7 +312,7 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input, std::functio
 		output.set_pixels(cur_roi, OIIO::TypeDesc::FLOAT, outputs[i].get());
 	}
 	// Other channels - without changes.
-	progress_val = 1.0F;
+	progress_val = 1.0f;
 
 	return output;
 }
