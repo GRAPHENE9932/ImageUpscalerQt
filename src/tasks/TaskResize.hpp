@@ -15,7 +15,7 @@ public:
 
 	explicit TaskResize(TaskResizeDesc desc);
 
-	OIIO::ImageBuf do_task(OIIO::ImageBuf input) override;
+	OIIO::ImageBuf do_task(OIIO::ImageBuf input, std::function<void()> canceled) override;
 
 	const TaskDesc* get_desc() const override;
 };

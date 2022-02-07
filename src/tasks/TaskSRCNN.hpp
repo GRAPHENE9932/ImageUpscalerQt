@@ -19,7 +19,7 @@ public:
 
 	float progress() const override;
 
-	OIIO::ImageBuf do_task(const OIIO::ImageBuf input) override;
+	OIIO::ImageBuf do_task(const OIIO::ImageBuf input, std::function<void()> cancelled) override;
 
 	const TaskDesc* get_desc() const override;
 

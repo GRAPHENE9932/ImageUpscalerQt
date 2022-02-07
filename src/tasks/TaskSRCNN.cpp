@@ -21,7 +21,7 @@ float TaskSRCNN::progress() const {
 	return static_cast<float>(blocks_processed) / blocks_amount;
 }
 
-OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
+OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> canceled) {
 	// Get spec.
 	auto spec = input.spec();
 	// Whole image size if we have not to split image into blocks.
@@ -96,8 +96,10 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input) {
 				blocks_processed++;
 
 				// Cancel if requested.
-				if (cancel_requested)
-					throw "canc";
+				if (cancel_requested) {
+					canceled();
+					return input;
+				}
 			}
 		}
 	}

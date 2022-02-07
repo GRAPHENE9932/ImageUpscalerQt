@@ -12,7 +12,7 @@
 
 TaskResize::TaskResize(TaskResizeDesc desc) : desc(desc) {}
 
-OIIO::ImageBuf TaskResize::do_task(OIIO::ImageBuf input) {
+OIIO::ImageBuf TaskResize::do_task(OIIO::ImageBuf input, std::function<void()> canceled) {
 	// Create ROI.
 	OIIO::ROI output_roi = OIIO::ROI(0, desc.size.width(), 0, desc.size.height(), 0, 1, 0, input.nchannels());
 

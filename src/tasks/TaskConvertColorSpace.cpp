@@ -225,7 +225,7 @@ std::unique_ptr<float[]> multiply(const float* o1, const float o2, const size_t 
 
 //END Algebra
 
-OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
+OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input, std::function<void()> canceled) {
 	if (input.nchannels() < 3)
 		throw std::runtime_error(
 			QString("Only 3 or more channel images are allowed to conversion. Provided %1").arg(QString::number(input.nchannels())).toStdString());
@@ -292,8 +292,10 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input) {
 							channel_size);
 
 			// Cancel if requested.
-			if (cancel_requested)
-				throw "canc";
+			if (cancel_requested) {
+				canceled();
+				return input;
+			}
 		}
 
 		if (offset_after_p != nullptr)

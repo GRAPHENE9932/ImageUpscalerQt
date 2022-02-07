@@ -18,6 +18,6 @@ public:
 	bool cancel_requested = false;
 
 	virtual float progress() const { return 0; };
-	virtual OIIO::ImageBuf do_task(const OIIO::ImageBuf input) = 0;
+	virtual OIIO::ImageBuf do_task(const OIIO::ImageBuf input, std::function<void()> cancelled) = 0;
 	virtual const TaskDesc* get_desc() const = 0;
 };

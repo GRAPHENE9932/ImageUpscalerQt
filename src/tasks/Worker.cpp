@@ -106,14 +106,16 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 	for (int i = 0; i < tasks.size(); i++)
 		tasks[i]->cancel_requested = false;
 
+#ifdef NDEBUG
 	try {
+#endif
 		for (cur_img = 0; cur_img < files.size(); cur_img++) {
 			// Read image.
 			auto cur_img_buf = OIIO::ImageBuf(files[cur_img].first.toStdString());
 
 			for (cur_task = 0; cur_task < tasks.size(); cur_task++) {
 				auto temp_img_buf = cur_img_buf;
-				cur_img_buf = tasks[cur_task]->do_task(temp_img_buf);
+				cur_img_buf = tasks[cur_task]->do_task(temp_img_buf, canceled);
 
 				if (cancel_requested) {
 					canceled();
@@ -124,16 +126,8 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 			// TODO: handle errors.
 			cur_img_buf.write(files[cur_img].second.toStdString());
 		}
-	}
-	catch (const char* str) {
-		// TODO: better cancelation handling.
-		if (strcmp(str, "canc") == 0)
-			canceled();
-		else
-			error(str);
-		return;
-	}
 #ifdef NDEBUG
+	}
 	catch (const std::runtime_error& e) {
 		error(e.what());
 		return;
