@@ -68,8 +68,8 @@ bool SRCNNDesc::from_string(QString str, SRCNNDesc* desc) {
 
 		// Return values.
 		if (desc != nullptr) {
-			std::copy(desc->kernels.begin(), desc->kernels.end(), kernels.begin());
-			std::copy(desc->channels.begin(), desc->channels.end(), channels.begin());
+			desc->kernels = kernels;
+			desc->channels = channels;
 		}
 		return true;
 	}
