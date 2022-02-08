@@ -365,7 +365,9 @@ void TaskCreationDialog::ccs_combo_box_changed(int) {
 	ccs_update();
 }
 
-void TaskCreationDialog::srcnn_architecture_changed(int) {
+void TaskCreationDialog::srcnn_architecture_changed(int index) {
+	if (index == -1)
+		return;
 	srcnn_update();
 }
 
@@ -377,7 +379,9 @@ void TaskCreationDialog::srcnn_block_size_changed(int) {
 	srcnn_update();
 }
 
-void TaskCreationDialog::fsrcnn_architecture_changed(int) {
+void TaskCreationDialog::fsrcnn_architecture_changed(int index) {
+	if (index == -1)
+		return;
 	fsrcnn_update();
 }
 
