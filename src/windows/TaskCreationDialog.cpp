@@ -171,19 +171,30 @@ void TaskCreationDialog::srcnn_update() {
 	m_ui->main_button_box->button(QDialogButtonBox::Ok)->setEnabled(valid_srcnn());
 	m_ui->srcnn_block_size_spin_box->setEnabled(m_ui->srcnn_split_check_box->isChecked());
 
-
 	// Construct the memory consumption string.
-	unsigned long long mem = func::predict_cnn_memory_consumption(
-		srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()], srcnn_block_size()
-	);
-	QString mem_str = mem_consumption_to_string(mem);
+	QString mem_str;
+	if (size.isNull()) {
+		mem_str = tr("unknown");
+	}
+	else {
+		unsigned long long mem = func::predict_cnn_memory_consumption(
+			srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()], srcnn_block_size()
+		);
+		mem_str = mem_consumption_to_string(mem);
+	}
 
 	// Construct the operations amount string.
-	unsigned long long opers = func::srcnn_operations_amount(
-		srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()], srcnn_block_size()
-	);
-	opers *= func::blocks_amount(size, srcnn_block_size());
-	QString opers_str = func::big_number_to_string(opers);
+	QString opers_str;
+	if (size.isNull()) {
+		opers_str = tr("unknown");
+	}
+	else {
+		unsigned long long opers = func::srcnn_operations_amount(
+			srcnn_list[m_ui->srcnn_architecture_combo_box->currentIndex()], srcnn_block_size()
+		);
+		opers *= func::blocks_amount(size, srcnn_block_size());
+		opers_str = func::big_number_to_string(opers);
+	}
 
 	QString result_str = QString("<p>Total operations: %1</p>"
 								 "<p>Approximate memory consumption: %2</p>").arg(
@@ -203,19 +214,30 @@ void TaskCreationDialog::fsrcnn_update() {
 	m_ui->main_button_box->button(QDialogButtonBox::Ok)->setEnabled(valid_fsrcnn());
 	m_ui->fsrcnn_block_size_spin_box->setEnabled(m_ui->fsrcnn_split_check_box->isChecked());
 
+	QString mem_str;
+	if (size.isNull()) {
+		mem_str = tr("unknown");
+	}
+	else {
+		// Construct the memory consumption string.
+		unsigned long long mem = func::predict_cnn_memory_consumption(
+			fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], fsrcnn_block_size()
+		);
+		mem_str = mem_consumption_to_string(mem);
+	}
 
-	// Construct the memory consumption string.
-	unsigned long long mem = func::predict_cnn_memory_consumption(
-		fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], fsrcnn_block_size()
-	);
-	QString mem_str = mem_consumption_to_string(mem);
-
-	// Construct the operations amount string.
-	unsigned long long opers = func::fsrcnn_operations_amount(
-		fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], fsrcnn_block_size()
-	);
-	opers *= func::blocks_amount(size, fsrcnn_block_size());
-	QString opers_str = func::big_number_to_string(opers);
+	QString opers_str;
+	if (size.isNull()) {
+		opers_str = tr("unknown");
+	}
+	else {
+		// Construct the operations amount string.
+		unsigned long long opers = func::fsrcnn_operations_amount(
+			fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], fsrcnn_block_size()
+		);
+		opers *= func::blocks_amount(size, fsrcnn_block_size());
+		opers_str = func::big_number_to_string(opers);
+	}
 
 	QString result_str = QString("<p>Total operations: %1</p>"
 								 "<p>Approximate memory consumption: %2</p>").arg(
