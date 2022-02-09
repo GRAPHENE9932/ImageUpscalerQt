@@ -1,6 +1,6 @@
 /*
  * ImageUpscalerQt - Super Resolution Convolutional Neural Network header
- * SPDX-FileCopyrightText: 2021 Artem Kliminskyi, artemklim50@gmail.com
+ * SPDX-FileCopyrightText: 2021-2022 Artem Kliminskyi, artemklim50@gmail.com
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
@@ -28,25 +28,18 @@ private:
 	// Convolution layer primitives descriptions.
 	std::array<dnnl::convolution_forward, 3> convs;
 
+	void init_src_descs(const std::array<unsigned short, 4>& chn,
+						const unsigned short img_w, const unsigned short img_h);
+	void init_ker_descs(const std::array<unsigned short, 4>& chn,
+						const std::array<unsigned short, 3>& ker);
+	void init_bias_descs(const std::array<unsigned short, 4>& chn);
+	void init_dest_descs(const std::array<unsigned short, 4>& chn,
+						 const unsigned short img_w, const unsigned short img_h);
+	void init_pads(const std::array<unsigned short, 3>& ker);
+	void init_conv();
+
 public:
-	static SRCNN create(unsigned short img_w, unsigned short img_h, SRCNNDesc desc);
-
-	static SRCNN create(std::array<dnnl::memory::dims, 3> src_dims,
-						std::array<dnnl::memory::dims, 3> ker_dims,
-						std::array<dnnl::memory::dims, 3> bias_dims,
-						std::array<dnnl::memory::dims, 3> dest_dims,
-						std::array<dnnl::memory::dims, 3> pads_l,
-						std::array<dnnl::memory::dims, 3> pads_r);
-
-	SRCNN(dnnl::engine eng, dnnl::stream eng_str, std::array<dnnl::memory::desc, 3> src_descs,
-		  std::array<dnnl::memory::desc, 3> ker_descs, std::array<dnnl::memory::desc, 3> bias_descs,
-		  std::array<dnnl::memory::desc, 3> dest_descs, std::array<dnnl::memory::dims, 3> pads_l,
-		  std::array<dnnl::memory::dims, 3> pads_r,
-		  std::array<dnnl::convolution_forward, 3> convs) :
-
-		  eng(eng), eng_str(eng_str), src_descs(src_descs), ker_descs(ker_descs),
-		  bias_descs(bias_descs), dest_descs(dest_descs), pads_l(pads_l),
-		  pads_r(pads_r), convs(convs) {}
+	SRCNN(const unsigned short img_w, const unsigned short img_h, const SRCNNDesc& desc);
 
 	std::array<dnnl::memory::desc, 3> get_ker_descs() const {
 		return ker_descs;

@@ -36,7 +36,7 @@ OIIO::ImageBuf TaskSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> ca
 	blocks_processed = 0;
 
 	// Initialize the neural network.
-	SRCNN nn = SRCNN::create(block_width, block_height, desc.srcnn_desc);
+	SRCNN nn = SRCNN(block_width, block_height, desc.srcnn_desc);
 	const std::array<dnnl::memory::desc, 3> ker_descs = nn.get_ker_descs();
 	const std::array<dnnl::memory::desc, 3> bias_descs = nn.get_bias_descs();
 	const dnnl::memory::desc input_desc = nn.get_input_desc();

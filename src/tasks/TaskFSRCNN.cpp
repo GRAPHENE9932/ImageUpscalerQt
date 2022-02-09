@@ -37,7 +37,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> c
 	blocks_processed = 0;
 
 	// Initialize the neural network.
-	FSRCNN nn = FSRCNN::create(block_width, block_height, desc.fsrcnn_desc);
+	FSRCNN nn = FSRCNN(block_width, block_height, desc.fsrcnn_desc);
 	const std::vector<dnnl::memory::desc> ker_descs = nn.get_ker_descs();
 	const std::vector<dnnl::memory::desc> bias_descs = nn.get_bias_descs();
 	const dnnl::memory::desc input_desc = nn.get_input_desc();
