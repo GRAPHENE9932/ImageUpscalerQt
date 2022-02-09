@@ -371,7 +371,7 @@ void TaskCreationDialog::srcnn_architecture_changed(int index) {
 	srcnn_update();
 }
 
-void TaskCreationDialog::srcnn_split_changed(bool checked) {
+void TaskCreationDialog::srcnn_split_changed(bool) {
 	srcnn_update();
 }
 
@@ -385,7 +385,7 @@ void TaskCreationDialog::fsrcnn_architecture_changed(int index) {
 	fsrcnn_update();
 }
 
-void TaskCreationDialog::fsrcnn_split_changed(bool checked) {
+void TaskCreationDialog::fsrcnn_split_changed(bool) {
 	fsrcnn_update();
 }
 
