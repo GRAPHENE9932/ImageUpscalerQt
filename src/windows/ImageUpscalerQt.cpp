@@ -16,7 +16,7 @@
 #include "TasksWaitingDialog.hpp"
 #include "../functions/func.hpp"
 
-constexpr const char* VERSION = "1.2";
+constexpr const char* VERSION = "2.0";
 constexpr const char* FILE_FILTER = "All images(*.png *.jpg *.jpeg *.bmp *.tif *.tiff *.ico);;"
 									"PNG image(*.png);;JPEG image(*.jpg *.jpeg);;"
 									"JPEG2000 image(*.jp2 *.jpg2);;"
