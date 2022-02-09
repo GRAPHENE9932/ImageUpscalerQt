@@ -22,12 +22,6 @@ namespace func {
 	/// @returns Indexes of duplicates.
 	std::vector<int> duplicate_indexes(const QStringList& list);
 
-	QStringList shorten_file_paths(const QStringList& list);
-
-	/// Shorten path and leave only one level of the path (exception is X:),
-	/// where X is uppercase letter of English alphabet.
-	QString shorten_file_path(const QString path);
-
 	void numerical_sort(QStringList& list);
 
 	/// Example

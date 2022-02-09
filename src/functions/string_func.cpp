@@ -32,62 +32,6 @@ std::vector<int> func::duplicate_indexes(const QStringList& list) {
 	return indexes;
 }
 
-QStringList func::shorten_file_paths(const QStringList& list) {
-	auto list_size = list.size();
-	// Leave only file name.
-	// For the files that have the same names, we will show the folder name they contained in.
-	// So we have to find duplicate file names.
-	QStringList file_names;
-	for (int i = 0; i < list_size; i++)
-		file_names += list[i].section('/', -1); // Leave only file name.
-
-	std::vector<int> dups = func::duplicate_indexes(file_names);
-
-	// Use duplicates data now.
-	for (int i = 0; i < dups.size(); i++) {
-		file_names[dups[i]] = shorten_file_path(list[dups[i]]);
-	}
-
-	// Return result.
-	return file_names;
-}
-
-QString func::shorten_file_path(const QString path) {
-	// Some examples of the shortened duplicates:
-	// /home/user/image.png -> .../user/image.png
-	// /home/image.png -> /home/image.png
-	// /image.png -> /image.png
-	// C:/image.png -> C:/image.png
-	// C:/Users/image.png -> C:/Users/image.png
-
-	int folder_depth = path.count('/');
-	QString folder_lvl_2 = path.section('/', -3, -3);
-	if (folder_depth > 1) {
-		// For Windows, check if the second folder is 'X:', where X - uppercase english letter.
-#ifdef Q_OS_WIN
-		const QString ENG_ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		if (folder_lvl_2.size() == 2 &&
-			ENG_ABC.contains(folder_lvl_2[0]) &&
-			folder_lvl_2[1] == ':')
-			return path.section('/', -3);
-#endif
-		// For UNIX, check if the second folder is root.
-#ifdef Q_OS_UNIX
-		if (folder_lvl_2 == "")
-			return path.section('/', -3);
-#endif
-		// If level 2 folder is not root (or drive letter), just do ".../foo/bar.file".
-		return ".../" + path.section('/', -2);
-	}
-	else if (folder_depth == 1) {
-		return path.section('/', -2);
-	}
-	else {
-		// folder_depth == 0 is impossible, but return the whole name (just in case).
-		return path;
-	}
-}
-
 void func::numerical_sort(QStringList& list) {
 	QCollator collator;
 	collator.setNumericMode(true);
