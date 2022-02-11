@@ -8,6 +8,18 @@ if (MSVC)
     set(CMAKE_CXX_FLAGS "/permissive-") # Disable the weird errors.
 endif()
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    # vcpkg integration.
+    add_custom_target(run
+        COMMAND ${PROJECT_NAME}
+        DEPENDS ${PROJECT_NAME}
+        WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+    )
+    # Copy DLLs in the output directory.
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+endif()
+
 # Find includes in corresponding build directories.
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
@@ -21,17 +33,15 @@ find_package(Qt5Widgets CONFIG REQUIRED) # Find the QtWidgets library.
 # Add Qt resources
 qt5_add_resources(imageupscalerqt_SRC res/resources.qrc)
 
-# Add executable (also for windows WIN32).
-if(CMAKE_COMPILER_IS_GNUCXX)
-	add_executable(imageupscalerqt ${imageupscalerqt_SRC})
-elseif(MSVC)
-	add_executable(imageupscalerqt WIN32 ${imageupscalerqt_SRC})
+# Add executable (also for Windows).
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    add_executable(imageupscalerqt WIN32 ${imageupscalerqt_SRC})
 else()
-	message(SEND_ERROR "Unknown compiler")
+    add_executable(imageupscalerqt ${imageupscalerqt_SRC})
 endif()
 
 # OpenImageIO.
-if (WIN32)
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     find_package(OpenImageIO CONFIG REQUIRED)
     target_link_libraries(imageupscalerqt OpenImageIO::OpenImageIO)
 else()
@@ -43,7 +53,9 @@ find_package(dnnl REQUIRED)
 target_link_libraries(imageupscalerqt DNNL::dnnl)
 
 # pthread.
-target_link_libraries(imageupscalerqt pthread)
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_link_libraries(imageupscalerqt pthread)
+endif()
 
 # Qt.
 target_link_libraries(imageupscalerqt Qt5::Widgets) # Use the Widgets module from Qt 5.
