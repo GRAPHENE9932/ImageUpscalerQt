@@ -69,7 +69,8 @@
           </property>
           <property name="icon">
            <iconset theme="list-add">
-            <normaloff>.</normaloff>.</iconset>
+            <normalon>:/icons/list-add.svg</normalon>
+           </iconset>
           </property>
          </widget>
         </item>
@@ -83,7 +84,8 @@
           </property>
           <property name="icon">
            <iconset theme="arrow-up">
-            <normaloff>.</normaloff>.</iconset>
+            <normalon>:/icons/arrow-up.svg</normalon>
+           </iconset>
           </property>
          </widget>
         </item>
@@ -97,7 +99,8 @@
           </property>
           <property name="icon">
            <iconset theme="arrow-down">
-            <normaloff>.</normaloff>.</iconset>
+            <normalon>:/icons/arrow-down.svg</normalon>
+           </iconset>
           </property>
          </widget>
         </item>
@@ -110,8 +113,9 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset theme="remove">
-            <normaloff>.</normaloff>.</iconset>
+           <iconset theme="list-remove">
+            <normalon>:/icons/list-remove.svg</normalon>
+           </iconset>
           </property>
          </widget>
         </item>
@@ -125,7 +129,8 @@
           </property>
           <property name="icon">
            <iconset theme="delete">
-            <normaloff>.</normaloff>.</iconset>
+            <normalon>:/icons/delete.svg</normalon>
+           </iconset>
           </property>
          </widget>
         </item>
@@ -156,7 +161,8 @@
             </property>
             <property name="icon">
              <iconset theme="list-add">
-              <normaloff>.</normaloff>.</iconset>
+              <normalon>:/icons/list-add.svg</normalon>
+             </iconset>
             </property>
            </widget>
           </item>
@@ -170,7 +176,8 @@
             </property>
             <property name="icon">
              <iconset theme="arrow-up">
-              <normaloff>.</normaloff>.</iconset>
+              <normalon>:/icons/arrow-up.svg</normalon>
+             </iconset>
             </property>
            </widget>
           </item>
@@ -184,7 +191,8 @@
             </property>
             <property name="icon">
              <iconset theme="arrow-down">
-              <normaloff>.</normaloff>.</iconset>
+              <normalon>:/icons/arrow-down.svg</normalon>
+             </iconset>
             </property>
            </widget>
           </item>
@@ -198,7 +206,8 @@
             </property>
             <property name="icon">
              <iconset theme="remove">
-              <normaloff>.</normaloff>.</iconset>
+              <normalon>:/icons/list-remove.svg</normalon>
+             </iconset>
             </property>
            </widget>
           </item>
@@ -212,7 +221,8 @@
             </property>
             <property name="icon">
              <iconset theme="delete">
-              <normaloff>.</normaloff>.</iconset>
+              <normalon>:/icons/delete.svg</normalon>
+             </iconset>
             </property>
            </widget>
           </item>
@@ -238,7 +248,8 @@
             </property>
             <property name="icon">
              <iconset theme="media-playback-start">
-              <normaloff>.</normaloff>.</iconset>
+              <normalon>:/icons/media-playback-start.svg</normalon>
+             </iconset>
             </property>
            </widget>
           </item>
