@@ -47,10 +47,16 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 else()
     target_link_libraries(imageupscalerqt OpenImageIO)
 endif()
+if (DEFINED OPENIMAGEIO_INCLUDE_DIR)
+    target_include_directories(imageupscalerqt PUBLIC ${OPENIMAGEIO_INCLUDE_DIR})
+endif()
 
 # oneDNN (oneAPI, DNNL).
 find_package(dnnl REQUIRED)
 target_link_libraries(imageupscalerqt DNNL::dnnl)
+if (DEFINED DNNL_INCLUDE_DIR)
+    target_include_directories(imageupscalerqt PUBLIC ${DNNL_INCLUDE_DIR})
+endif()
 
 # pthread.
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -59,6 +65,9 @@ endif()
 
 # Qt.
 target_link_libraries(imageupscalerqt Qt5::Widgets) # Use the Widgets module from Qt 5.
+if (DEFINED QT5_INCLUDE_DIR)
+    target_include_directories(imageupscalerqt PUBLIC ${QT5_INCLUDE_DIR})
+endif()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
