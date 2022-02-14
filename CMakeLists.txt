@@ -18,6 +18,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     # Copy DLLs in the output directory.
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+    message(STATUS "vcpkg and Windows set up.")
 endif()
 
 # Find includes in corresponding build directories.
@@ -48,6 +50,7 @@ else()
     target_link_libraries(imageupscalerqt OpenImageIO)
 endif()
 if (DEFINED OPENIMAGEIO_INCLUDE_DIR)
+    message(STATUS "Using the OPENIMAGEIO_INCLUDE_DIR argument")
     target_include_directories(imageupscalerqt PUBLIC ${OPENIMAGEIO_INCLUDE_DIR})
 endif()
 
@@ -55,11 +58,13 @@ endif()
 find_package(dnnl REQUIRED)
 target_link_libraries(imageupscalerqt DNNL::dnnl)
 if (DEFINED DNNL_INCLUDE_DIR)
+    message(STATUS "Using the DNNL_INCLUDE_DIR argument")
     target_include_directories(imageupscalerqt PUBLIC ${DNNL_INCLUDE_DIR})
 endif()
 
 # pthread.
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    message(STATUS "Using pthread.")
     target_link_libraries(imageupscalerqt pthread)
 endif()
 
