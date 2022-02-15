@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=ImageUpscalerQt
+Comment=Application for image upscaling using the neural networks.
+Exec=imageupscalerqt
+Type=Application
+Icon=com.graphene9932.ImageUpscalerQt
+Categories=Graphics
