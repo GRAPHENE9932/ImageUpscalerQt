@@ -75,5 +75,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Install the executable.
 install(TARGETS imageupscalerqt DESTINATION bin)
-install(FILES com.graphene9932.ImageUpscalerQt.desktop DESTINATION share/applications/com.graphene9932.ImageUpscalerQt.desktop)
-install(FILES res/icon.png DESTINATION share/icons/hicolor/scalable/apps/com.graphene9932.ImageUpscalerQt.png)
+install(FILES com.graphene9932.ImageUpscalerQt.desktop DESTINATION share/applications)
+install(FILES res/icon.png DESTINATION share/icons/hicolor/scalable/apps RENAME com.graphene9932.ImageUpscalerQt.png)
