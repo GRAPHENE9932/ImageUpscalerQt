@@ -9,7 +9,7 @@ Contents:
     * [Windows](#windows-build)
 
 ImageUpscalerQt is a program for upscaling images using neural networks, but it also has other auxiliary functions.
-![Screenshot](docs/Main screenshot.png)
+![Screenshot](docs/MainScreenshot.png)
 Main functions:
 
 * Resize with various interpolations.
@@ -27,7 +27,7 @@ Main functions:
 7. Your task has appeared in the queue.
 8. Click the **"Start tasks"** button.
 
-![Screenshot](docs/Progress screenshot.png)
+![Screenshot](docs/ProgressScreenshot.png)
 
 9. Wait for tasks to be completed.
 
