@@ -1,15 +1,15 @@
 # ImageUpscalerQt
-# <p align="center">**The project is under development!**</p>
 
 Contents:
 * [How to use](#how-to-use)
 * [Build from source](#source)
-	* [Arch](#arch-build)
-	* [Ubuntu](#ubuntu-build)
-	* [Windows](#windows-build)
+    * [Flatpak](#flatpak-build)
+    * [Arch](#arch-build)
+    * [Ubuntu](#ubuntu-build)
+    * [Windows](#windows-build)
 
 ImageUpscalerQt is a program for upscaling images using neural networks, but it also has other auxiliary functions.
-![Screenshot](https://i.imgur.com/Km588DX.png)
+![Screenshot](docs/Main screenshot.png)
 Main functions:
 
 * Resize with various interpolations.
@@ -18,19 +18,29 @@ Main functions:
 * Convert color space (RGB to YCbCr, RGB to YCoCg and vice versa).
 
 ## How to use <a name="how-to-use"/>
-1. Select the image you want to process using the **"Select image"** button in the left-top corner.
-2. Every function of this program have its own task type. You can choose the task type using the combo box in the top-right corner.
-3. Each task has its own parameters.
-4. When all the parameters are specified, click on the **"Add task"** button.
-5. Your task has appeared in the queue. You can add other tasks or manage existing using the **"Remove"**, **"Clear"**, **"Up"** and **"Down"** buttons.
-6. Click the **"Start tasks"** button in the left-bottom corner.
+1. Select the images you want to process using the **"Add files..."** button.
+2. Now your files appeared in the table. Left column is input files, right column is output files.
+3. Add a task using the **"Add task..."** button.
+4. Every function of this program have its own task type. Select it.
+5. Each task has it's own parameters.
+6. When all the parameters are specified, click **"Ok"**.
+7. Your task has appeared in the queue.
+8. Click the **"Start tasks"** button.
 
-![Screenshot](https://i.imgur.com/L1Wj66f.png)
+![Screenshot](docs/Progress screenshot.png)
 
-7. Wait for tasks to be completed.
-8. Save the result using the **"Save result"** button in the right-bottom corner.
+9. Wait for tasks to be completed.
 
 # Build from source <a name="source"/>
+## Flatpak build <a name="flatpak-build"/>
+```
+# Download the manifest.
+wget https://raw.githubusercontent.com/GRAPHENE9932/ImageUpscalerQt/master/com.graphene9932.ImageUpscalerQt.yml
+# Build the flatpak and export it to repository.
+flatpak-builder --repo=./repo ./app com.graphene9932.ImageUpscalerQt.yml
+# Create a single-file bundle (optional).
+flatpak build-bundle ./repo ImageUpscalerQt.flatpak com.graphene9932.ImageUpscalerQt
+```
 ## For Arch Linux based distributions <a name="arch-build"/>
 ### Install dependencies
 ```
@@ -62,7 +72,7 @@ $ make
 ## For Windows <a name="windows-build"/>
 
 ### Install Visual Studio
-You need visual studio in order to compile this project.
+You need Microsoft Visual Studio in order to compile this project.
 
 ### Install vcpkg
 Vcpkg is needed to install other packages/libraries.
