@@ -91,7 +91,7 @@ In directory where vcpkg installed, enter this command to install the OpenImageI
 Go to other directory where you want to build the project.
 ```
 git clone https://github.com/GRAPHENE9932/ImageUpscalerQt.git
-cd ImageUpscalerQt-master
+cd ImageUpscalerQt
 cmake -DCMAKE_TOOLCHAIN_FILE=\path\to\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Visual Studio 16 2019" -A x64 -S . -B "build64"
 cmake --build build64 --config Release
 ```
