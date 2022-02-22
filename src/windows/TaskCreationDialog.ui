@@ -92,7 +92,7 @@
          <item>
           <widget class="QComboBox" name="resize_interpolation_combo_box">
            <property name="currentIndex">
-            <number>4</number>
+            <number>2</number>
            </property>
            <item>
             <property name="text">
