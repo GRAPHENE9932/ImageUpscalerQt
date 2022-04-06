@@ -38,7 +38,7 @@ bool SRCNNDesc::from_string(QString str, SRCNNDesc* desc) {
 		std::array<unsigned short, 3> kernels = {0, 0, 0};
 		std::array<unsigned short, 4> channels = {1, 0, 0, 1};
 
-		// BEGIN Parse first part (kernels)
+		// BEGIN Parse the first part (kernels).
 		QStringList splitted_ker = parts[0].split('-');
 
 		if (splitted_ker.size() != 3)
@@ -47,8 +47,10 @@ bool SRCNNDesc::from_string(QString str, SRCNNDesc* desc) {
 		bool bad_params = false;
 
 		for (unsigned char i = 0; i < 3; i++) {
-			// Parse name.
-			kernels[i] = splitted_ker[i].toUShort();
+			bool ok;
+			kernels[i] = splitted_ker[i].toUShort(&ok, 10);
+			if (!ok)
+				return false;
 			bad_params |= kernels[i] % 2 != 1;
 		}
 
@@ -56,14 +58,18 @@ bool SRCNNDesc::from_string(QString str, SRCNNDesc* desc) {
 			return false;
 		// END
 
-		// BEGIN Parse second part (channels)
+		// BEGIN Parse the second part (channels).
 		QStringList splitted_ch = parts[1].split('-');
 
 		if (splitted_ch.size() != 2)
 			return false;
 
-		for (unsigned char i = 0; i < 2; i++)
+		for (unsigned char i = 0; i < 2; i++) {
+			bool ok;
 			channels[i + 1] = splitted_ch[i].toUShort();
+			if (!ok)
+				return false;
+		}
 		// END
 
 		// Return values.
@@ -141,7 +147,7 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* desc) {
 		if (parts.size() != 2)
 			return false;
 
-		// BEGIN Parse first part (kernels)
+		// BEGIN Parse the second part (kernels).
 		QStringList splitted_ker = parts[0].split('-');
 
 		// Initialize kernels and paddigns vectors.
@@ -151,8 +157,12 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* desc) {
 		bool bad_params = false;
 
 		for (uint8_t i = 0; i < splitted_ker.size(); i++) {
-			kernels[i] = splitted_ker[i].toUShort();
-			if (i != splitted_ker.size() - 1)// Any, except last element (conv transpose).
+			bool ok;
+			kernels[i] = splitted_ker[i].toUShort(&ok, 10);
+			if (!ok)
+				return false;
+
+			if (i != splitted_ker.size() - 1) // Any, except the last element (conv transpose).
 				bad_params |= (kernels[i] % 2) != 1;
 		}
 
@@ -161,15 +171,19 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* desc) {
 
 		// END
 
-		// BEGIN Parse second part (channels)
+		// BEGIN Parse the third part (channels).
 		QStringList splitted_ch = parts[1].split('-');
 		// Inititalize channels vector.
 		std::vector<unsigned short> channels(splitted_ker.size() + 1, 0);
 		channels[0] = 1;
 		channels[channels.size() - 1] = 1;
 
-		for (uint8_t i = 0; i < splitted_ch.size(); i++)
-			channels[i + 1] = splitted_ch[i].toUShort();
+		for (uint8_t i = 0; i < splitted_ch.size(); i++) {
+			bool ok;
+			channels[i + 1] = splitted_ch[i].toUShort(&ok, 10);
+			if (!ok)
+				return false;
+		}
 		// END
 
 		// Return values.
