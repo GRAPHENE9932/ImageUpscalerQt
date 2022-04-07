@@ -9,6 +9,8 @@
 #include "FSRCNN.hpp"
 
 FSRCNN::FSRCNN(unsigned short img_w, unsigned short img_h, const FSRCNNDesc& desc) {
+	this->size_multiplier = desc.size_multiplier;
+
 	init_src_descs(desc.channels, img_w, img_h);
 	init_ker_descs(desc.kernels, desc.channels);
 	init_bias_descs(desc.channels);
@@ -23,7 +25,7 @@ FSRCNN::FSRCNN(unsigned short img_w, unsigned short img_h, const FSRCNNDesc& des
 
 void inline FSRCNN::init_src_descs(const std::vector<unsigned short>& chn,
 								   const unsigned short img_w, const unsigned short img_h) {
-	const auto nn_size = chn.size() - 1;
+	const size_t& nn_size = chn.size() - 1;
 
 	src_descs.resize(nn_size);
 
@@ -36,7 +38,7 @@ void inline FSRCNN::init_src_descs(const std::vector<unsigned short>& chn,
 
 void inline FSRCNN::init_ker_descs(const std::vector<unsigned short>& ker,
 								   const std::vector<unsigned short>& chn) {
-	const auto nn_size = ker.size();
+	const size_t& nn_size = ker.size();
 
 	ker_descs.resize(nn_size);
 
@@ -48,7 +50,7 @@ void inline FSRCNN::init_ker_descs(const std::vector<unsigned short>& ker,
 }
 
 void inline FSRCNN::init_bias_descs(const std::vector<unsigned short>& chn) {
-	const auto nn_size = chn.size() - 1;
+	const size_t& nn_size = chn.size() - 1;
 
 	bias_descs.resize(nn_size);
 
@@ -61,13 +63,14 @@ void inline FSRCNN::init_bias_descs(const std::vector<unsigned short>& chn) {
 
 void inline FSRCNN::init_dest_descs(const std::vector<unsigned short>& chn,
 									const unsigned short img_w, const unsigned short img_h) {
-	const auto nn_size = chn.size() - 1;
+	const size_t& nn_size = chn.size() - 1;
+	const unsigned char& mul = size_multiplier;
 
 	dest_descs.resize(nn_size);
 
 	for (int i = 0; i < nn_size; i++) {
-		const auto cur_img_h = img_h * (i == nn_size - 1 ? 3 : 1);
-		const auto cur_img_w = img_w * (i == nn_size - 1 ? 3 : 1);
+		const auto cur_img_h = img_h * (i == nn_size - 1 ? mul : 1);
+		const auto cur_img_w = img_w * (i == nn_size - 1 ? mul : 1);
 		dnnl::memory::dims cur_dims = {1, chn[i + 1], cur_img_h, cur_img_w};
 		dest_descs[i] = dnnl::memory::desc(cur_dims, dnnl::memory::data_type::f32,
 										   dnnl::memory::format_tag::nchw);
@@ -75,20 +78,22 @@ void inline FSRCNN::init_dest_descs(const std::vector<unsigned short>& chn,
 }
 
 void inline FSRCNN::init_pads(const std::vector<unsigned short>& ker) {
-	const auto nn_size = ker.size();
+	const size_t& nn_size = ker.size();
+	const unsigned char& mul = size_multiplier;
 
 	pads_l.resize(nn_size);
 	pads_r.resize(nn_size);
 
 	for (int i = 0; i < nn_size; i++) {
-		const auto cur_pad = i == nn_size ? (ker[i] - 3) / 2 : (ker[i] - 1) / 2;
+		const auto cur_pad = i == nn_size ? (ker[i] - mul) / 2 : (ker[i] - 1) / 2;
 		pads_l[i] = {cur_pad, cur_pad, 0, 0};
 		pads_r[i] = {cur_pad, cur_pad, 0, 0};
 	}
 }
 
 void inline FSRCNN::init_conv() {
-	const auto nn_size = ker_descs.size();
+	const size_t& nn_size = ker_descs.size();
+	const unsigned char& mul = size_multiplier;
 
 	convs.resize(nn_size - 1);
 
@@ -112,7 +117,7 @@ void inline FSRCNN::init_conv() {
 	auto deconv_desc = dnnl::deconvolution_forward::desc(dnnl::prop_kind::forward_inference,
 					   dnnl::algorithm::deconvolution_direct,
 					   src_descs[nn_size - 1], ker_descs[nn_size - 1], bias_descs[nn_size - 1],
-					   dest_descs[nn_size - 1], {3, 3}, pads_l[nn_size - 1], pads_r[nn_size - 1]);
+					   dest_descs[nn_size - 1], {mul, mul}, pads_l[nn_size - 1], pads_r[nn_size - 1]);
 
 	auto deconv_prim_desc = dnnl::deconvolution_forward::primitive_desc(deconv_desc, attr, eng);
 	deconv = dnnl::deconvolution_forward(deconv_prim_desc);

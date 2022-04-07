@@ -66,7 +66,7 @@ bool SRCNNDesc::from_string(QString str, SRCNNDesc* desc) {
 
 		for (unsigned char i = 0; i < 2; i++) {
 			bool ok;
-			channels[i + 1] = splitted_ch[i].toUShort();
+			channels[i + 1] = splitted_ch[i].toUShort(&ok, 10);
 			if (!ok)
 				return false;
 		}
@@ -115,6 +115,8 @@ bool SRCNNDesc::operator==(const SRCNNDesc& right) const {
 QString FSRCNNDesc::to_string() const {
 	QString output;
 
+	output += 'x' + QString::number(size_multiplier) + ' ';
+
 	for (size_t i = 0; i < kernels.size(); i++) {
 		output += QString::number(kernels[i]);
 		if (i != kernels.size() - 1)
@@ -131,6 +133,7 @@ QString FSRCNNDesc::to_string() const {
 
 	return output;
 }
+		;
 
 QString TaskFSRCNNDesc::to_string() const {
 	return QCoreApplication::translate("ImageUpscalerQt", "Use FSRCNN %1").arg(fsrcnn_desc.to_string());
@@ -144,11 +147,18 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* desc) {
 	try {
 		QStringList parts = str.split(' ');
 
-		if (parts.size() != 2)
+		if (parts.size() != 3)
 			return false;
 
+		// BEGIN Parse the first part (size multiplier).
+		bool ok;
+		unsigned char size_multiplier = parts[0].mid(1).toUShort(&ok, 10);
+		if (!ok)
+			return false;
+		// END
+
 		// BEGIN Parse the second part (kernels).
-		QStringList splitted_ker = parts[0].split('-');
+		QStringList splitted_ker = parts[1].split('-');
 
 		// Initialize kernels and paddigns vectors.
 		std::vector<unsigned short> kernels(splitted_ker.size(), 0);
@@ -172,7 +182,7 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* desc) {
 		// END
 
 		// BEGIN Parse the third part (channels).
-		QStringList splitted_ch = parts[1].split('-');
+		QStringList splitted_ch = parts[2].split('-');
 		// Inititalize channels vector.
 		std::vector<unsigned short> channels(splitted_ker.size() + 1, 0);
 		channels[0] = 1;
@@ -190,6 +200,7 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* desc) {
 		if (desc != nullptr) {
 			desc->kernels = kernels;
 			desc->channels = channels;
+			desc->size_multiplier = size_multiplier;
 		}
 		return true;
 	}

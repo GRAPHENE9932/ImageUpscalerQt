@@ -29,6 +29,8 @@ private:
 	std::vector<dnnl::convolution_forward> convs;
 	dnnl::deconvolution_forward deconv;
 
+	unsigned char size_multiplier;
+
 	void init_src_descs(const std::vector<unsigned short>& chn,
 						const unsigned short img_w, const unsigned short img_h);
 	void init_ker_descs(const std::vector<unsigned short>& ker,

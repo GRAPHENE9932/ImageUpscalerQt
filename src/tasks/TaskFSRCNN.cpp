@@ -22,14 +22,16 @@ float TaskFSRCNN::progress() const {
 }
 
 OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> canceled) {
+	unsigned char& mul = desc.fsrcnn_desc.size_multiplier;
+
 	// Get spec.
 	auto spec = input.spec();
 	// Whole image size if we don't have to split image into blocks.
 	const int block_width = desc.block_size == 0 ? spec.width : desc.block_size;
 	const int block_height = desc.block_size == 0 ? spec.height : desc.block_size;
 
-	// Create output buffer.
-	const OIIO::ImageSpec out_spec(spec.width * 3, spec.height * 3, spec.nchannels);
+	// Create the output buffer.
+	const OIIO::ImageSpec out_spec(spec.width * mul, spec.height * mul, spec.nchannels);
 	OIIO::ImageBuf output(out_spec);
 
 	blocks_amount = func::blocks_amount(QSize(spec.width, spec.height),
@@ -72,7 +74,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> c
 		mem_offset += full_bias_sizes[i];
 	}
 
-	// Use SRCNN block by block.
+	// Use FSRCNN block by block.
 	for (int y = 0; y < spec.height; y += block_height) {
 		for (int x = 0; x < spec.width; x += block_width) {
 			for (int c = 0; c < spec.nchannels; c++) {
@@ -80,8 +82,8 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> c
 				OIIO::ROI block_extract_roi_in(x, x + block_width,
 											   y, y + block_height,
 											   0, 1, c, c + 1);
-				OIIO::ROI block_extract_roi_out(x * 3, (x + block_width) * 3,
-												y * 3, (y + block_height) * 3,
+				OIIO::ROI block_extract_roi_out(x * mul, (x + block_width) * mul,
+												y * mul, (y + block_height) * mul,
 												0, 1, c, c + 1);
 				// Get block pixels. Planar, because we are working on single-channel image.
 				auto block_pixels = std::make_unique<float[]>(block_width * block_height * 1);

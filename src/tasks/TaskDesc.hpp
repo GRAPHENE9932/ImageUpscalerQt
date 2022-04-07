@@ -147,12 +147,14 @@ struct TaskSRCNNDesc : TaskDesc {
 struct FSRCNNDesc {
 	std::vector<unsigned short> kernels;
 	std::vector<unsigned short> channels;
+	unsigned char size_multiplier;
 
 	FSRCNNDesc() = default;
 
 	FSRCNNDesc(const std::vector<unsigned short>& kernels,
-			   const std::vector<unsigned short>& channels) :
-			   kernels(kernels), channels(channels) {}
+			   const std::vector<unsigned short>& channels,
+			   unsigned char size_multiplier) :
+			   kernels(kernels), channels(channels), size_multiplier(size_multiplier) {}
 
 	QString to_string() const;
 	/// Parse FSRCNN. Returns true if parsing is successful.
@@ -177,8 +179,9 @@ struct TaskFSRCNNDesc : TaskDesc {
 
 	TaskFSRCNNDesc(const std::vector<unsigned short>& kernels,
 				   const std::vector<unsigned short>& channels,
+				   unsigned char size_multiplier,
 				   unsigned int block_size) :
-				   fsrcnn_desc(kernels, channels), block_size(block_size) {}
+				   fsrcnn_desc(kernels, channels, size_multiplier), block_size(block_size) {}
 
 	~TaskFSRCNNDesc() = default;
 
