@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <OpenImageIO/imageio.h>
+#include <OpenImageIO/imagebufalgo.h>
 
 #include "ImageUpscalerQt.hpp"
 #include "ui_ImageUpscalerQt.h"
@@ -196,8 +197,6 @@ void ImageUpscalerQt::update_previews(int start, int end) {
 	}
 
 	for (int i = 0; i < items.size(); i++) {
-		// TODO: load the embedded thumbnails of the images with OpenImageIO 2.3.
-		// Arch Linux 24.01.2022: OpenImageIO 2.2.18.0-4. Waiting for 2.3...
 		QPixmap icon_pixmap(files[i]);
 		if (icon_pixmap.isNull()) {
 			items[i]->setIcon(QIcon(":unknown.svg"));
