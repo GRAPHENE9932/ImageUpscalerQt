@@ -210,10 +210,15 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* desc) {
 }
 
 bool FSRCNNDesc::operator<(const FSRCNNDesc& right) const {
+	if (size_multiplier < right.size_multiplier)
+		return true;
+	else if (size_multiplier > right.size_multiplier)
+		return false;
+
 	if (kernels.size() < right.kernels.size() || channels.size() < right.channels.size())
 		return true;
 
-	// After previous statement, we can assume that amount of kernels and channels
+	// After the previous expression, we can assume that amount of kernels and channels
 	// are equal in both operands.
 	for (unsigned char i = 0; i < kernels.size(); i++)
 		if (kernels[i] < right.kernels[i])
