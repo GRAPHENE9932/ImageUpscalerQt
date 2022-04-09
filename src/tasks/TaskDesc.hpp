@@ -156,7 +156,7 @@ struct FSRCNNDesc {
 			   unsigned char size_multiplier) :
 			   kernels(kernels), channels(channels), size_multiplier(size_multiplier) {}
 
-	QString to_string() const;
+	QString to_string(bool with_multiplier = true) const;
 	/// Parse FSRCNN. Returns true if parsing is successful.
 	/// Returns false if it is impossible to parse.
 	/// Pass nullptr as pointer for desc to validate if it is valid FSRCNN description string.

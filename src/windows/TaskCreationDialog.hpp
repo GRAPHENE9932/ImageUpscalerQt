@@ -33,33 +33,33 @@ private:
 	std::vector<SRCNNDesc> srcnn_list;
 	std::vector<FSRCNNDesc> fsrcnn_list;
 
-	// Initialization for every task kind.
-	void init_resize();
-	void init_ccs();
-	void init_srcnn();
-	void init_fsrcnn();
-
-	// Validate parameters for every task kind.
-	bool valid_resize();
-	bool valid_ccs();
-	bool valid_srcnn();
-	bool valid_fsrcnn();
-
-	// Parameters update event for every task kind.
-	void resize_update();
-	void ccs_update();
-
 	QString mem_consumption_to_string(unsigned long long bytes);
-	QSize srcnn_block_size();
-	QSize fsrcnn_block_size();
 
-	void srcnn_update();
-	void fsrcnn_update();
-
-	// Construct every task description from the UI.
+	// TaskResize
+	void init_resize();
+	bool valid_resize();
+	void resize_update();
 	TaskResizeDesc create_resize();
+
+	// TaskConvertColorSpace
+	void init_ccs();
+	bool valid_ccs();
+	void ccs_update();
 	TaskConvertColorSpaceDesc create_ccs();
+
+	// TaskSRCNN
+	void init_srcnn();
+	QSize srcnn_block_size();
+	bool valid_srcnn();
+	void srcnn_update();
 	TaskSRCNNDesc create_srcnn();
+
+	// TaskFSRCNN
+	void update_fsrcnn_list();
+	void init_fsrcnn();
+	bool valid_fsrcnn();
+	QSize fsrcnn_block_size();
+	void fsrcnn_update();
 	TaskFSRCNNDesc create_fsrcnn();
 
 private slots:
@@ -76,6 +76,7 @@ private slots:
 	void srcnn_split_changed(bool checked);
 	void srcnn_block_size_changed(int size);
 
+	void fsrcnn_multiplier_changed(int index);
 	void fsrcnn_architecture_changed(int index);
 	void fsrcnn_split_changed(bool checked);
 	void fsrcnn_block_size_changed(int size);

@@ -112,10 +112,11 @@ bool SRCNNDesc::operator==(const SRCNNDesc& right) const {
 
 // BEGIN FSRCNN
 
-QString FSRCNNDesc::to_string() const {
+QString FSRCNNDesc::to_string(bool with_multiplier) const {
 	QString output;
 
-	output += 'x' + QString::number(size_multiplier) + ' ';
+	if (with_multiplier)
+		output += 'x' + QString::number(size_multiplier) + ' ';
 
 	for (size_t i = 0; i < kernels.size(); i++) {
 		output += QString::number(kernels[i]);

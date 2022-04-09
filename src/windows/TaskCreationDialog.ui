@@ -41,7 +41,7 @@
    <item>
     <widget class="QStackedWidget" name="parameters_stacked_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="resize_page">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -324,7 +324,25 @@
      <widget class="QWidget" name="fsrcnn_page">
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QComboBox" name="fsrcnn_architecture_combo_box"/>
+        <layout class="QHBoxLayout" name="fsrcnn_architecture_layout" stretch="0,1">
+         <item>
+          <widget class="QComboBox" name="fsrcnn_multiplier_combo_box">
+           <item>
+            <property name="text">
+             <string>x3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>x5</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="fsrcnn_architecture_combo_box"/>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QCheckBox" name="fsrcnn_split_check_box">
@@ -475,8 +493,8 @@
    <slot>resize_x_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>166</x>
-     <y>65</y>
+     <x>111</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>391</x>
@@ -491,8 +509,8 @@
    <slot>resize_y_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>325</x>
-     <y>59</y>
+     <x>111</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>390</x>
@@ -507,8 +525,8 @@
    <slot>resize_keep_ratio_changed(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>81</x>
-     <y>100</y>
+     <x>87</x>
+     <y>55</y>
     </hint>
     <hint type="destinationlabel">
      <x>390</x>
@@ -523,8 +541,8 @@
    <slot>resize_interpolation_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>168</x>
-     <y>140</y>
+     <x>111</x>
+     <y>91</y>
     </hint>
     <hint type="destinationlabel">
      <x>391</x>
@@ -539,8 +557,8 @@
    <slot>ccs_combo_box_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>296</x>
-     <y>68</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>387</x>
@@ -555,8 +573,8 @@
    <slot>srcnn_architecture_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>155</x>
-     <y>66</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>390</x>
@@ -571,8 +589,8 @@
    <slot>srcnn_split_changed(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>73</x>
-     <y>101</y>
+     <x>79</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>390</x>
@@ -587,8 +605,8 @@
    <slot>srcnn_block_size_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>183</x>
-     <y>132</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>389</x>
@@ -644,6 +662,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>fsrcnn_multiplier_combo_box</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>fsrcnn_multiplier_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>24</x>
+     <y>63</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>57</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>task_changed(int)</slot>
@@ -658,5 +692,6 @@
   <slot>fsrcnn_architecture_changed(int)</slot>
   <slot>fsrcnn_split_changed(bool)</slot>
   <slot>fsrcnn_block_size_changed(int)</slot>
+  <slot>fsrcnn_multiplier_changed(int)</slot>
  </slots>
 </ui>
