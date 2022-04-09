@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>816</width>
+    <width>762</width>
     <height>558</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1">
     <item>
      <layout class="QVBoxLayout" name="file_list_layout">
       <item>
@@ -138,127 +138,6 @@
       </item>
      </layout>
     </item>
-    <item>
-     <layout class="QVBoxLayout" name="task_list_big_layout" stretch="1,1">
-      <item>
-       <layout class="QVBoxLayout" name="task_list_layout">
-        <item>
-         <widget class="QLabel" name="task_list_label">
-          <property name="text">
-           <string>List of tasks</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QListWidget" name="task_list_widget"/>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="task_list_button_layout" stretch="1,0,0,0,0">
-          <item>
-           <widget class="QPushButton" name="add_task_button">
-            <property name="text">
-             <string>Add task...</string>
-            </property>
-            <property name="icon">
-             <iconset theme="list-add">
-              <normalon>:/icons/list-add.svg</normalon>
-             </iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="task_up_button">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset theme="arrow-up">
-              <normalon>:/icons/arrow-up.svg</normalon>
-             </iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="task_down_button">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset theme="arrow-down">
-              <normalon>:/icons/arrow-down.svg</normalon>
-             </iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="task_remove_button">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset theme="remove">
-              <normalon>:/icons/list-remove.svg</normalon>
-             </iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="task_clear_button">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset theme="delete">
-              <normalon>:/icons/delete.svg</normalon>
-             </iconset>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="info_layout">
-        <item>
-         <widget class="QPlainTextEdit" name="info_plain_text_edit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="start_task_layout" stretch="1">
-          <item>
-           <widget class="QPushButton" name="start_task_button">
-            <property name="text">
-             <string>Start tasks</string>
-            </property>
-            <property name="icon">
-             <iconset theme="media-playback-start">
-              <normalon>:/icons/media-playback-start.svg</normalon>
-             </iconset>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="main_menu_bar">
@@ -266,7 +145,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>816</width>
+     <width>762</width>
      <height>30</height>
     </rect>
    </property>
@@ -278,6 +157,143 @@
     <addaction name="action_about_qt"/>
    </widget>
    <addaction name="menu_about"/>
+  </widget>
+  <widget class="QDockWidget" name="task_list_dock">
+   <property name="minimumSize">
+    <size>
+     <width>268</width>
+     <height>338</height>
+    </size>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>List of tasks</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="task_list_big_layout">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QVBoxLayout" name="info_layout">
+       <item>
+        <layout class="QVBoxLayout" name="task_list_layout">
+         <item>
+          <widget class="QListWidget" name="task_list_widget"/>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="task_list_button_layout" stretch="1,0,0,0,0">
+           <item>
+            <widget class="QPushButton" name="add_task_button">
+             <property name="text">
+              <string>Add task...</string>
+             </property>
+             <property name="icon">
+              <iconset theme="list-add">
+               <normalon>:/icons/list-add.svg</normalon>
+              </iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="task_up_button">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset theme="arrow-up">
+               <normalon>:/icons/arrow-up.svg</normalon>
+              </iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="task_down_button">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset theme="arrow-down">
+               <normalon>:/icons/arrow-down.svg</normalon>
+              </iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="task_remove_button">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset theme="remove">
+               <normalon>:/icons/list-remove.svg</normalon>
+              </iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="task_clear_button">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset theme="delete">
+               <normalon>:/icons/delete.svg</normalon>
+              </iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="info_plain_text_edit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="start_task_layout" stretch="1">
+         <item>
+          <widget class="QPushButton" name="start_task_button">
+           <property name="text">
+            <string>Start tasks</string>
+           </property>
+           <property name="icon">
+            <iconset theme="media-playback-start">
+             <normalon>:/icons/media-playback-start.svg</normalon>
+            </iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="action_about_qt">
    <property name="text">
