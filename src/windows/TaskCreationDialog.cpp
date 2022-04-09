@@ -58,7 +58,7 @@ void TaskCreationDialog::init_srcnn() {
 	srcnn_list.clear();
 
 	// Iterate through all resources to find SRCNNs and add them to our list (vector).
-	QDirIterator iter(":/SRCNN");
+	QDirIterator iter(":/srcnn");
 	while (iter.hasNext()) {
 		SRCNNDesc cur_desc;
 		// Leave only filename without extension to pass it to the parser.
@@ -82,7 +82,7 @@ void TaskCreationDialog::init_fsrcnn() {
 	fsrcnn_list.clear();
 
 	// Iterate through all resources to find SRCNNs and add them to our list (vector).
-	QDirIterator iter(":/FSRCNN");
+	QDirIterator iter(":/fsrcnn");
 	while (iter.hasNext()) {
 		FSRCNNDesc cur_desc;
 		// Leave only filename without extension to pass it to the parser.

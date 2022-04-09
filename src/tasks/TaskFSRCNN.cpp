@@ -58,7 +58,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> c
 	}
 
 	// Load file with parameters from resources.
-	QFile file(":/FSRCNN/" + desc.fsrcnn_desc.to_string() + ".bin");
+	QFile file(":/fsrcnn/" + desc.fsrcnn_desc.to_string() + ".bin");
 	file.open(QFile::ReadOnly);
 	QByteArray file_array = file.read(512 * 1024 * 1024); //Maximum size is 512 MiB
 	assert(file_array.size() == total_params_size);
