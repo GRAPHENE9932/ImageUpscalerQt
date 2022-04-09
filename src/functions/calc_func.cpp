@@ -48,8 +48,8 @@ unsigned long long func::fsrcnn_operations_amount(FSRCNNDesc desc,
 	std::vector<unsigned long long> widths(nn_size + 1);
 	std::vector<unsigned long long> heights(nn_size + 1);
 	for (unsigned short i = 0; i < nn_size + 1; i++) {
-		widths[i] = i == nn_size ? size.width() * 3 : size.width();
-		heights[i] = i == nn_size ? size.height() * 3 : size.height();
+		widths[i] = i == nn_size ? size.width() * desc.size_multiplier : size.width();
+		heights[i] = i == nn_size ? size.height() * desc.size_multiplier : size.height();
 	}
 
 	for (unsigned char i = 0; i < nn_size - 1; i++) {
@@ -78,8 +78,8 @@ unsigned long long func::predict_cnn_memory_consumption(FSRCNNDesc desc,
 													    QSize size) {
 	std::vector<unsigned short> channels_vec = desc.channels;
 	std::vector<QSize> sizes_vec(desc.kernels.size() + 1, size);
-	sizes_vec.back().rwidth() *= 3;
-	sizes_vec.back().rheight() *= 3;
+	sizes_vec.back().rwidth() *= desc.size_multiplier;
+	sizes_vec.back().rheight() *= desc.size_multiplier;
 
 	return predict_cnn_memory_consumption(channels_vec, sizes_vec);
 }
