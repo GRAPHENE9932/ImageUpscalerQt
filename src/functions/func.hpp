@@ -33,6 +33,8 @@ namespace func {
 	QString bytes_amount_to_string(unsigned long long bytes);
 	QString pixel_amount_to_string(unsigned long long pixels);
 	QString milliseconds_to_string(unsigned long long millis);
+
+	QString shorten_file_path(const QString& orig);
 	// END String functions
 
 	// BEGIN Calculation functions

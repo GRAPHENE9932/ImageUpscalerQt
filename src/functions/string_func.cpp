@@ -120,3 +120,13 @@ QString func::milliseconds_to_string(unsigned long long millis) {
 		QString::number(millis).rightJustified(3, '0')
 	);
 }
+// 0/1home/2artem/3file.ttt
+QString func::shorten_file_path(const QString& orig) {
+	if (orig.startsWith("/home/") || orig.startsWith("C:/Users/")) {
+		const int depth = orig.count('/');
+		if (depth >= 3)
+			return "~/" + orig.section('/', 3);
+	}
+
+	return orig;
+}

@@ -136,8 +136,10 @@ void ImageUpscalerQt::add_files(QStringList files) {
 		// Add to the GUI.
 		int cur_row = m_ui->file_list_table->rowCount();
 		m_ui->file_list_table->insertRow(cur_row);
-		QTableWidgetItem* item_0 = new QTableWidgetItem(input_file);
-		QTableWidgetItem* item_1 = new QTableWidgetItem(output_file);
+		QTableWidgetItem* item_0 = new QTableWidgetItem(func::shorten_file_path(input_file));
+		item_0->setToolTip(input_file);
+		QTableWidgetItem* item_1 = new QTableWidgetItem(func::shorten_file_path(output_file));
+		item_1->setToolTip(output_file);
 		m_ui->file_list_table->setItem(cur_row, 0, item_0);
 		m_ui->file_list_table->setItem(cur_row, 1, item_1);
 	}
