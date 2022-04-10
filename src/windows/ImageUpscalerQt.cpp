@@ -18,10 +18,6 @@
 #include "../functions/func.hpp"
 
 constexpr const char* VERSION = "2.0";
-constexpr const char* FILE_FILTER = "All images(*.png *.jpg *.jpeg *.bmp *.tif *.tiff);;"
-									"PNG image(*.png);;JPEG image(*.jpg *.jpeg);;"
-									"JPEG2000 image(*.jp2 *.jpg2);;"
-									"Bitmap image(*.bmp);;TIFF image (*.tiff *.tif)";
 constexpr const char* ABOUT_TEXT = "ImageUpscalerQt is a program for image upscaling "
 								   "using neural networks, but it also have other auxiliary functions.\n\n"
 								   "Made by Artem Kliminskyi in Ukraine, Zhytomyr.";
@@ -158,7 +154,7 @@ void ImageUpscalerQt::add_files(QStringList files) {
 }
 
 void ImageUpscalerQt::reselect_input_file(int row) {
-	QFileDialog dialog(this, tr("Select input file"), QString(), FILE_FILTER);
+	QFileDialog dialog(this, tr("Select input file"), QString(), func::get_image_input_wildcard());
 	dialog.setFileMode(QFileDialog::FileMode::ExistingFile);
 	if (dialog.exec()) {
 		// If the output path is the same as one generated automatically,
@@ -181,7 +177,7 @@ void ImageUpscalerQt::reselect_input_file(int row) {
 }
 
 void ImageUpscalerQt::reselect_output_file(int row) {
-	QFileDialog dialog(this, tr("Select output file"), QString(), FILE_FILTER);
+	QFileDialog dialog(this, tr("Select output file"), QString(), func::get_image_output_wildcard());
 	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
 	dialog.setFileMode(QFileDialog::FileMode::AnyFile);
 	if (dialog.exec()) {
@@ -314,7 +310,7 @@ void ImageUpscalerQt::update_info_text() {
 
 void ImageUpscalerQt::add_files_clicked() {
 	// Create a QFileDialog
-	QFileDialog dialog(this, tr("Add images and folders"), QString(), FILE_FILTER);
+	QFileDialog dialog(this, tr("Add images and folders"), QString(), func::get_image_input_wildcard());
 	dialog.setFileMode(QFileDialog::FileMode::ExistingFiles);
 	if (dialog.exec())
 		add_files(dialog.selectedFiles());

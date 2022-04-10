@@ -9,6 +9,9 @@
 
 #include <QStringList>
 #include <QCollator>
+#include <QCoreApplication>
+#include <QMap>
+#include <OpenImageIO/imageio.h>
 
 #include "func.hpp"
 
@@ -120,7 +123,7 @@ QString func::milliseconds_to_string(unsigned long long millis) {
 		QString::number(millis).rightJustified(3, '0')
 	);
 }
-// 0/1home/2artem/3file.ttt
+
 QString func::shorten_file_path(const QString& orig) {
 	if (orig.startsWith("/home/") || orig.startsWith("C:/Users/")) {
 		const int depth = orig.count('/');
@@ -129,4 +132,126 @@ QString func::shorten_file_path(const QString& orig) {
 	}
 
 	return orig;
+}
+
+const QMap<QString, QString> FORMAT_NAMES = {
+	{"png", "PNG"},
+	{"jpeg", "JPEG"},
+	{"webp", "WebP"},
+	{"heif", "HEIF/AVIF"},
+	{"bmp", "BMP"},
+	{"jpeg2000", "JPEG 2000"},
+	{"gif", "GIF"},
+	{"ico", "ICO"},
+	{"tiff", "TIFF"},
+	{"cineon", "Cineon"},
+	{"dds", "DirecrDraw surface"},
+	{"dpx", "DPX"},
+	{"fits", "FITS"},
+	{"hdr", "RGBE"},
+	{"iff", "IFF"},
+	{"null", "NULL"},
+	{"openexr", "OpenEXR"},
+	{"pnm", "PNM"},
+	{"psd", "PSD"},
+	{"raw", "RAW"},
+	{"rla", "RLA"},
+	{"sgi", "SGI"},
+	{"softimage", "SoftImage"},
+	{"targa", "Targa"}
+};
+
+QString get_format_name(const QString& format) {
+	if (FORMAT_NAMES.contains(format))
+		return FORMAT_NAMES[format] + " image";
+
+	return format + " image";
+}
+
+QStringList sort_formats(const QStringList& orig_list) {
+	QMultiMap<int, QString> map;
+	for (const QString& format : orig_list) {
+		int priority = 0;
+
+		if (format == "png")
+			priority = 9;
+		else if (format == "jpeg")
+			priority = 8;
+		else if (format == "webp")
+			priority = 7;
+		else if (format == "heif")
+			priority = 6;
+		else if (format == "bmp")
+			priority = 5;
+		else if (format == "jpeg2000")
+			priority = 4;
+		else if (format == "gif")
+			priority = 3;
+		else if (format == "ico")
+			priority = 2;
+		else if (format == "tiff")
+			priority = 1;
+
+		map.insert(priority, format);
+	}
+	QStringList str_list = map.values();
+	std::reverse(str_list.begin(), str_list.end());
+	return str_list;
+}
+
+QString input_wildcard;
+QString func::get_image_input_wildcard() {
+	if (!input_wildcard.isEmpty()) // Return the cached string if it exist.
+		return input_wildcard;
+
+	std::map<std::string, std::vector<std::string>> ext_map = OIIO::get_extension_map();
+	QStringList input_formats = QString::fromStdString(OIIO::get_string_attribute("input_format_list")).split(',');
+	input_formats = sort_formats(input_formats);
+
+	// All extensions part.
+	QString result = QCoreApplication::translate("ImageUpscalerQt", "All images(");
+	for (QString& format : input_formats) {
+		auto extensions = ext_map[format.toStdString()];
+		for (std::string& ext : extensions)
+			result += "*." + QString::fromStdString(ext) + ' ';
+	}
+	result[result.size() - 1] = ')'; // Replace the last ' ' with ')'.
+	result += ";;";
+
+	// Other formats one by one.
+	for (QString& format : input_formats) {
+		result += get_format_name(format) + '(';
+		auto extensions = ext_map[format.toStdString()];
+		for (std::string& ext : extensions)
+			result += "*." + QString::fromStdString(ext) + ' ';
+		result[result.size() - 1] = ')';
+		result += ";;";
+	}
+
+	input_wildcard = result;
+	return result;
+}
+
+QString output_wildcard;
+QString func::get_image_output_wildcard() {
+	if (!output_wildcard.isEmpty())
+		return output_wildcard;
+
+	std::map<std::string, std::vector<std::string>> ext_map = OIIO::get_extension_map();
+	QStringList output_formats = QString::fromStdString(OIIO::get_string_attribute("output_format_list")).split(',');
+	output_formats = sort_formats(output_formats);
+
+	// Image formats one by one.
+	QString result;
+	for (QString& format : output_formats) {
+		result += get_format_name(format) + '(';
+		auto extensions = ext_map[format.toStdString()];
+		for (std::string& ext : extensions)
+			result += "*." + QString::fromStdString(ext) + ' ';
+		result[result.size() - 1] = ')';
+		result += ";;";
+	}
+
+	output_wildcard = result;
+	return result;
 }

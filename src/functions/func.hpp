@@ -35,6 +35,9 @@ namespace func {
 	QString milliseconds_to_string(unsigned long long millis);
 
 	QString shorten_file_path(const QString& orig);
+
+	QString get_image_input_wildcard();
+	QString get_image_output_wildcard();
 	// END String functions
 
 	// BEGIN Calculation functions
