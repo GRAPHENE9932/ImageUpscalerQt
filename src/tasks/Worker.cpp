@@ -112,6 +112,11 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 		for (cur_img = 0; cur_img < files.size(); cur_img++) {
 			// Read image.
 			auto cur_img_buf = OIIO::ImageBuf(files[cur_img].first.toStdString());
+			if (cur_img_buf.spec().undefined()) {
+				error("Can't read the image. The file is in an unsupported format "
+					"or damaged.");
+				return;
+			}
 
 			for (cur_task = 0; cur_task < tasks.size(); cur_task++) {
 				auto temp_img_buf = cur_img_buf;

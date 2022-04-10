@@ -94,6 +94,7 @@ void TasksWaitingDialog::progress_check() {
 		QMessageBox::critical(this, "Error", error_message);
 
 		timer->stop(); // Stop timer.
+		QDialog::reject(); // Close dialog.
 		return;
 	}
 }
