@@ -112,9 +112,12 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 		for (cur_img = 0; cur_img < files.size(); cur_img++) {
 			// Read image.
 			auto cur_img_buf = OIIO::ImageBuf(files[cur_img].first.toStdString());
-			if (cur_img_buf.spec().undefined()) {
-				error("Can't read the image. The file is in an unsupported format "
-					"or damaged.");
+			if (cur_img_buf.has_error()) {
+				error(QString::fromStdString(
+					"Can't read the image. The file may be inaccessible, "
+					"in an unsupported format or damaged.\nMessage:\n"
+					+ cur_img_buf.geterror()
+				));
 				return;
 			}
 
@@ -128,8 +131,15 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 				}
 			}
 			// Write image.
-			// TODO: handle errors.
 			cur_img_buf.write(files[cur_img].second.toStdString());
+			if (cur_img_buf.has_error()) {
+				error(QString::fromStdString(
+					"Can't write the image. The path may be non existent or "
+					"inaccessible.\nMessage:\n"
+					+ cur_img_buf.geterror()
+				));
+				return;
+			}
 		}
 #ifdef NDEBUG
 	}
