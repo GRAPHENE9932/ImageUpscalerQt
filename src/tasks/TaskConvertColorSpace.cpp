@@ -56,7 +56,7 @@ OIIO::ImageBuf TaskConvertColorSpace::do_task(OIIO::ImageBuf input, std::functio
 			QString("Only 3 or more channel images are allowed to conversion. Provided %1").arg(QString::number(input.nchannels())).toStdString());
 
 	OIIO::ROI roi = input.roi();
-	roi.chend = 4;
+	roi.chend = 3;
 
 	size_t pix_count = input.spec().width * input.spec().height * 3;
 
