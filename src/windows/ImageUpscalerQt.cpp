@@ -162,7 +162,7 @@ void ImageUpscalerQt::reselect_input_file(int row) {
 	dialog.setFileMode(QFileDialog::FileMode::ExistingFile);
 	if (dialog.exec()) {
 		// If the output path is the same as one generated automatically,
-		// the generate it automatically from the new path.
+		// then generate it automatically from the new path.
 		bool auto_output = files[row].second == auto_output_path(files[row].first);
 
 		auto selected_files = dialog.selectedFiles();
@@ -170,7 +170,8 @@ void ImageUpscalerQt::reselect_input_file(int row) {
 
 		if (auto_output) {
 			files[row].second = auto_output_path(files[row].first);
-			m_ui->file_list_table->item(row, 1)->setText(files[row].second);
+			m_ui->file_list_table->item(row, 1)->setText(func::shorten_file_path(files[row].second));
+			m_ui->file_list_table->item(row, 1)->setToolTip(files[row].second);
 		}
 		m_ui->file_list_table->item(row, 0)->setText(files[row].first);
 
@@ -185,7 +186,8 @@ void ImageUpscalerQt::reselect_output_file(int row) {
 	dialog.setFileMode(QFileDialog::FileMode::AnyFile);
 	if (dialog.exec()) {
 		files[row].second = dialog.selectedFiles()[0];
-		m_ui->file_list_table->item(row, 1)->setText(files[row].second);
+		m_ui->file_list_table->item(row, 1)->setText(func::shorten_file_path(files[row].second));
+		m_ui->file_list_table->item(row, 1)->setToolTip(files[row].second);
 	}
 }
 
