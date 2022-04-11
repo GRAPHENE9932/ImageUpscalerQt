@@ -336,7 +336,7 @@ TaskFSRCNNDesc TaskCreationDialog::create_fsrcnn() {
 						  block_size);
 }
 
-void TaskCreationDialog::fsrcnn_multiplier_changed(int index) {
+void TaskCreationDialog::fsrcnn_multiplier_changed(int) {
 	update_fsrcnn_list();
 	fsrcnn_update();
 }

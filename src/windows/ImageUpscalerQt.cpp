@@ -181,7 +181,7 @@ void ImageUpscalerQt::reselect_output_file(int row) {
 	dialog.setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
 	dialog.setFileMode(QFileDialog::FileMode::AnyFile);
 	if (dialog.exec()) {
-		files[row].second = dialog.selectedFiles()[0];
+		files[row].second = dialog.selectedFiles().constFirst();
 		m_ui->file_list_table->item(row, 1)->setText(func::shorten_file_path(files[row].second));
 		m_ui->file_list_table->item(row, 1)->setToolTip(files[row].second);
 	}
@@ -440,7 +440,7 @@ void ImageUpscalerQt::clear_tasks_clicked() {
 	update_info_text();
 }
 
-void ImageUpscalerQt::task_selection_changed(int index) {
+void ImageUpscalerQt::task_selection_changed(int) {
 	update_task_buttons();
 }
 

@@ -153,7 +153,7 @@ bool FSRCNNDesc::from_string(QString str, FSRCNNDesc* desc) {
 
 		// BEGIN Parse the first part (size multiplier).
 		bool ok;
-		unsigned char size_multiplier = parts[0].mid(1).toUShort(&ok, 10);
+		unsigned char size_multiplier = parts[0].midRef(1).toUShort(&ok, 10);
 		if (!ok)
 			return false;
 		// END

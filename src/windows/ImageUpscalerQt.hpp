@@ -75,7 +75,7 @@ private slots:
 	void move_task_down_clicked();
 	void remove_task_clicked();
 	void clear_tasks_clicked();
-	void task_selection_changed(int index);
+	void task_selection_changed(int);
 
 	void about_program_triggered();
 	void about_qt_triggered();
