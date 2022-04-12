@@ -37,7 +37,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> c
 	OIIO::ImageBuf output(out_spec);
 
 	blocks_amount = func::blocks_amount(QSize(spec.width, spec.height),
-										QSize(block_width, block_height)) * spec.nchannels;
+										QSize(block_width, block_height), margin) * spec.nchannels;
 	blocks_processed = 0;
 
 	// Initialize the neural network.

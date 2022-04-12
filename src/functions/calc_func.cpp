@@ -6,12 +6,15 @@
 
 #include "func.hpp"
 
-int func::blocks_amount(QSize full_size, QSize block_size) {
-	int blocks_width = full_size.width() / block_size.width();
-	if (blocks_width * block_size.width() < full_size.width())
+int func::blocks_amount(const QSize full_size, const QSize block_size, const int block_margin) {
+	const int& block_width = block_size.width() - block_margin * 2;
+	const int& block_height = block_size.height() - block_margin * 2;
+
+	int blocks_width = full_size.width() / block_width;
+	if (blocks_width * block_width < full_size.width())
 		blocks_width++;
-	int blocks_height = full_size.height() / block_size.height();
-	if (blocks_height * block_size.height() < full_size.height())
+	int blocks_height = full_size.height() / block_height;
+	if (blocks_height * block_height < full_size.height())
 		blocks_height++;
 
 	return blocks_height * blocks_width;

@@ -292,7 +292,8 @@ QSize TaskCreationDialog::fsrcnn_block_size() {
 void TaskCreationDialog::fsrcnn_update() {
 	m_ui->main_button_box->button(QDialogButtonBox::Ok)->setEnabled(valid_fsrcnn());
 	m_ui->fsrcnn_block_size_spin_box->setEnabled(m_ui->fsrcnn_split_check_box->isChecked());
-	m_ui->fsrcnn_margin_spin_box->setMinimum(-m_ui->fsrcnn_block_size_spin_box->value() / 2);
+	const int margin = m_ui->fsrcnn_block_size_spin_box->value();
+	m_ui->fsrcnn_margin_spin_box->setMinimum(-margin / 2);
 
 	QString mem_str;
 	if (size.isNull()) {
@@ -315,7 +316,7 @@ void TaskCreationDialog::fsrcnn_update() {
 		unsigned long long opers = func::fsrcnn_operations_amount(
 			fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()], fsrcnn_block_size()
 		);
-		opers *= func::blocks_amount(size, fsrcnn_block_size());
+		opers *= func::blocks_amount(size, fsrcnn_block_size(), margin);
 		opers_str = func::big_number_to_string(opers);
 	}
 

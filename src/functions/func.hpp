@@ -42,7 +42,7 @@ namespace func {
 
 	// BEGIN Calculation functions
 	/// How many blocks (block_size) will fit in the full image (full_size).
-	int blocks_amount(QSize full_size, QSize block_size);
+	int blocks_amount(const QSize full_size, const QSize block_size, const int block_margin = 0);
 
 	unsigned long long srcnn_operations_amount(SRCNNDesc desc, QSize size);
 	unsigned long long fsrcnn_operations_amount(FSRCNNDesc desc, QSize size);
