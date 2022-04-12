@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>391</width>
+    <width>396</width>
     <height>343</height>
    </rect>
   </property>
@@ -382,6 +382,27 @@
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="fsrcnn_margin_layout" stretch="0,1">
+         <item>
+          <widget class="QLabel" name="fsrcnn_margin_label">
+           <property name="text">
+            <string>Margin</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="fsrcnn_margin_spin_box">
+           <property name="minimum">
+            <number>-64</number>
+           </property>
+           <property name="maximum">
+            <number>64</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QLabel" name="fsrcnn_info_label">
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Total operations: no image&lt;/p&gt;&lt;p&gt;Approximate memory consumption: no image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -493,8 +514,8 @@
    <slot>resize_x_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>111</x>
-     <y>79</y>
+     <x>197</x>
+     <y>72</y>
     </hint>
     <hint type="destinationlabel">
      <x>391</x>
@@ -509,8 +530,8 @@
    <slot>resize_y_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>111</x>
-     <y>79</y>
+     <x>377</x>
+     <y>72</y>
     </hint>
     <hint type="destinationlabel">
      <x>390</x>
@@ -525,8 +546,8 @@
    <slot>resize_keep_ratio_changed(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>87</x>
-     <y>55</y>
+     <x>96</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel">
      <x>390</x>
@@ -541,8 +562,8 @@
    <slot>resize_interpolation_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>111</x>
-     <y>91</y>
+     <x>205</x>
+     <y>137</y>
     </hint>
     <hint type="destinationlabel">
      <x>391</x>
@@ -557,8 +578,8 @@
    <slot>ccs_combo_box_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>105</x>
-     <y>73</y>
+     <x>202</x>
+     <y>72</y>
     </hint>
     <hint type="destinationlabel">
      <x>387</x>
@@ -573,8 +594,8 @@
    <slot>srcnn_architecture_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>105</x>
-     <y>73</y>
+     <x>123</x>
+     <y>71</y>
     </hint>
     <hint type="destinationlabel">
      <x>390</x>
@@ -589,8 +610,8 @@
    <slot>srcnn_split_changed(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>79</x>
-     <y>73</y>
+     <x>97</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel">
      <x>390</x>
@@ -605,8 +626,8 @@
    <slot>srcnn_block_size_changed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>105</x>
-     <y>73</y>
+     <x>189</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel">
      <x>389</x>
@@ -678,6 +699,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>fsrcnn_margin_spin_box</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>TaskCreationDialog</receiver>
+   <slot>fsrcnn_margin_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>task_changed(int)</slot>
@@ -693,5 +730,6 @@
   <slot>fsrcnn_split_changed(bool)</slot>
   <slot>fsrcnn_block_size_changed(int)</slot>
   <slot>fsrcnn_multiplier_changed(int)</slot>
+  <slot>fsrcnn_margin_changed(int)</slot>
  </slots>
 </ui>

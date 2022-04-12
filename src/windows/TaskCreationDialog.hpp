@@ -76,8 +76,9 @@ private slots:
 	void srcnn_split_changed(bool checked);
 	void srcnn_block_size_changed(int size);
 
-	void fsrcnn_multiplier_changed(int index);
+	void fsrcnn_multiplier_changed(int);
 	void fsrcnn_architecture_changed(int index);
 	void fsrcnn_split_changed(bool checked);
 	void fsrcnn_block_size_changed(int size);
+	void fsrcnn_margin_changed(int);
 };

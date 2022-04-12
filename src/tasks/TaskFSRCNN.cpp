@@ -10,6 +10,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <OpenImageIO/imagebufalgo.h>
 
 #include "TaskFSRCNN.hpp"
 #include "../nn/FSRCNN.hpp"
@@ -22,7 +23,8 @@ float TaskFSRCNN::progress() const {
 }
 
 OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> canceled) {
-	unsigned char& mul = desc.fsrcnn_desc.size_multiplier;
+	const unsigned char& mul = desc.fsrcnn_desc.size_multiplier;
+	const int& margin = desc.margin;
 
 	// Get spec.
 	auto spec = input.spec();
@@ -39,7 +41,7 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> c
 	blocks_processed = 0;
 
 	// Initialize the neural network.
-	FSRCNN nn = FSRCNN(block_width, block_height, desc.fsrcnn_desc);
+	FSRCNN nn = FSRCNN(block_width - margin * 2, block_height - margin * 2, desc.fsrcnn_desc);
 	const std::vector<dnnl::memory::desc> ker_descs = nn.get_ker_descs();
 	const std::vector<dnnl::memory::desc> bias_descs = nn.get_bias_descs();
 	const dnnl::memory::desc input_desc = nn.get_input_desc();
@@ -75,31 +77,48 @@ OIIO::ImageBuf TaskFSRCNN::do_task(OIIO::ImageBuf input, std::function<void()> c
 	}
 
 	// Use FSRCNN block by block.
-	for (int y = 0; y < spec.height; y += block_height) {
-		for (int x = 0; x < spec.width; x += block_width) {
+	for (int y = 0; y < spec.height; y += block_height + margin * 2) {
+		for (int x = 0; x < spec.width; x += block_width + margin * 2) {
 			for (int c = 0; c < spec.nchannels; c++) {
 				// Create block roi.
-				OIIO::ROI block_extract_roi_in(x, x + block_width,
-											   y, y + block_height,
-											   0, 1, c, c + 1);
-				OIIO::ROI block_extract_roi_out(x * mul, (x + block_width) * mul,
-												y * mul, (y + block_height) * mul,
-												0, 1, c, c + 1);
+				OIIO::ROI block_roi_input(x + margin,
+										  x - margin + block_width,
+										  y + margin,
+										  y - margin + block_height,
+										  0, 1, c, c + 1);
+
 				// Get block pixels. Planar, because we are working on single-channel image.
-				auto block_pixels = std::make_unique<float[]>(block_width * block_height * 1);
-				input.get_pixels(block_extract_roi_in, OIIO::TypeDesc::FLOAT, block_pixels.get());
+				auto block_pixels = std::make_unique<float[]>(
+					(block_width - margin * 2) * (block_height - margin * 2) * 1
+				);
+				input.get_pixels(block_roi_input, OIIO::TypeDesc::FLOAT, block_pixels.get());
 
 				// Create input memory.
 				dnnl::memory input_mem = dnnl::memory(input_desc, eng, block_pixels.get());
-
 				// Create output memory.
 				dnnl::memory output_mem = dnnl::memory(output_desc, eng);
-
 				// Get output from the neural network.
 				nn.execute(input_mem, ker_mems, bias_mems, output_mem);
 
 				// Set pixels to buf.
-				output.set_pixels(block_extract_roi_out, OIIO::TypeDesc::FLOAT, output_mem.get_data_handle());
+				const OIIO::ROI block_roi_net_output((x + margin) * mul, (x - margin + block_width) * mul,
+					(y + margin) * mul, (y - margin + block_height) * mul,
+					0, 1, c, c + 1);
+				if (margin == 0) {
+					output.set_pixels(block_roi_net_output, OIIO::TypeDesc::FLOAT, output_mem.get_data_handle());
+				}
+				else {
+					OIIO::ROI block_roi(0, block_roi_net_output.width(),
+										0, block_roi_net_output.height(),
+										0, 1, 0, 1);
+					OIIO::ImageSpec block_spec(block_roi, OIIO::TypeDesc::FLOAT);
+					OIIO::ImageBuf block(block_spec, output_mem.get_data_handle());
+
+					OIIO::ROI marginated_block_roi(-margin * mul, (block_width + margin) * mul,
+												   -margin * mul, (block_height + margin) * mul,
+												   0, 1, 0, 1);
+					OIIO::ImageBufAlgo::paste(output, x * mul, y * mul, 0, c, block, marginated_block_roi);
+				}
 
 				blocks_processed++;
 

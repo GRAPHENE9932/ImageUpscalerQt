@@ -171,17 +171,28 @@ struct TaskFSRCNNDesc : TaskDesc {
 	FSRCNNDesc fsrcnn_desc;
 	/// Block size of the input image that will be splitted into blocks before the CNN.
 	/// 0 if the input image have not to be splitted.
-	int block_size;
+	unsigned int block_size;
+	/// Margin for every block (even if input image must not be splitted).
+	/// Positive value creates gaps between the blocks with width of margin * 2.
+	/// Negative value crops pixels around the borders in every block.
+	/// Usually used to remove artifacts around the borders.
+	int margin;
 
 	TaskFSRCNNDesc(const FSRCNNDesc& fsrcnn_desc,
-				   unsigned int block_size) :
-				   fsrcnn_desc(fsrcnn_desc), block_size(block_size) {}
+				   unsigned int block_size,
+				   int margin = 0) :
+				   fsrcnn_desc(fsrcnn_desc),
+				   block_size(block_size),
+				   margin(margin) {};
 
 	TaskFSRCNNDesc(const std::vector<unsigned short>& kernels,
 				   const std::vector<unsigned short>& channels,
 				   unsigned char size_multiplier,
-				   unsigned int block_size) :
-				   fsrcnn_desc(kernels, channels, size_multiplier), block_size(block_size) {}
+				   unsigned int block_size,
+				   int margin = 0) :
+				   fsrcnn_desc(kernels, channels, size_multiplier),
+				   block_size(block_size),
+				   margin(margin) {};
 
 	~TaskFSRCNNDesc() = default;
 

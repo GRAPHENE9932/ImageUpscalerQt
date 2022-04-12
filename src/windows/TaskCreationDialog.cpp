@@ -292,6 +292,7 @@ QSize TaskCreationDialog::fsrcnn_block_size() {
 void TaskCreationDialog::fsrcnn_update() {
 	m_ui->main_button_box->button(QDialogButtonBox::Ok)->setEnabled(valid_fsrcnn());
 	m_ui->fsrcnn_block_size_spin_box->setEnabled(m_ui->fsrcnn_split_check_box->isChecked());
+	m_ui->fsrcnn_margin_spin_box->setMinimum(-m_ui->fsrcnn_block_size_spin_box->value() / 2);
 
 	QString mem_str;
 	if (size.isNull()) {
@@ -332,8 +333,9 @@ TaskFSRCNNDesc TaskCreationDialog::create_fsrcnn() {
 	else
 		block_size = 0;
 
+	int margin = m_ui->fsrcnn_margin_spin_box->value();
 	return TaskFSRCNNDesc(fsrcnn_list[m_ui->fsrcnn_architecture_combo_box->currentIndex()],
-						  block_size);
+						  block_size, margin);
 }
 
 void TaskCreationDialog::fsrcnn_multiplier_changed(int) {
@@ -354,6 +356,11 @@ void TaskCreationDialog::fsrcnn_split_changed(bool) {
 void TaskCreationDialog::fsrcnn_block_size_changed(int) {
 	fsrcnn_update();
 }
+
+void TaskCreationDialog::fsrcnn_margin_changed(int) {
+	fsrcnn_update();
+}
+
 // END TaskFSRCNN
 
 std::shared_ptr<TaskDesc> TaskCreationDialog::get_task_desc() {
