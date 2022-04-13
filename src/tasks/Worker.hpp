@@ -41,4 +41,6 @@ private:
 	int cur_task = 0, cur_img = 0;
 
 	bool cancel_requested = false;
+	bool everything_finished = false;
+	bool img_writing_now = false;
 };

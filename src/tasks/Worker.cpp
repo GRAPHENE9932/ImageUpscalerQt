@@ -49,14 +49,23 @@ void Worker::init(std::vector<std::shared_ptr<TaskDesc>> task_descs,
 	this->files = files;
 }
 
+/// Image writing progress.
+/// Global, because OIIO::ProgressCallback is a function pointer
+/// that doesn't accept capturing.
+float img_writing_progress = 0.0f;
+
 float Worker::cur_task_progress() const {
-	return tasks[get_cur_task_index()]->progress();
+	return tasks[get_cur_task_index()]->progress() * 0.99f + img_writing_progress * 0.01f;
 }
 
 float Worker::overall_progress() const {
-	float cur_img_progress = (static_cast<float>(get_cur_task_index()) + cur_task_progress()) /
-		static_cast<float>(tasks.size());
-	return (static_cast<float>(get_cur_img_index()) + cur_img_progress) / files.size();
+	const float& task_idx = static_cast<float>(get_cur_task_index());
+	const float& cur_task_prog = cur_task_progress();
+	const float& tasks_n = static_cast<float>(tasks.size());
+	const float& cur_img = static_cast<float>(get_cur_img_index());
+
+	float cur_img_progress = (task_idx + cur_task_prog) / tasks_n;
+	return (cur_img + cur_img_progress) / files.size();
 }
 
 QString Worker::cur_status() const {
@@ -65,8 +74,16 @@ QString Worker::cur_status() const {
 	auto cur_task_copy = get_cur_task_index();
 	auto cur_img_copy = get_cur_img_index();
 
-	if (cur_task_copy == tasks.size() && cur_img_copy == files.size())
+	if (everything_finished) {
 		return "Done!";
+	}
+
+	if (img_writing_now) {
+		return QString("Image %1/%2, saving...").arg(
+			QString::number(cur_img_copy + 1),
+			QString::number(files.size())
+		);
+	}
 
 	// Prepare text for current task label.
 	// Task 1/1: Unknown task.
@@ -131,7 +148,15 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 				}
 			}
 			// Write image.
-			cur_img_buf.write(files[cur_img].second.toStdString());
+			OIIO::ProgressCallback callback = [] (void*, float part) -> bool {
+				img_writing_progress = part;
+				return true;
+			};
+
+			img_writing_now = true;
+			cur_img_buf.write(files[cur_img].second.toStdString(), OIIO::TypeDesc::UINT8, "", callback);
+			img_writing_now = false;
+
 			if (cur_img_buf.has_error()) {
 				error(QString::fromStdString(
 					"Can't write the image. The path may be non existent or "
@@ -141,6 +166,7 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 				return;
 			}
 		}
+		everything_finished = true;
 #ifdef NDEBUG
 	}
 	catch (const std::runtime_error& e) {
