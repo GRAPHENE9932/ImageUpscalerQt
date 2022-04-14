@@ -40,6 +40,8 @@ private:
 	std::vector<Task*> tasks;
 	int cur_task = 0, cur_img = 0;
 
+	/// Image writing progress.
+	float img_writing_progress = 0.0f;
 	bool cancel_requested = false;
 	bool everything_finished = false;
 	bool img_writing_now = false;

@@ -49,11 +49,6 @@ void Worker::init(std::vector<std::shared_ptr<TaskDesc>> task_descs,
 	this->files = files;
 }
 
-/// Image writing progress.
-/// Global, because OIIO::ProgressCallback is a function pointer
-/// that doesn't accept capturing.
-float img_writing_progress = 0.0f;
-
 float Worker::cur_task_progress() const {
 	return tasks[get_cur_task_index()]->progress() * 0.99f + img_writing_progress * 0.01f;
 }
@@ -148,13 +143,16 @@ void Worker::do_tasks(std::function<void()> success, std::function<void()> cance
 				}
 			}
 			// Write image.
-			OIIO::ProgressCallback callback = [] (void*, float part) -> bool {
-				img_writing_progress = part;
+			OIIO::ProgressCallback callback = [] (void* worker, float part) -> bool {
+				static_cast<Worker*>(worker)->img_writing_progress = part;
 				return true;
 			};
 
 			img_writing_now = true;
-			cur_img_buf.write(files[cur_img].second.toStdString(), OIIO::TypeDesc::UINT8, "", callback);
+			// OpenImageIO creates an invalid file if the callback parameter is passed, so don't pass it.
+			// TODO: check if it behaves normal now. Last check: 14.04.2022, OpenImageIO 2.3.14.0-1.
+			//cur_img_buf.write(files[cur_img].second.toStdString(), OIIO::TypeUnknown, OIIO::string_view(), callback, this);
+			cur_img_buf.write(files[cur_img].second.toStdString(), OIIO::TypeUnknown, OIIO::string_view());
 			img_writing_now = false;
 
 			if (cur_img_buf.has_error()) {
